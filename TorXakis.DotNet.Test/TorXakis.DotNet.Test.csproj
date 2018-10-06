@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="Source\TorXakis\DotNet\ConstraintTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\TorXakis\DotNet\MappingTest.cs" />
     <Compile Include="Source\TorXakis\DotNet\SolverTest.cs" />
   </ItemGroup>
   <ItemGroup>

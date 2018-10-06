@@ -51,6 +51,10 @@
     <Compile Include="Source\TorXakis\DotNet\Constraint\SymbolicState.cs" />
     <Compile Include="Source\TorXakis\DotNet\Constraint\SymbolicTransition.cs" />
     <Compile Include="Source\TorXakis\DotNet\Constraint\SymbolicTransitionSystem.cs" />
+    <Compile Include="Source\TorXakis\DotNet\Mapping\SymbolicState.cs" />
+    <Compile Include="Source\TorXakis\DotNet\Mapping\SymbolicTransition.cs" />
+    <Compile Include="Source\TorXakis\DotNet\Mapping\SymbolicTransitionSystem.cs" />
+    <Compile Include="Source\TorXakis\DotNet\Mapping\SymbolicVariable.cs" />
     <Compile Include="Source\TorXakis\DotNet\TorXakisAction.cs" />
     <Compile Include="Source\TorXakis\DotNet\TorXakisAdapter.cs" />
     <Compile Include="Source\TorXakis\DotNet\TorXakisConnection.cs" />
