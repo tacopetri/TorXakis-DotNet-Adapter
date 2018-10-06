@@ -1,5 +1,4 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -19,14 +18,6 @@ namespace TorXakis.DotNet
     /// </summary>
     internal sealed class TorXakisConnection : IDisposable
     {
-        #region Log
-
-        /// <summary>
-        /// The <see cref="ILog"/> for this class.
-        /// </summary>
-        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        #endregion
         #region Definitions
 
         /// <summary>
@@ -257,16 +248,7 @@ namespace TorXakis.DotNet
         private void Log(string message, Exception e = null)
         {
             string line = "[" + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + message;
-
-            bool logToTrace = true;
-            if (logToTrace)
-            {
-                Trace.WriteLine(line + "\n" + e);
-            }
-            else
-            {
-                log.Info(line, e);
-            }
+            Trace.WriteLine(line + "\n" + e);
         }
 
         #endregion

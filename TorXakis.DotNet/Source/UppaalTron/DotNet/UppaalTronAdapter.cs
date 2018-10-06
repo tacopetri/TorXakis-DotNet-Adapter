@@ -1,5 +1,4 @@
-﻿using log4net;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -19,14 +18,6 @@ namespace UppaalTron.DotNet
     /// </summary>
     public class UppaalTronAdapter : IDisposable
     {
-        #region Log
-
-        /// <summary>
-        /// The <see cref="ILog"/> for this class.
-        /// </summary>
-        private static readonly ILog log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
-        #endregion
         #region Definitions
 
         /// <summary>
@@ -127,7 +118,7 @@ namespace UppaalTron.DotNet
             Model = model;
             Arguments = arguments;
 
-            log.Info("Creating: " + this);
+            Log("Creating: " + this);
         }
 
         /// <summary>
@@ -140,13 +131,22 @@ namespace UppaalTron.DotNet
         }
 
         /// <summary>
+        /// Logs the given message, which automatically appends accurate timing information.
+        /// </summary>
+        private void Log(string message, Exception e = null)
+        {
+            string line = "[" + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + message;
+            Trace.WriteLine(line + "\n" + e);
+        }
+
+        /// <summary>
         /// Start the adapter.
         /// </summary>
         public void Start()
         {
             if (thread == null)
             {
-                log.Info("Starting: " + this);
+                Log("Starting: " + this);
 
                 thread = new Thread(new ThreadStart(ThreadLoop))
                 {
@@ -168,7 +168,7 @@ namespace UppaalTron.DotNet
         {
             if (thread != null)
             {
-                log.Info("Stopping: " + this);
+                Log("Stopping: " + this);
 
                 thread.Abort();
                 thread = null;
@@ -210,7 +210,7 @@ namespace UppaalTron.DotNet
             }
             catch (Exception e)
             {
-                log.Warn(nameof(Dispose) + " Exception!", e);
+                Log(nameof(Dispose) + " Exception!", e);
             }
         }
 
@@ -228,11 +228,11 @@ namespace UppaalTron.DotNet
 
                 tcpListener = new TcpListener(IPAddress.Any, Port);
                 tcpListener.Start();
-                log.Info("Waiting for TCP connection: " + tcpListener.LocalEndpoint);
+                Log("Waiting for TCP connection: " + tcpListener.LocalEndpoint);
 
                 tcpClient = tcpListener.AcceptTcpClient();
                 tcpClient.NoDelay = true;
-                log.Info("Connected TCP client: " + tcpListener.LocalEndpoint);
+                Log("Connected TCP client: " + tcpListener.LocalEndpoint);
 
                 NetworkStream stream = tcpClient.GetStream();
                 reader = new BinaryReader(stream);
@@ -252,8 +252,8 @@ namespace UppaalTron.DotNet
             }
             catch (Exception e)
             {
-                Trace.WriteLine(GetType().Name + " " + nameof(ThreadLoop) + " Exception!" + "\n" + e);
-                log.Warn(nameof(ThreadLoop) + " Exception!", e);
+                Log(GetType().Name + " " + nameof(ThreadLoop) + " Exception!" + "\n" + e);
+                Log(nameof(ThreadLoop) + " Exception!", e);
             }
             finally
             {
@@ -289,7 +289,7 @@ namespace UppaalTron.DotNet
                 WindowStyle = ProcessWindowStyle.Maximized,
             };
 
-            log.Info("Starting process: " + startInfo.FileName + "\n" + "Working directory: " + startInfo.WorkingDirectory + "\n" + "Arguments: " + startInfo.Arguments);
+            Log("Starting process: " + startInfo.FileName + "\n" + "Working directory: " + startInfo.WorkingDirectory + "\n" + "Arguments: " + startInfo.Arguments);
 
             process = new Process()
             {
@@ -323,7 +323,7 @@ namespace UppaalTron.DotNet
         {
             if (string.IsNullOrEmpty(e.Data)) return;
 
-            log.Info("Received TRON output: " + e.Data);
+            Log("Received TRON output: " + e.Data);
             TronOutputReceived?.Invoke(e.Data);
         }
 
@@ -334,7 +334,7 @@ namespace UppaalTron.DotNet
         {
             if (string.IsNullOrEmpty(e.Data)) return;
 
-            log.Info("Received TRON error: " + e.Data);
+            Log("Received TRON error: " + e.Data);
             TronErrorReceived?.Invoke(e.Data);
         }
 
@@ -373,13 +373,13 @@ namespace UppaalTron.DotNet
 
         private string GetErrorMessage(int errorCode)
         {
-            log.Info("Getting error message for error code: " + errorCode);
+            Log("Getting error message for error code: " + errorCode);
             writer.Write((byte)Commands.SA_GetError);
             writer.Write(IPAddress.HostToNetworkOrder(errorCode));
             writer.Flush();
 
             string result = ReadString();
-            log.Info("Result: " + result);
+            Log("Result: " + result);
             return result;
         }
 
@@ -388,16 +388,16 @@ namespace UppaalTron.DotNet
         /// </summary>
         public void SetTimeUnit(long microSeconds)
         {
-            log.Info("Setting time unit: " + microSeconds + " microseconds");
+            Log("Setting time unit: " + microSeconds + " microseconds");
             writer.Write((byte)Commands.SA_TimeUnit);
             writer.Write(IPAddress.HostToNetworkOrder(microSeconds));
             writer.Flush();
 
             int result = IPAddress.NetworkToHostOrder(reader.ReadInt32());
-            log.Info("Result: " + result);
+            Log("Result: " + result);
             if (result < 0)
             {
-                log.Info("Error! Code: " + result + " Message: " + GetErrorMessage(result));
+                Log("Error! Code: " + result + " Message: " + GetErrorMessage(result));
             }
         }
 
@@ -406,16 +406,16 @@ namespace UppaalTron.DotNet
         /// </summary>
         public void SetTimeOut(int timeUnits)
         {
-            log.Info("Setting time out: " + timeUnits + " time units");
+            Log("Setting time out: " + timeUnits + " time units");
             writer.Write((byte)Commands.SA_Timeout);
             writer.Write(IPAddress.HostToNetworkOrder(timeUnits));
             writer.Flush();
 
             int result = IPAddress.NetworkToHostOrder(reader.ReadInt32());
-            log.Info("Result: " + result);
+            Log("Result: " + result);
             if (result < 0)
             {
-                log.Info("Error! Code: " + result + " Message: " + GetErrorMessage(result));
+                Log("Error! Code: " + result + " Message: " + GetErrorMessage(result));
             }
         }
 
@@ -424,16 +424,16 @@ namespace UppaalTron.DotNet
         /// </summary>
         public int AddInput(string channel)
         {
-            log.Info("Adding input channel: " + channel);
+            Log("Adding input channel: " + channel);
             writer.Write((byte)Commands.SA_InpEnc);
             WriteString(channel);
             writer.Flush();
 
             int result = IPAddress.NetworkToHostOrder(reader.ReadInt32());
-            log.Info("Result: " + result);
+            Log("Result: " + result);
             if (result < 0)
             {
-                log.Info("Error! Code: " + result + " Message: " + GetErrorMessage(result));
+                Log("Error! Code: " + result + " Message: " + GetErrorMessage(result));
             }
             return result;
         }
@@ -443,16 +443,16 @@ namespace UppaalTron.DotNet
         /// </summary>
         public int AddOutput(string channel)
         {
-            log.Info("Adding output channel: " + channel);
+            Log("Adding output channel: " + channel);
             writer.Write((byte)Commands.SA_OutEnc);
             WriteString(channel);
             writer.Flush();
 
             int result = IPAddress.NetworkToHostOrder(reader.ReadInt32());
-            log.Info("Result: " + result);
+            Log("Result: " + result);
             if (result < 0)
             {
-                log.Info("Error! Code: " + result + " Message: " + GetErrorMessage(result));
+                Log("Error! Code: " + result + " Message: " + GetErrorMessage(result));
             }
             return result;
         }
@@ -462,17 +462,17 @@ namespace UppaalTron.DotNet
         /// </summary>
         public int AddVariableToInput(int channel, string variable)
         {
-            log.Info("Adding variable to input: " + channel + " " + variable);
+            Log("Adding variable to input: " + channel + " " + variable);
             writer.Write((byte)Commands.SA_VarToInp);
             writer.Write(IPAddress.HostToNetworkOrder(channel));
             WriteString(variable);
             writer.Flush();
 
             int result = IPAddress.NetworkToHostOrder(reader.ReadInt32());
-            log.Info("Result: " + result);
+            Log("Result: " + result);
             if (result < 0)
             {
-                log.Info("Error! Code: " + result + " Message: " + GetErrorMessage(result));
+                Log("Error! Code: " + result + " Message: " + GetErrorMessage(result));
             }
             return result;
         }
@@ -482,17 +482,17 @@ namespace UppaalTron.DotNet
         /// </summary>
         public int AddVariableToOutput(int channel, string variable)
         {
-            log.Info("Adding variable to output: " + channel + " " + variable);
+            Log("Adding variable to output: " + channel + " " + variable);
             writer.Write((byte)Commands.SA_VarToOut);
             writer.Write(IPAddress.HostToNetworkOrder(channel));
             WriteString(variable);
             writer.Flush();
 
             int result = IPAddress.NetworkToHostOrder(reader.ReadInt32());
-            log.Info("Result: " + result);
+            Log("Result: " + result);
             if (result < 0)
             {
-                log.Info("Error! Code: " + result + " Message: " + GetErrorMessage(result));
+                Log("Error! Code: " + result + " Message: " + GetErrorMessage(result));
             }
             return result;
         }
@@ -502,12 +502,12 @@ namespace UppaalTron.DotNet
         /// </summary>
         public string StartTest()
         {
-            log.Info("Starting test!");
+            Log("Starting test!");
             writer.Write((byte)Commands.SA_TestExec);
             writer.Flush();
 
             string result = ReadString();
-            log.Info("Result: " + result);
+            Log("Result: " + result);
             return result;
         }
 
@@ -518,7 +518,7 @@ namespace UppaalTron.DotNet
             {
                 channel &= ~Ack;
 
-                log.Info("Received ACK: " + channel);
+                Log("Received ACK: " + channel);
                 return new KeyValuePair<int, int[]>(channel, null);
             }
             else
@@ -531,7 +531,7 @@ namespace UppaalTron.DotNet
                 string message = "Received input: " + channel;
                 if (variables != null && variables.Length > 0)
                     message += " (" + string.Join(", ", variables.Select(x => x.ToString()).ToArray()) + ")";
-                log.Info(message);
+                Log(message);
 
                 SendAck(1);
                 return new KeyValuePair<int, int[]>(channel, variables);
@@ -548,7 +548,7 @@ namespace UppaalTron.DotNet
                 string message = "Sending output: " + channel;
                 if (variables != null && variables.Length > 0)
                     message += " (" + string.Join(", ", variables.Select(x => x.ToString()).ToArray()) + ")";
-                log.Info(message);
+                Log(message);
 
                 writer.Write(IPAddress.HostToNetworkOrder(channel));
                 writer.Write(IPAddress.HostToNetworkOrder((short)variables.Length));
@@ -565,7 +565,7 @@ namespace UppaalTron.DotNet
         {
             if (writer != null)
             {
-                log.Info("Sending ACK: x" + count);
+                Log("Sending ACK: x" + count);
 
                 writer.Write(IPAddress.HostToNetworkOrder(Ack | count));
                 writer.Flush();
