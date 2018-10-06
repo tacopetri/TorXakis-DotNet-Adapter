@@ -30,14 +30,14 @@ namespace TorXakis.DotNet
 
             // INTERACTION VARIABLES //
 
-            string[] guids = new string[] { "c87354e7-888b-4a7f-a337-d5e24324b4f1", "10d0e86d-1d6e-4c4e-80c0-2cea387d98a5" };
+            Guid[] guids = new Guid[] { new Guid("c87354e7-888b-4a7f-a337-d5e24324b4f1"), new Guid("10d0e86d-1d6e-4c4e-80c0-2cea387d98a5") };
             string[] systemNames = new string[] { "human_nld_fire_bevelvoerder", "object_firetool_watergun" };
             string[] positions = new string[] { "(0,0,0)", "(1,1,1)" };
             string[] rotations = new string[] { "(0,0,0,1)" };
             string[] modelGroups = new string[] { "group_12", "default" };
             string[] models = new string[] { "asset_human_nld_ic1_fire_bevelvoerder_12", "asset_object_int_fire_watergun" };
             int[] modelVersions = new int[] { 24, 18 };
-            string[] parents = new string[] { "null" };
+            object[] parents = new object[] { null };
 
             HashSet<SymbolicTransition> transitions = new HashSet<SymbolicTransition>()
             {
