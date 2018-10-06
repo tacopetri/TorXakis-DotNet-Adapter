@@ -48,9 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Source\TorXakis\DotNet\ActionType.cs" />
-    <Compile Include="Source\TorXakis\DotNet\SymbolicState.cs" />
-    <Compile Include="Source\TorXakis\DotNet\SymbolicTransition.cs" />
-    <Compile Include="Source\TorXakis\DotNet\SymbolicTransitionSystem.cs" />
+    <Compile Include="Source\TorXakis\DotNet\Constraint\SymbolicState.cs" />
+    <Compile Include="Source\TorXakis\DotNet\Constraint\SymbolicTransition.cs" />
+    <Compile Include="Source\TorXakis\DotNet\Constraint\SymbolicTransitionSystem.cs" />
     <Compile Include="Source\TorXakis\DotNet\TorXakisAction.cs" />
     <Compile Include="Source\TorXakis\DotNet\TorXakisAdapter.cs" />
     <Compile Include="Source\TorXakis\DotNet\TorXakisConnection.cs" />

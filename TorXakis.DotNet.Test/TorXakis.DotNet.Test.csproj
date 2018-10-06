@@ -52,9 +52,9 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\TorXakis\DotNet\Test\IOSTS.cs" />
+    <Compile Include="Source\TorXakis\DotNet\ConstraintTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\TorXakis\DotNet\Test\Solver.cs" />
+    <Compile Include="Source\TorXakis\DotNet\SolverTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

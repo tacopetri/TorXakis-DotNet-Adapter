@@ -5,10 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakis.DotNet.Test
+using TorXakis.DotNet.Constraint;
+
+namespace TorXakis.DotNet
 {
     [TestClass]
-    public class IOSTS
+    public class ConstraintTest
     {
         [TestMethod]
         public void Create()
@@ -25,18 +27,6 @@ namespace TorXakis.DotNet.Test
             Parameter item = new Parameter(Domain.IntegerRange(0, 2), "item");
             item.SetBinding(0);
             variables.Add(item);
-            if (false)
-            {
-                Parameter var2 = new Parameter(Domain.Integer, "Int");
-                var2.SetBinding(10);
-                variables.Add(var2);
-                Parameter var3 = new Parameter(Domain.Real, "Float");
-                var3.SetBinding(2.5);
-                variables.Add(var3);
-                Parameter var4 = new Parameter(Domain.Enum("text", "book"), "String");
-                var4.SetBinding("text");
-                variables.Add(var4);
-            }
 
             // INTERACTION VARIABLES 1 //
 

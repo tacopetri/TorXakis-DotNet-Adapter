@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakis.DotNet
+namespace TorXakis.DotNet.Constraint
 {
     /// <summary>
     /// A state contained in a <see cref="SymbolicTransitionSystem"/>.

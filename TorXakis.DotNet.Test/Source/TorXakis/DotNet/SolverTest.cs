@@ -5,10 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakis.DotNet.Test
+namespace TorXakis.DotNet
 {
     [TestClass]
-    public class Solver
+    public class SolverTest
     {
         [TestMethod]
         public void LinearExample()
