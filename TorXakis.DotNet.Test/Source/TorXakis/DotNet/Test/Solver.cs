@@ -11,7 +11,7 @@ namespace TorXakis.DotNet.Test
     public class Solver
     {
         [TestMethod]
-        public void Example()
+        public void LinearExample()
         {
             // Implementation of example:
             // https://msdn.microsoft.com/en-us/library/ff628587(v=vs.93).aspx
@@ -43,6 +43,87 @@ namespace TorXakis.DotNet.Test
 
             Assert.AreEqual("3500", vz.ToString());
             Assert.AreEqual("2000", sa.ToString());
+        }
+
+        [TestMethod]
+        public void EnumExample()
+        {
+            // Implementation of example:
+            // https://msdn.microsoft.com/en-us/library/ff826355(v=vs.93).aspx
+
+            SolverContext context = SolverContext.GetContext();
+            Model model = context.CreateModel();
+
+            Domain colors = Domain.Enum("red", "green", "blue", "yellow");
+            Decision be = new Decision(colors, "belgium");
+            Decision de = new Decision(colors, "germany");
+            Decision fr = new Decision(colors, "france");
+            Decision nl = new Decision(colors, "netherlands");
+            model.AddDecisions(be, de, fr, nl);
+
+            model.AddConstraints("borders",
+                be != de, be != fr, be != nl, de != fr, de != nl);
+
+            DecisionBinding bindBe = be.CreateBinding();
+            DecisionBinding bindDe = de.CreateBinding();
+            DecisionBinding bindFr = fr.CreateBinding();
+            DecisionBinding bindNl = nl.CreateBinding();
+            DecisionBinding[] bindings = new DecisionBinding[] { bindBe, bindDe, bindFr, bindNl };
+
+            bindBe.Fix("red");
+            bindDe.Fix("blue");
+
+            context.FindAllowedValues(bindings);
+
+            string[] valuesFr = bindFr.StringFeasibleValues.ToArray();
+            Console.WriteLine("France: \t{0}", string.Join(", ", valuesFr));
+
+            string[] valuesNl = bindNl.StringFeasibleValues.ToArray();
+            Console.WriteLine("Netherlands: \t{0}", string.Join(", ", valuesNl));
+        }
+
+        [TestMethod]
+        public void SingleChannel()
+        {
+            SolverContext context = SolverContext.GetContext();
+            Model model = context.CreateModel();
+
+            Domain domain = Domain.Enum("CreateItem", "ConnectItem", "DeleteItem");
+            Decision channel = new Decision(domain, "channel");
+            model.AddDecision(channel);
+
+            model.AddConstraint("constraint",
+                channel == "CreateItem"
+            );
+
+            Solution solution = context.Solve(new SimplexDirective());
+
+            Report report = solution.GetReport();
+            Console.WriteLine("channel: {0}", channel);
+            Console.Write("{0}", report);
+        }
+
+        [TestMethod]
+        public void MultiChannel()
+        {
+            SolverContext context = SolverContext.GetContext();
+            Model model = context.CreateModel();
+
+            Domain domain = Domain.Enum("CreateItem", "ConnectItem", "DeleteItem");
+            Decision channel = new Decision(domain, "channel");
+            model.AddDecision(channel);
+
+            model.AddConstraint("constraint",
+                channel == "CreateItem" | channel == "ConnectItem"
+            );
+
+            // Find all possible values.
+            DecisionBinding binding = channel.CreateBinding();
+            DecisionBinding[] bindings = new DecisionBinding[] { binding };
+
+            context.FindAllowedValues(bindings);
+            string[] values = binding.StringFeasibleValues.ToArray();
+            Console.WriteLine("channel: {0}", string.Join(", ", values));
         }
     }
 }
