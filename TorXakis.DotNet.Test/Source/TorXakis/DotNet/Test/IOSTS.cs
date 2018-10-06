@@ -13,31 +13,36 @@ namespace TorXakis.DotNet.Test
         [TestMethod]
         public void Create()
         {
-            SolverContext solverContext = SolverContext.GetContext();
-
             HashSet<SymbolicState> states = new HashSet<SymbolicState>()
             {
                 new SymbolicState("S1"),
                 new SymbolicState("S2"),
             };
 
-            // MODEL 1 //
+            // LOCATION VARIABLES //
 
-            solverContext.ClearModel();
-            Model model1 = solverContext.CreateModel();
+            List<Parameter> variables = new List<Parameter>();
+            Parameter item = new Parameter(Domain.IntegerRange(0, 2), "item");
+            item.SetBinding(0);
+            variables.Add(item);
+            if (false)
+            {
+                Parameter var2 = new Parameter(Domain.Integer, "Int");
+                var2.SetBinding(10);
+                variables.Add(var2);
+                Parameter var3 = new Parameter(Domain.Real, "Float");
+                var3.SetBinding(2.5);
+                variables.Add(var3);
+                Parameter var4 = new Parameter(Domain.Enum("text", "book"), "String");
+                var4.SetBinding("text");
+                variables.Add(var4);
+            }
+
+            // INTERACTION VARIABLES 1 //
 
             Decision id = new Decision(Domain.IntegerRange(1, 2), "id");
-            model1.AddDecision(id);
 
-            Term guard1 = id == 1;
-            model1.AddConstraint("guard",
-                guard1
-            );
-
-            // MODEL 2 //
-
-            solverContext.ClearModel();
-            Model model2 = solverContext.CreateModel();
+            // INTERACTION VARIABLES 2 //
 
             string[] guids = new string[] { "c87354e7-888b-4a7f-a337-d5e24324b4f1", "10d0e86d-1d6e-4c4e-80c0-2cea387d98a5" };
             Decision guid = new Decision(Domain.Enum(guids), "Guid");
@@ -56,27 +61,6 @@ namespace TorXakis.DotNet.Test
             string[] parents = new string[] { "null" };
             Decision parent = new Decision(Domain.Enum(parents), "Parent");
 
-            Term guard2 =
-                Model.If(id == 1,
-                        guid == guids[0] &
-                        systemName == systemNames[0] &
-                        position == positions[0] &
-                        rotation == rotations[0] &
-                        modelGroup == modelGroups[0] &
-                        model == models[0] &
-                        modelVersion == modelVersions[0] &
-                        parent == parents[0],
-                    Model.If(id == 2,
-                        guid == guids[1] &
-                        systemName == systemNames[1] &
-                        position == positions[1] &
-                        rotation == rotations[0] &
-                        modelGroup == modelGroups[1] &
-                        model == models[1] &
-                        modelVersion == modelVersions[1] &
-                        parent == parents[0],
-                    string.Empty));
-
             HashSet<SymbolicTransition> transitions = new HashSet<SymbolicTransition>()
             {
                 new SymbolicTransition("T12", states.ElementAt(0), states.ElementAt(1),
@@ -85,10 +69,15 @@ namespace TorXakis.DotNet.Test
                     {
                         id,
                     },
-                    guard1,
-                    (Dictionary<string, object> v, Dictionary<string, object> p) =>
+                    (m, v, p) =>
                     {
-                        return new Dictionary<string, object>();
+                        m.AddConstraint("guard",
+                            1 <= id <= 2);
+                    },
+                    (v, p) =>
+                    {
+                        Console.WriteLine("Setting item var: " + int.Parse(id.ToString()));
+                        item.SetBinding(int.Parse(id.ToString()));
                     }
                 ),
                 new SymbolicTransition("T21", states.ElementAt(1), states.ElementAt(0),
@@ -104,27 +93,39 @@ namespace TorXakis.DotNet.Test
                         modelVersion,
                         parent,
                     },
-                    guard2,
-                    (Dictionary<string, object> v, Dictionary<string, object> p) =>
+                    (m, p, v) =>
                     {
-                        return new Dictionary<string, object>();
+                        m.AddParameter(item);
+
+                        m.AddConstraint("guard",
+                            Model.If(item == 1,
+                                guid == guids[0] &
+                                systemName == systemNames[0] &
+                                position == positions[0] &
+                                rotation == rotations[0] &
+                                modelGroup == modelGroups[0] &
+                                model == models[0] &
+                                modelVersion == modelVersions[0] &
+                                parent == parents[0],
+                            Model.If(item == 2,
+                                guid == guids[1] &
+                                systemName == systemNames[1] &
+                                position == positions[1] &
+                                rotation == rotations[0] &
+                                modelGroup == modelGroups[1] &
+                                model == models[1] &
+                                modelVersion == modelVersions[1] &
+                                parent == parents[0],
+                            false))
+                            );
+                    },
+                    (v, p) =>
+                    {
+                        Console.WriteLine("Setting item var: " + 0);
+                        item.SetBinding(0);
                     }
                 ),
             };
-
-            List<Parameter> variables = new List<Parameter>();
-            Parameter var1 = new Parameter(Domain.Boolean, "Bool");
-            var1.SetBinding(true);
-            variables.Add(var1);
-            Parameter var2 = new Parameter(Domain.Integer, "Int");
-            var2.SetBinding(10);
-            variables.Add(var2);
-            Parameter var3 = new Parameter(Domain.Real, "Float");
-            var3.SetBinding(2.5);
-            variables.Add(var3);
-            Parameter var4 = new Parameter(Domain.Enum("text", "book"), "String");
-            var4.SetBinding("text");
-            variables.Add(var4);
 
             SymbolicTransitionSystem iosts = new SymbolicTransitionSystem("IOSTS", states, states.ElementAt(0), transitions, variables);
             Console.WriteLine(iosts);

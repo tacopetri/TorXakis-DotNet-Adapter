@@ -49,14 +49,18 @@ namespace TorXakis.DotNet
         public List<Decision> Variables { get; private set; }
 
         /// <summary>
+        /// The delegate signature of the <see cref="Guard"/>.
+        /// </summary>
+        public delegate void GuardDelegate(Model model, List<Parameter> variables, List<Decision> parameters);
+        /// <summary>
         /// The guard constraint: is this transition valid given the parameter values?
         /// </summary>
-        public Term Guard { get; private set; }
+        public GuardDelegate Guard { get; private set; }
 
         /// <summary>
         /// The delegate signature of the <see cref="Update"/>.
         /// </summary>
-        public delegate Dictionary<string, object> UpdateDelegate(Dictionary<string, object> variables, Dictionary<string, object> parameters);
+        public delegate void UpdateDelegate(List<Parameter> variables, List<Decision> parameters);
         /// <summary>
         /// The update function: if this transition is taken, which variables must be updated?
         /// </summary>
@@ -70,7 +74,7 @@ namespace TorXakis.DotNet
         /// </summary>
         public SymbolicTransition(string name, SymbolicState from, SymbolicState to, ActionType type, string channel,
             List<Decision> variables,
-            Term guard,
+            GuardDelegate guard,
             UpdateDelegate update)
         {
             // Sanity checks.

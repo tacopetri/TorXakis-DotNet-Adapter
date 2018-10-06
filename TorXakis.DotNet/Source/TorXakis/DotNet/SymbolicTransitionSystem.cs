@@ -94,6 +94,8 @@ namespace TorXakis.DotNet
         #endregion
         #region Functionality
 
+        private readonly Dictionary<SymbolicTransition, Model> modelCache = new Dictionary<SymbolicTransition, Model>();
+
         /// <summary>
         /// Handles the given action, which may result in a synchronized transition.
         /// </summary>
@@ -110,13 +112,60 @@ namespace TorXakis.DotNet
                 if (transition.Type != type) continue;
                 // Transition must have the same channel name.
                 if (transition.Channel != channel) continue;
+
+                bool valid = true;
+                try
+                {
+                    SolverContext solver = SolverContext.GetContext();
+
+                    if (!modelCache.TryGetValue(transition, out Model model))
+                    {
+                        solver.ClearModel();
+                        model = solver.CreateModel();
+                        modelCache.Add(transition, model);
+
+                        Console.WriteLine("Created new model: " + model);
+
+                        // Add location variables, and interaction variables.
+                        //model.AddParameters(Variables.ToArray());
+                        model.AddDecisions(transition.Variables.ToArray());
+
+                        // Let the transition add its guard expression.
+                        transition.Guard(model, Variables, transition.Variables);
+                    }
+                    else
+                    {
+                        Console.WriteLine("Re-using existing model: " + model);
+
+                        solver.ClearModel();
+                        solver.CurrentModel = model;
+                    }
+
+                    // Does it solve?
+                    Solution solution = solver.Solve(new HybridLocalSearchDirective() { TimeLimit = 1000, });
+
+                    Console.WriteLine("Succesfully solved: " + transition);
+                    foreach (Decision decision in transition.Variables)
+                        Console.WriteLine("<Decision> {0}: {1}", decision.Name, decision);
+
+                    Report report = solution.GetReport();
+                    Console.Write("{0}", report);
+
+                    solver.ClearModel();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception solving: " + transition + "\n" + e);
+                    valid = false;
+                }
+
                 // Transition must have the same parameters (but order does not matter).
                 //if (!transition.Parameters.SetEquals(new HashSet<string>(parameters.Keys))) continue;
                 // Transition guard function must evaluate to true.
                 //if (!transition.GuardFunction(Variables, parameters)) continue;
 
                 // All checks passed!
-                validTransitions.Add(transition);
+                if (valid) validTransitions.Add(transition);
             }
 
             Console.WriteLine("Valid transitions:\n" + string.Join("\n", validTransitions.Select(x => x.ToString()).ToArray()));
@@ -127,14 +176,8 @@ namespace TorXakis.DotNet
             SymbolicTransition chosenTransition = validTransitions.First();
             Console.WriteLine("Chosen transition:\n" + chosenTransition);
 
-            /*
-            Dictionary<string, object> updates = chosenTransition.UpdateFunction(Variables, parameters);
-            foreach (KeyValuePair<string, object> kvp in updates)
-            {
-                Console.WriteLine("Variable: " + kvp.Key + " Old: " + Variables[kvp.Key] + " New: " + kvp.Value);
-                Variables[kvp.Key] = kvp.Value;
-            }
-            */
+            chosenTransition.Update(Variables, chosenTransition.Variables);
+
             Console.WriteLine("From: " + State + " To: " + chosenTransition.To);
             State = chosenTransition.To;
 

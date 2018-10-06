@@ -65,6 +65,6 @@
     <PreBuildEvent>rd /s /q "$(TargetDir)"</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>for %25%25f in ($(ProjectName).dll $(ProjectName).pdb $(ProjectName).xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis-DotNet DLLs\"</PostBuildEvent>
+    <PostBuildEvent>for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis-DotNet DLLs\"</PostBuildEvent>
   </PropertyGroup>
 </Project>
