@@ -54,22 +54,22 @@ namespace TorXakis.DotNet
         public HashSet<string> Parameters { get; private set; }
 
         /// <summary>
-        /// The delegate signature of the <see cref="GuardExpression"/>.
+        /// The delegate signature of the <see cref="GuardFunction"/>.
         /// </summary>
         public delegate bool GuardDelegate(Dictionary<string, object> variables, Dictionary<string, object> parameters);
         /// <summary>
-        /// The guard expression: is this transition valid given the parameter values?
+        /// The guard function: is this transition valid given the parameter values?
         /// </summary>
-        public GuardDelegate GuardExpression { get; private set; }
+        public GuardDelegate GuardFunction { get; private set; }
 
         /// <summary>
-        /// The delegate signature of the <see cref="UpdateExpression"/>.
+        /// The delegate signature of the <see cref="UpdateFunction"/>.
         /// </summary>
         public delegate Dictionary<string, object> UpdateDelegate(Dictionary<string, object> variables, Dictionary<string, object> parameters);
         /// <summary>
-        /// The update expression: if this transition is taken, which variables must be updated?
+        /// The update function: if this transition is taken, which variables must be updated?
         /// </summary>
-        public UpdateDelegate UpdateExpression { get; private set; }
+        public UpdateDelegate UpdateFunction { get; private set; }
 
         #endregion
         #region Create & Destroy
@@ -80,8 +80,8 @@ namespace TorXakis.DotNet
         [JsonConstructor]
         public SymbolicTransition(string name, SymbolicState from, SymbolicState to, ActionType type, string channel,
             HashSet<string> parameters,
-            GuardDelegate guardExpression,
-            UpdateDelegate updateExpression)
+            GuardDelegate guardFunction,
+            UpdateDelegate updateFunction)
         {
             // Sanity checks.
             if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name) + ": " + name);
@@ -89,8 +89,8 @@ namespace TorXakis.DotNet
             if (to == null) throw new ArgumentNullException(nameof(from));
             if (string.IsNullOrEmpty(channel)) throw new ArgumentException(nameof(channel) + ": " + channel);
             if (parameters == null) throw new ArgumentNullException(nameof(parameters));
-            if (guardExpression == null) throw new ArgumentNullException(nameof(guardExpression));
-            if (updateExpression == null) throw new ArgumentNullException(nameof(updateExpression));
+            if (guardFunction == null) throw new ArgumentNullException(nameof(guardFunction));
+            if (updateFunction == null) throw new ArgumentNullException(nameof(updateFunction));
 
             Name = name;
             From = from;
@@ -99,8 +99,8 @@ namespace TorXakis.DotNet
             Type = type;
             Channel = channel;
             Parameters = new HashSet<string>(parameters);
-            GuardExpression = guardExpression;
-            UpdateExpression = updateExpression;
+            GuardFunction = guardFunction;
+            UpdateFunction = updateFunction;
         }
 
         /// <summary><see cref="Object.ToString"/></summary>
@@ -112,8 +112,8 @@ namespace TorXakis.DotNet
 
             result += "\n\t\t" + nameof(Parameters) + ": " + string.Join(", ", Parameters.ToArray());
 
-            result += "\n\t\t" + nameof(GuardExpression) + ": " + GuardExpression;
-            result += "\n\t\t" + nameof(UpdateExpression) + ": " + UpdateExpression;
+            result += "\n\t\t" + nameof(GuardFunction) + ": " + GuardFunction;
+            result += "\n\t\t" + nameof(UpdateFunction) + ": " + UpdateFunction;
 
             return result;
         }

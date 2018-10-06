@@ -69,6 +69,18 @@ namespace TorXakis.DotNet.Test
 
             SymbolicTransitionSystem iosts = new SymbolicTransitionSystem("IOSTS", states, states.ElementAt(0), transitions, variables);
 
+            // Have the static properties been initialized correctly?
+            CollectionAssert.AreEqual(states.ToList(), iosts.States.ToList());
+            Assert.AreEqual(states.ElementAt(0), iosts.InitialState);
+            CollectionAssert.AreEqual(transitions.ToList(), iosts.Transitions.ToList());
+            CollectionAssert.AreEqual(variables.Select(x => x.Key).ToList(), iosts.InitialVariables.Select(x => x.Key).ToList());
+            CollectionAssert.AreEqual(variables.Select(x => x.Value).ToList(), iosts.InitialVariables.Select(x => x.Value).ToList());
+
+            // Have the dynamic properties been initialized correctly?
+            Assert.AreEqual(iosts.InitialState, iosts.CurrentState);
+            CollectionAssert.AreEqual(iosts.InitialVariables.Select(x => x.Key).ToList(), iosts.CurrentVariables.Select(x => x.Key).ToList());
+            CollectionAssert.AreEqual(iosts.InitialVariables.Select(x => x.Value).ToList(), iosts.CurrentVariables.Select(x => x.Value).ToList());
+
             Console.WriteLine(iosts);
         }
     }
