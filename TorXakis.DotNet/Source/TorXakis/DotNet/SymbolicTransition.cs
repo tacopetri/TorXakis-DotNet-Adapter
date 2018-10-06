@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +7,6 @@ namespace TorXakis.DotNet
     /// <summary>
     /// A transition contained in a <see cref="SymbolicTransitionSystem"/>.
     /// </summary>
-    [JsonObject(MemberSerialization = MemberSerialization.OptIn, IsReference = true)]
     public sealed class SymbolicTransition
     {
         #region Definitions
@@ -21,31 +19,26 @@ namespace TorXakis.DotNet
         /// <summary>
         /// The user-friendly name.
         /// </summary>
-        [JsonProperty]
         public string Name { get; private set; }
 
         /// <summary>
         /// The from <see cref="SymbolicState"/> state.
         /// </summary>
-        [JsonProperty]
         public SymbolicState From { get; private set; }
 
         /// <summary>
         /// The to <see cref="SymbolicState"/> state.
         /// </summary>
-        [JsonProperty]
         public SymbolicState To { get; private set; }
 
         /// <summary>
         /// The <see cref="ActionType"/> value: input or output?
         /// </summary>
-        [JsonProperty]
         public ActionType Type { get; private set; }
 
         /// <summary>
         /// The channel name to communicate on.
         /// </summary>
-        [JsonProperty]
         public string Channel { get; private set; }
 
         /// <summary>
@@ -77,7 +70,6 @@ namespace TorXakis.DotNet
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        [JsonConstructor]
         public SymbolicTransition(string name, SymbolicState from, SymbolicState to, ActionType type, string channel,
             HashSet<string> parameters,
             GuardDelegate guardFunction,

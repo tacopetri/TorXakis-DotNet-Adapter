@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +8,6 @@ namespace TorXakis.DotNet
     /// This container class represents an ACTION (either an INPUT or an OUTPUT).
     /// It combines <see cref="Type"/>, <see cref="Channel"/> and <see cref="Data"/> information.
     /// </summary>
-    [JsonObject(MemberSerialization = MemberSerialization.OptIn)]
     public sealed class TorXakisAction
     {
         #region Definitions
@@ -22,19 +20,16 @@ namespace TorXakis.DotNet
         /// <summary>
         /// The <see cref="ActionType"/> value.
         /// </summary>
-        [JsonProperty]
         public ActionType Type { get; private set; }
 
         /// <summary>
         /// The channel, in user-friendly string format.
         /// </summary>
-        [JsonProperty]
         public string Channel { get; private set; }
 
         /// <summary>
         /// The data, in user-friendly string format.
         /// </summary>
-        [JsonProperty]
         public string Data { get; private set; }
 
         #endregion
@@ -43,7 +38,6 @@ namespace TorXakis.DotNet
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        [JsonConstructor]
         private TorXakisAction(ActionType type, string channel, string data)
         {
             // Sanity checks.

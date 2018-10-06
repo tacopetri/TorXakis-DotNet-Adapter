@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -8,7 +7,6 @@ namespace TorXakis.DotNet
     /// <summary>
     /// A state contained in a <see cref="SymbolicTransitionSystem"/>.
     /// </summary>
-    [JsonObject(MemberSerialization = MemberSerialization.OptIn, IsReference = true)]
     public sealed class SymbolicState
     {
         #region Definitions
@@ -21,7 +19,6 @@ namespace TorXakis.DotNet
         /// <summary>
         /// The user-friendly name.
         /// </summary>
-        [JsonProperty]
         public string Name { get; private set; }
 
         #endregion
@@ -30,7 +27,6 @@ namespace TorXakis.DotNet
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        [JsonConstructor]
         public SymbolicState(string name)
         {
             // Sanity checks.
