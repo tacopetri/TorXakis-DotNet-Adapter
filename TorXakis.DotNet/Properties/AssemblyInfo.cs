@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TorXakis.DotNet")]
-[assembly: AssemblyCopyright("")]
+[assembly: AssemblyCopyright("Copyright © 2018 Taco Petri")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
