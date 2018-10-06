@@ -15,13 +15,12 @@ namespace TorXakis.DotNet.Test
             {
                 new SymbolicState("S1"),
                 new SymbolicState("S2"),
-                new SymbolicState("S3"),
             };
 
             HashSet<SymbolicTransition> transitions = new HashSet<SymbolicTransition>()
             {
                 new SymbolicTransition("T12", states.ElementAt(0), states.ElementAt(1),
-                    ActionType.Input, "input",
+                    ActionType.Input, "Input",
                     new HashSet<string>() { "Param1", "Param2" },
                     (Dictionary<string, object> v, Dictionary<string, object> p) =>
                     {
@@ -29,11 +28,11 @@ namespace TorXakis.DotNet.Test
                     },
                     (Dictionary<string, object> v, Dictionary<string, object> p) =>
                     {
-                        return new Dictionary<string, object>() { { "Var1", false } };
+                        return new Dictionary<string, object>() { { "Var1", false }, { "Var2", 15 }, };
                     }
                 ),
-                new SymbolicTransition("T23", states.ElementAt(1), states.ElementAt(2),
-                    ActionType.Output, "command",
+                new SymbolicTransition("T21", states.ElementAt(1), states.ElementAt(0),
+                    ActionType.Output, "Output",
                     new HashSet<string>() { "Param1" },
                     (Dictionary<string, object> v, Dictionary<string, object> p) =>
                     {
@@ -41,19 +40,7 @@ namespace TorXakis.DotNet.Test
                     },
                     (Dictionary<string, object> v, Dictionary<string, object> p) =>
                     {
-                        return new Dictionary<string, object>() { { "Var2", 15 }, { "Var3", 7.5 } };
-                    }
-                ),
-                new SymbolicTransition("T31", states.ElementAt(2), states.ElementAt(0),
-                    ActionType.Input, "simple",
-                    new HashSet<string>(),
-                    (Dictionary<string, object> v, Dictionary<string, object> p) =>
-                    {
-                        return true;
-                    },
-                    (Dictionary<string, object> v, Dictionary<string, object> p) =>
-                    {
-                        return new Dictionary<string, object>();
+                        return new Dictionary<string, object>() { { "Var3", 7.5 }, { "Var4", "book" } };
                     }
                 ),
             };
@@ -82,12 +69,12 @@ namespace TorXakis.DotNet.Test
             CollectionAssert.AreEqual(iosts.InitialVariables.Select(x => x.Value).ToList(), iosts.CurrentVariables.Select(x => x.Value).ToList());
 
             // Test some transitions!
-            iosts.HandleAction(ActionType.Input, "input", new Dictionary<string, object>() { { "Param1", 1 }, { "Param2", 2 }, });
+            iosts.HandleAction(ActionType.Input, "Input", new Dictionary<string, object>() { { "Param1", 1 }, { "Param2", 2 }, });
             Console.WriteLine(iosts);
             Assert.AreEqual(states.ElementAt(1), iosts.CurrentState);
-            iosts.HandleAction(ActionType.Output, "command", new Dictionary<string, object>() { { "Param1", 1 }, });
+            iosts.HandleAction(ActionType.Output, "Output", new Dictionary<string, object>() { { "Param1", 1 }, });
             Console.WriteLine(iosts);
-            Assert.AreEqual(states.ElementAt(2), iosts.CurrentState);
+            Assert.AreEqual(states.ElementAt(0), iosts.CurrentState);
         }
     }
 }
