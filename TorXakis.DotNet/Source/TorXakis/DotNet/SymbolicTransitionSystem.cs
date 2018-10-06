@@ -46,6 +46,7 @@ namespace TorXakis.DotNet
         /// <summary>
         /// The initial variables: expressed as named key-value pairs.
         /// </summary>
+        [JsonProperty]
         public Dictionary<string, object> InitialVariables { get; private set; }
 
         #endregion
@@ -60,6 +61,7 @@ namespace TorXakis.DotNet
         /// <summary>
         /// The current variables: expressed as named key-value pairs.
         /// </summary>
+        [JsonProperty]
         public Dictionary<string, object> CurrentVariables { get; private set; }
 
         #endregion
@@ -123,7 +125,50 @@ namespace TorXakis.DotNet
         #endregion
         #region Functionality
 
-        // TODO: Implement!
+        /// <summary>
+        /// Handles the given action, which may result in a synchronized transition.
+        /// </summary>
+        public bool HandleAction(ActionType type, string channel, Dictionary<string, object> parameters)
+        {
+            Console.WriteLine(nameof(HandleAction) + " Type: " + type + " Channel: " + channel + " Parameters:\n" + string.Join("\n", parameters.Select(x => x.Key + ": " + x.Value).ToArray()));
+
+            List<SymbolicTransition> validTransitions = new List<SymbolicTransition>();
+            foreach (SymbolicTransition transition in Transitions)
+            {
+                // Transition must come from the current state.
+                if (transition.From != CurrentState) continue;
+                // Transition must have the same type (input or output).
+                if (transition.Type != type) continue;
+                // Transition must have the same channel name.
+                if (transition.Channel != channel) continue;
+                // Transition must have the same parameters (but order does not matter).
+                if (!transition.Parameters.SetEquals(new HashSet<string>(parameters.Keys))) continue;
+                // Transition guard function must evaluate to true.
+                if (!transition.GuardFunction(CurrentVariables, parameters)) continue;
+
+                // All checks passed!
+                validTransitions.Add(transition);
+            }
+
+            Console.WriteLine("Valid transitions:\n" + string.Join("\n", validTransitions.Select(x => x.ToString()).ToArray()));
+
+            if (validTransitions.Count == 0) return false;
+
+            // DEBUG: For testing, we pick the first compatible transition, not a random one. (TPE)
+            SymbolicTransition chosenTransition = validTransitions.First();
+            Console.WriteLine("Chosen transition:\n" + chosenTransition);
+
+            Dictionary<string, object> updates = chosenTransition.UpdateFunction(CurrentVariables, parameters);
+            foreach (KeyValuePair<string, object> kvp in updates)
+            {
+                Console.WriteLine("Variable: " + kvp.Key + " Old: " + CurrentVariables[kvp.Key] + " New: " + kvp.Value);
+                CurrentVariables[kvp.Key] = kvp.Value;
+            }
+            Console.WriteLine("From: " + CurrentState + " To: " + chosenTransition.To);
+            CurrentState = chosenTransition.To;
+
+            return true;
+        }
 
         #endregion
     }

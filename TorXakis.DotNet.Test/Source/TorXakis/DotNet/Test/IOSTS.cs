@@ -26,11 +26,11 @@ namespace TorXakis.DotNet.Test
                     new HashSet<string>() { "Param1", "Param2" },
                     (Dictionary<string, object> v, Dictionary<string, object> p) =>
                     {
-                        return true;
+                        return (bool)v["Var1"] == true;
                     },
                     (Dictionary<string, object> v, Dictionary<string, object> p) =>
                     {
-                        return new Dictionary<string, object>();
+                        return new Dictionary<string, object>() { { "Var1", false } };
                     }
                 ),
                 new SymbolicTransition("T23", states.ElementAt(1), states.ElementAt(2),
@@ -42,12 +42,12 @@ namespace TorXakis.DotNet.Test
                     },
                     (Dictionary<string, object> v, Dictionary<string, object> p) =>
                     {
-                        return new Dictionary<string, object>();
+                        return new Dictionary<string, object>() { { "Var2", 15 }, { "Var3", 7.5 } };
                     }
                 ),
                 new SymbolicTransition("T31", states.ElementAt(2), states.ElementAt(0),
-                    ActionType.Input, "event",
-                    new HashSet<string>() { "Param1" },
+                    ActionType.Input, "simple",
+                    new HashSet<string>(),
                     (Dictionary<string, object> v, Dictionary<string, object> p) =>
                     {
                         return true;
@@ -68,6 +68,7 @@ namespace TorXakis.DotNet.Test
             };
 
             SymbolicTransitionSystem iosts = new SymbolicTransitionSystem("IOSTS", states, states.ElementAt(0), transitions, variables);
+            Console.WriteLine(iosts);
 
             // Have the static properties been initialized correctly?
             CollectionAssert.AreEqual(states.ToList(), iosts.States.ToList());
@@ -81,7 +82,13 @@ namespace TorXakis.DotNet.Test
             CollectionAssert.AreEqual(iosts.InitialVariables.Select(x => x.Key).ToList(), iosts.CurrentVariables.Select(x => x.Key).ToList());
             CollectionAssert.AreEqual(iosts.InitialVariables.Select(x => x.Value).ToList(), iosts.CurrentVariables.Select(x => x.Value).ToList());
 
+            // Test some transitions!
+            iosts.HandleAction(ActionType.Input, "input", new Dictionary<string, object>() { { "Param1", 1 }, { "Param2", 2 }, });
             Console.WriteLine(iosts);
+            Assert.AreEqual(states.ElementAt(1), iosts.CurrentState);
+            iosts.HandleAction(ActionType.Output, "command", new Dictionary<string, object>() { { "Param1", 1 }, });
+            Console.WriteLine(iosts);
+            Assert.AreEqual(states.ElementAt(2), iosts.CurrentState);
         }
     }
 }
