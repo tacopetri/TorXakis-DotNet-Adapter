@@ -92,8 +92,12 @@ namespace TorXakis.DotNet.Test
             Decision channel = new Decision(domain, "channel");
             model.AddDecision(channel);
 
+            Parameter p = new Parameter(Domain.Integer, "p");
+            model.AddParameter(p);
+            p.SetBinding(3);
+
             model.AddConstraint("constraint",
-                channel == "CreateItem"
+                channel == "CreateItem" & p == 3
             );
 
             Solution solution = context.Solve(new SimplexDirective());
@@ -101,6 +105,8 @@ namespace TorXakis.DotNet.Test
             Report report = solution.GetReport();
             Console.WriteLine("channel: {0}", channel);
             Console.Write("{0}", report);
+
+            Assert.AreEqual("CreateItem", channel.GetString());
         }
 
         [TestMethod]
@@ -124,6 +130,8 @@ namespace TorXakis.DotNet.Test
             context.FindAllowedValues(bindings);
             string[] values = binding.StringFeasibleValues.ToArray();
             Console.WriteLine("channel: {0}", string.Join(", ", values));
+
+            CollectionAssert.AreEqual(new List<string>() { "CreateItem", "ConnectItem" }, values);
         }
     }
 }
