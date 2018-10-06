@@ -49,22 +49,18 @@ namespace TorXakis.DotNet
         public List<Decision> Variables { get; private set; }
 
         /// <summary>
-        /// The delegate signature of the <see cref="GuardFunction"/>.
+        /// The guard constraint: is this transition valid given the parameter values?
         /// </summary>
-        public delegate bool GuardDelegate(Dictionary<string, object> variables, Dictionary<string, object> parameters);
-        /// <summary>
-        /// The guard function: is this transition valid given the parameter values?
-        /// </summary>
-        public GuardDelegate GuardFunction { get; private set; }
+        public Term Guard { get; private set; }
 
         /// <summary>
-        /// The delegate signature of the <see cref="UpdateFunction"/>.
+        /// The delegate signature of the <see cref="Update"/>.
         /// </summary>
         public delegate Dictionary<string, object> UpdateDelegate(Dictionary<string, object> variables, Dictionary<string, object> parameters);
         /// <summary>
         /// The update function: if this transition is taken, which variables must be updated?
         /// </summary>
-        public UpdateDelegate UpdateFunction { get; private set; }
+        public UpdateDelegate Update { get; private set; }
 
         #endregion
         #region Create & Destroy
@@ -74,8 +70,8 @@ namespace TorXakis.DotNet
         /// </summary>
         public SymbolicTransition(string name, SymbolicState from, SymbolicState to, ActionType type, string channel,
             List<Decision> variables,
-            GuardDelegate guardFunction,
-            UpdateDelegate updateFunction)
+            Term guard,
+            UpdateDelegate update)
         {
             // Sanity checks.
             if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name) + ": " + name);
@@ -83,8 +79,7 @@ namespace TorXakis.DotNet
             if (to == null) throw new ArgumentNullException(nameof(from));
             if (string.IsNullOrEmpty(channel)) throw new ArgumentException(nameof(channel) + ": " + channel);
             if (variables == null) throw new ArgumentNullException(nameof(variables));
-            if (guardFunction == null) throw new ArgumentNullException(nameof(guardFunction));
-            if (updateFunction == null) throw new ArgumentNullException(nameof(updateFunction));
+            if (update == null) throw new ArgumentNullException(nameof(update));
 
             Name = name;
             From = from;
@@ -93,8 +88,8 @@ namespace TorXakis.DotNet
             Type = type;
             Channel = channel;
             Variables = variables;
-            GuardFunction = guardFunction;
-            UpdateFunction = updateFunction;
+            Guard = guard;
+            Update = update;
         }
 
         /// <summary><see cref="Object.ToString"/></summary>
@@ -106,8 +101,8 @@ namespace TorXakis.DotNet
 
             result += "\n\t\t" + nameof(Variables) + ": " + string.Join(", ", Variables.Select(x => x.Name).ToArray());
 
-            result += "\n\t\t" + nameof(GuardFunction) + ": " + GuardFunction;
-            result += "\n\t\t" + nameof(UpdateFunction) + ": " + UpdateFunction;
+            result += "\n\t\t" + nameof(Guard) + ": " + Guard.ToString();
+            result += "\n\t\t" + nameof(Update) + ": " + Update;
 
             return result;
         }

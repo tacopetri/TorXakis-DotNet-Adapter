@@ -13,11 +13,69 @@ namespace TorXakis.DotNet.Test
         [TestMethod]
         public void Create()
         {
+            SolverContext solverContext = SolverContext.GetContext();
+
             HashSet<SymbolicState> states = new HashSet<SymbolicState>()
             {
                 new SymbolicState("S1"),
                 new SymbolicState("S2"),
             };
+
+            // MODEL 1 //
+
+            solverContext.ClearModel();
+            Model model1 = solverContext.CreateModel();
+
+            Decision id = new Decision(Domain.IntegerRange(1, 2), "id");
+            model1.AddDecision(id);
+
+            Term guard1 = id == 1;
+            model1.AddConstraint("guard",
+                guard1
+            );
+
+            // MODEL 2 //
+
+            solverContext.ClearModel();
+            Model model2 = solverContext.CreateModel();
+
+            string[] guids = new string[] { "c87354e7-888b-4a7f-a337-d5e24324b4f1", "10d0e86d-1d6e-4c4e-80c0-2cea387d98a5" };
+            Decision guid = new Decision(Domain.Enum(guids), "Guid");
+            string[] systemNames = new string[] { "human_nld_fire_bevelvoerder", "object_firetool_watergun" };
+            Decision systemName = new Decision(Domain.Enum(systemNames), "SystemName");
+            string[] positions = new string[] { "(0,0,0)", "(1,1,1)" };
+            Decision position = new Decision(Domain.Enum(positions), "Position");
+            string[] rotations = new string[] { "(0,0,0,1)" };
+            Decision rotation = new Decision(Domain.Enum(rotations), "Rotation");
+            string[] modelGroups = new string[] { "group_12", "default" };
+            Decision modelGroup = new Decision(Domain.Enum(modelGroups), "ModelGroup");
+            string[] models = new string[] { "asset_human_nld_ic1_fire_bevelvoerder_12", "asset_object_int_fire_watergun" };
+            Decision model = new Decision(Domain.Enum(models), "Model");
+            int[] modelVersions = new int[] { 24, 18 };
+            Decision modelVersion = new Decision(Domain.Set(modelVersions), "ModelVersion");
+            string[] parents = new string[] { "null" };
+            Decision parent = new Decision(Domain.Enum(parents), "Parent");
+
+            Term guard2 =
+                Model.If(id == 1,
+                        guid == guids[0] &
+                        systemName == systemNames[0] &
+                        position == positions[0] &
+                        rotation == rotations[0] &
+                        modelGroup == modelGroups[0] &
+                        model == models[0] &
+                        modelVersion == modelVersions[0] &
+                        parent == parents[0],
+                    Model.If(id == 2,
+                        guid == guids[1] &
+                        systemName == systemNames[1] &
+                        position == positions[1] &
+                        rotation == rotations[0] &
+                        modelGroup == modelGroups[1] &
+                        model == models[1] &
+                        modelVersion == modelVersions[1] &
+                        parent == parents[0],
+                    string.Empty));
 
             HashSet<SymbolicTransition> transitions = new HashSet<SymbolicTransition>()
             {
@@ -25,12 +83,9 @@ namespace TorXakis.DotNet.Test
                     ActionType.Input, "NewItem",
                     new List<Decision>()
                     {
-                        new Decision(Domain.IntegerRange(1, 2), "id"),
+                        id,
                     },
-                    (Dictionary<string, object> v, Dictionary<string, object> p) =>
-                    {
-                        return true;
-                    },
+                    guard1,
                     (Dictionary<string, object> v, Dictionary<string, object> p) =>
                     {
                         return new Dictionary<string, object>();
@@ -40,19 +95,16 @@ namespace TorXakis.DotNet.Test
                     ActionType.Output, "ItemEventArgsNew",
                     new List<Decision>()
                     {
-                        new Decision(Domain.Enum("c87354e7-888b-4a7f-a337-d5e24324b4f1", "10d0e86d-1d6e-4c4e-80c0-2cea387d98a5"), "Guid"),
-                        new Decision(Domain.Enum("human_nld_fire_bevelvoerder", "object_firetool_watergun"), "SystemName"),
-                        new Decision(Domain.Enum("(0,0,0)", "(1,1,1)"), "Position"),
-                        new Decision(Domain.Enum("(0,0,0,1)"), "Rotation"),
-                        new Decision(Domain.Enum("group_12", "default"), "ModelGroup"),
-                        new Decision(Domain.Enum("asset_human_nld_ic1_fire_bevelvoerder_12", "asset_object_int_fire_watergun"), "Model"),
-                        new Decision(Domain.Set(24, 18), "ModelVersion"),
-                        new Decision(Domain.Enum("null"), "Parent"),
+                        guid,
+                        systemName,
+                        position,
+                        rotation,
+                        modelGroup,
+                        model,
+                        modelVersion,
+                        parent,
                     },
-                    (Dictionary<string, object> v, Dictionary<string, object> p) =>
-                    {
-                        return true;
-                    },
+                    guard2,
                     (Dictionary<string, object> v, Dictionary<string, object> p) =>
                     {
                         return new Dictionary<string, object>();
