@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.SolverFoundation.Common;
+using Microsoft.SolverFoundation.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 

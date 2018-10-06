@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.SolverFoundation.Common;
+using Microsoft.SolverFoundation.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,7 +17,7 @@ namespace TorXakis.DotNet
         // TODO: Implement!
 
         #endregion
-        #region Template Variables & Properties
+        #region Variables & Properties
 
         /// <summary>
         /// The user-friendly name.
@@ -28,9 +30,9 @@ namespace TorXakis.DotNet
         public HashSet<SymbolicState> States { get; private set; }
 
         /// <summary>
-        /// The initial <see cref="SymbolicState"/> state.
+        /// The current <see cref="SymbolicState"/> state.
         /// </summary>
-        public SymbolicState InitialState { get; private set; }
+        public SymbolicState State { get; private set; }
 
         /// <summary>
         /// The collection of contained <see cref="SymbolicTransition"/> transitions.
@@ -38,22 +40,9 @@ namespace TorXakis.DotNet
         public HashSet<SymbolicTransition> Transitions { get; private set; }
 
         /// <summary>
-        /// The initial variables: expressed as named key-value pairs.
+        /// The current variables: expressed as named keys bound to values.
         /// </summary>
-        public Dictionary<string, object> InitialVariables { get; private set; }
-
-        #endregion
-        #region Instance Variables & Properties
-
-        /// <summary>
-        /// The current <see cref="SymbolicState"/> state.
-        /// </summary>
-        public SymbolicState CurrentState { get; private set; }
-
-        /// <summary>
-        /// The current variables: expressed as named key-value pairs.
-        /// </summary>
-        public Dictionary<string, object> CurrentVariables { get; private set; }
+        public List<Parameter> Variables { get; private set; }
 
         #endregion
         #region Create & Destroy
@@ -61,25 +50,22 @@ namespace TorXakis.DotNet
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public SymbolicTransitionSystem(string name, HashSet<SymbolicState> states, SymbolicState initialState, HashSet<SymbolicTransition> transitions, Dictionary<string, object> initialVariables)
+        public SymbolicTransitionSystem(string name, HashSet<SymbolicState> states, SymbolicState state, HashSet<SymbolicTransition> transitions, List<Parameter> variables)
         {
             // Sanity checks.
             if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name) + ": " + name);
             if (states == null) throw new ArgumentNullException(nameof(states));
-            if (initialState == null) throw new ArgumentNullException(nameof(initialState));
-            if (!states.Contains(initialState)) throw new ArgumentException(nameof(initialState) + ": " + initialState);
+            if (state == null) throw new ArgumentNullException(nameof(state));
+            if (!states.Contains(state)) throw new ArgumentException(nameof(state) + ": " + state);
             if (transitions == null) throw new ArgumentNullException(nameof(transitions));
             if (transitions.Any(x => !states.Contains(x.From) || !states.Contains(x.To))) throw new ArgumentException(nameof(transitions) + ": " + transitions);
-            if (initialVariables == null) throw new ArgumentNullException(nameof(initialVariables));
+            if (variables == null) throw new ArgumentNullException(nameof(variables));
 
             Name = name;
-            States = new HashSet<SymbolicState>(states);
-            InitialState = initialState;
-            Transitions = new HashSet<SymbolicTransition>(transitions);
-            InitialVariables = new Dictionary<string, object>(initialVariables);
-
-            CurrentState = InitialState;
-            CurrentVariables = new Dictionary<string, object>(InitialVariables);
+            States = states;
+            State = state;
+            Transitions = transitions;
+            Variables = variables;
         }
 
         /// <summary><see cref="Object.ToString"/></summary>
@@ -92,22 +78,15 @@ namespace TorXakis.DotNet
             foreach (SymbolicState state in States)
                 result += "\n\t" + state;
 
-            result += "\n" + nameof(InitialState) + ": " + InitialState;
+            result += "\n" + nameof(State) + ": " + State;
 
             result += "\n" + nameof(Transitions) + ":";
             foreach (SymbolicTransition transition in Transitions)
                 result += "\n\t" + transition;
 
-            result += "\n" + nameof(InitialVariables) + ":";
-            foreach (KeyValuePair<string, object> variable in InitialVariables)
-                result += "\n\t" + variable.Key + ": " + variable.Value;
-
-            result += "\n";
-            result += "\n" + nameof(CurrentState) + ": " + CurrentState;
-
-            result += "\n" + nameof(CurrentVariables) + ":";
-            foreach (KeyValuePair<string, object> variable in CurrentVariables)
-                result += "\n\t" + variable.Key + ": " + variable.Value;
+            result += "\n" + nameof(Variables) + ":";
+            foreach (Parameter variable in Variables)
+                result += "\n\t" + variable.Name + ": " + variable.ToString();
 
             return result;
         }
@@ -126,15 +105,15 @@ namespace TorXakis.DotNet
             foreach (SymbolicTransition transition in Transitions)
             {
                 // Transition must come from the current state.
-                if (transition.From != CurrentState) continue;
+                if (transition.From != State) continue;
                 // Transition must have the same type (input or output).
                 if (transition.Type != type) continue;
                 // Transition must have the same channel name.
                 if (transition.Channel != channel) continue;
                 // Transition must have the same parameters (but order does not matter).
-                if (!transition.Parameters.SetEquals(new HashSet<string>(parameters.Keys))) continue;
+                //if (!transition.Parameters.SetEquals(new HashSet<string>(parameters.Keys))) continue;
                 // Transition guard function must evaluate to true.
-                if (!transition.GuardFunction(CurrentVariables, parameters)) continue;
+                //if (!transition.GuardFunction(Variables, parameters)) continue;
 
                 // All checks passed!
                 validTransitions.Add(transition);
@@ -148,14 +127,16 @@ namespace TorXakis.DotNet
             SymbolicTransition chosenTransition = validTransitions.First();
             Console.WriteLine("Chosen transition:\n" + chosenTransition);
 
-            Dictionary<string, object> updates = chosenTransition.UpdateFunction(CurrentVariables, parameters);
+            /*
+            Dictionary<string, object> updates = chosenTransition.UpdateFunction(Variables, parameters);
             foreach (KeyValuePair<string, object> kvp in updates)
             {
-                Console.WriteLine("Variable: " + kvp.Key + " Old: " + CurrentVariables[kvp.Key] + " New: " + kvp.Value);
-                CurrentVariables[kvp.Key] = kvp.Value;
+                Console.WriteLine("Variable: " + kvp.Key + " Old: " + Variables[kvp.Key] + " New: " + kvp.Value);
+                Variables[kvp.Key] = kvp.Value;
             }
-            Console.WriteLine("From: " + CurrentState + " To: " + chosenTransition.To);
-            CurrentState = chosenTransition.To;
+            */
+            Console.WriteLine("From: " + State + " To: " + chosenTransition.To);
+            State = chosenTransition.To;
 
             return true;
         }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.SolverFoundation.Common;
+using Microsoft.SolverFoundation.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -42,9 +44,9 @@ namespace TorXakis.DotNet
         public string Channel { get; private set; }
 
         /// <summary>
-        /// The set of parameters.
+        /// The set of variables (values to be decided during transitions).
         /// </summary>
-        public HashSet<string> Parameters { get; private set; }
+        public List<Decision> Variables { get; private set; }
 
         /// <summary>
         /// The delegate signature of the <see cref="GuardFunction"/>.
@@ -71,7 +73,7 @@ namespace TorXakis.DotNet
         /// Constructor, with parameters.
         /// </summary>
         public SymbolicTransition(string name, SymbolicState from, SymbolicState to, ActionType type, string channel,
-            HashSet<string> parameters,
+            List<Decision> variables,
             GuardDelegate guardFunction,
             UpdateDelegate updateFunction)
         {
@@ -80,7 +82,7 @@ namespace TorXakis.DotNet
             if (from == null) throw new ArgumentNullException(nameof(from));
             if (to == null) throw new ArgumentNullException(nameof(from));
             if (string.IsNullOrEmpty(channel)) throw new ArgumentException(nameof(channel) + ": " + channel);
-            if (parameters == null) throw new ArgumentNullException(nameof(parameters));
+            if (variables == null) throw new ArgumentNullException(nameof(variables));
             if (guardFunction == null) throw new ArgumentNullException(nameof(guardFunction));
             if (updateFunction == null) throw new ArgumentNullException(nameof(updateFunction));
 
@@ -90,7 +92,7 @@ namespace TorXakis.DotNet
 
             Type = type;
             Channel = channel;
-            Parameters = new HashSet<string>(parameters);
+            Variables = variables;
             GuardFunction = guardFunction;
             UpdateFunction = updateFunction;
         }
@@ -98,11 +100,11 @@ namespace TorXakis.DotNet
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            string result = "Transition (" + Name + ") " + From + " => " + To;
+            string result = "Transition (" + Name + ") " + From + " -> " + To;
             result += "\n\t\t" + nameof(Type) + ": " + Type;
             result += "\n\t\t" + nameof(Channel) + ": " + Channel;
 
-            result += "\n\t\t" + nameof(Parameters) + ": " + string.Join(", ", Parameters.ToArray());
+            result += "\n\t\t" + nameof(Variables) + ": " + string.Join(", ", Variables.Select(x => x.Name).ToArray());
 
             result += "\n\t\t" + nameof(GuardFunction) + ": " + GuardFunction;
             result += "\n\t\t" + nameof(UpdateFunction) + ": " + UpdateFunction;
