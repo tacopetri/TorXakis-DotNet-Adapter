@@ -13,6 +13,9 @@ namespace TorXakis.DotNet.Test
         [TestMethod]
         public void Example()
         {
+            // Implementation of example:
+            // https://msdn.microsoft.com/en-us/library/ff628587(v=vs.93).aspx
+
             SolverContext context = SolverContext.GetContext();
             Model model = context.CreateModel();
 
