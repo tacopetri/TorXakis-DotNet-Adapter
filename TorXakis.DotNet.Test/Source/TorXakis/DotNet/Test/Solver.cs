@@ -133,5 +133,72 @@ namespace TorXakis.DotNet.Test
 
             CollectionAssert.AreEqual(new List<string>() { "CreateItem", "ConnectItem" }, values);
         }
+
+        [TestMethod]
+        public void NewItem()
+        {
+            SolverContext solverContext = SolverContext.GetContext();
+            Model solverModel = solverContext.CreateModel();
+
+            Parameter id = new Parameter(Domain.IntegerRange(1, 2), nameof(id));
+            id.SetBinding(2);
+            solverModel.AddParameter(id);
+
+            string[] guids = new string[] { "c87354e7-888b-4a7f-a337-d5e24324b4f1", "10d0e86d-1d6e-4c4e-80c0-2cea387d98a5" };
+            Decision guid = new Decision(Domain.Enum(guids), nameof(guid));
+            string[] systemNames = new string[] { "human_nld_fire_bevelvoerder", "object_firetool_watergun" };
+            Decision systemName = new Decision(Domain.Enum(systemNames), nameof(systemName));
+            string[] positions = new string[] { "(0,0,0)", "(1,1,1)" };
+            Decision position = new Decision(Domain.Enum(positions), nameof(position));
+            string[] rotations = new string[] { "(0,0,0,1)" };
+            Decision rotation = new Decision(Domain.Enum(rotations), nameof(rotation));
+            string[] modelGroups = new string[] { "group_12", "default" };
+            Decision modelGroup = new Decision(Domain.Enum(modelGroups), nameof(modelGroup));
+            string[] models = new string[] { "asset_human_nld_ic1_fire_bevelvoerder_12", "asset_object_int_fire_watergun" };
+            Decision model = new Decision(Domain.Enum(models), nameof(model));
+            int[] modelVersions = new int[] { 24, 18 };
+            Decision modelVersion = new Decision(Domain.Set(modelVersions), nameof(modelVersion));
+            string[] parents = new string[] { "null" };
+            Decision parent = new Decision(Domain.Enum(parents), nameof(parent));
+
+            solverModel.AddDecisions(guid, systemName, position, rotation, modelGroup, model, modelVersion, parent);
+
+            Term guard =
+                Model.If(id == 1,
+                        guid == guids[0] &
+                        systemName == systemNames[0] &
+                        position == positions[0] &
+                        rotation == rotations[0] &
+                        modelGroup == modelGroups[0] &
+                        model == models[0] &
+                        modelVersion == modelVersions[0] &
+                        parent == parents[0],
+                Model.If(id == 2,
+                        guid == guids[1] &
+                        systemName == systemNames[1] &
+                        position == positions[1] &
+                        rotation == rotations[0] &
+                        modelGroup == modelGroups[1] &
+                        model == models[1] &
+                        modelVersion == modelVersions[1] &
+                        parent == parents[0],
+                false));
+
+            solverModel.AddConstraint(nameof(guard), guard);
+
+            Solution solution = solverContext.Solve(new HybridLocalSearchDirective());
+
+            Report report = solution.GetReport();
+            Console.WriteLine("{0}: {1}", nameof(id), id);
+            Console.WriteLine("{0}: {1}", nameof(guid), guid);
+            Console.WriteLine("{0}: {1}", nameof(systemName), systemName);
+            Console.WriteLine("{0}: {1}", nameof(position), position);
+            Console.WriteLine("{0}: {1}", nameof(rotation), rotation);
+            Console.WriteLine("{0}: {1}", nameof(modelGroup), modelGroup);
+            Console.WriteLine("{0}: {1}", nameof(model), model);
+            Console.WriteLine("{0}: {1}", nameof(modelVersion), modelVersion);
+            Console.WriteLine("{0}: {1}", nameof(parent), parent);
+            Console.Write("{0}", report);
+        }
     }
 }
