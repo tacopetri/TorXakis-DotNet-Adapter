@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace TorXakis.DotNet
+namespace TorXakisDotNetAdapter
 {
     /// <summary>
     /// A test adapter for TorXakis.

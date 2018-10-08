@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakis.DotNet.Mapping
+namespace TorXakisDotNetAdapter.Mapping
 {
     /// <summary>
     /// An Input Output Symbolic Transition System (IOSTS).

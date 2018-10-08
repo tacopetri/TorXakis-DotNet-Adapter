@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("TorXakis.DotNet")]
-[assembly: AssemblyDescription("A .NET framework for the TorXakis model-based testing tool.")]
+[assembly: AssemblyTitle("TorXakisDotNetAdapter")]
+[assembly: AssemblyDescription("A .NET adapter for the TorXakis model-based testing tool.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TorXakis.DotNet")]
-[assembly: AssemblyCopyright("Copyright © 2018 Taco Petri")]
+[assembly: AssemblyProduct("TorXakisDotNetAdapter")]
+[assembly: AssemblyCopyright("Copyright © 2018")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

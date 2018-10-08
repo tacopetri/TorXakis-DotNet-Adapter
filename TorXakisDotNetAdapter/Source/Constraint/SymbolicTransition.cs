@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.SolverFoundation.Common;
+using Microsoft.SolverFoundation.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakis.DotNet.Mapping
+namespace TorXakisDotNetAdapter.Constraint
 {
     /// <summary>
     /// A transition contained in a <see cref="SymbolicTransitionSystem"/>.
@@ -44,12 +46,12 @@ namespace TorXakis.DotNet.Mapping
         /// <summary>
         /// The set of variables (values to be decided during transitions).
         /// </summary>
-        public List<SymbolicVariable> Variables { get; private set; }
+        public List<Decision> Variables { get; private set; }
 
         /// <summary>
         /// The delegate signature of the <see cref="Guard"/>.
         /// </summary>
-        public delegate List<SymbolicVariable> GuardDelegate(List<SymbolicVariable> variables, List<SymbolicVariable> parameters);
+        public delegate void GuardDelegate(Model model, List<Parameter> variables, List<Decision> parameters);
         /// <summary>
         /// The guard constraint: is this transition valid given the parameter values?
         /// </summary>
@@ -58,7 +60,7 @@ namespace TorXakis.DotNet.Mapping
         /// <summary>
         /// The delegate signature of the <see cref="Update"/>.
         /// </summary>
-        public delegate void UpdateDelegate(List<SymbolicVariable> variables, List<SymbolicVariable> parameters);
+        public delegate void UpdateDelegate(List<Parameter> variables, List<Decision> parameters);
         /// <summary>
         /// The update function: if this transition is taken, which variables must be updated?
         /// </summary>
@@ -71,7 +73,7 @@ namespace TorXakis.DotNet.Mapping
         /// Constructor, with parameters.
         /// </summary>
         public SymbolicTransition(string name, SymbolicState from, SymbolicState to, ActionType type, string channel,
-            List<SymbolicVariable> variables,
+            List<Decision> variables,
             GuardDelegate guard,
             UpdateDelegate update)
         {

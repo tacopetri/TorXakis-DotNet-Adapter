@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.SolverFoundation.Common;
+using Microsoft.SolverFoundation.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakis.DotNet.Mapping
+namespace TorXakisDotNetAdapter.Constraint
 {
     /// <summary>
     /// A state contained in a <see cref="SymbolicTransitionSystem"/>.

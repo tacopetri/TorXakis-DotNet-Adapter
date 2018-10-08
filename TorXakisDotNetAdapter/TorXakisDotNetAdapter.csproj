@@ -7,8 +7,8 @@
     <ProjectGuid>{8A724948-57C2-4888-AEE5-657A264AAD35}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TorXakis.DotNet</RootNamespace>
-    <AssemblyName>TorXakis.DotNet</AssemblyName>
+    <RootNamespace>TorXakisDotNetAdapter</RootNamespace>
+    <AssemblyName>TorXakisDotNetAdapter</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -20,7 +20,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\TorXakis.DotNet.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\TorXakisDotNetAdapter.xml</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -30,7 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\TorXakis.DotNet.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\TorXakisDotNetAdapter.xml</DocumentationFile>
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
@@ -47,18 +47,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\TorXakis\DotNet\ActionType.cs" />
-    <Compile Include="Source\TorXakis\DotNet\Constraint\SymbolicState.cs" />
-    <Compile Include="Source\TorXakis\DotNet\Constraint\SymbolicTransition.cs" />
-    <Compile Include="Source\TorXakis\DotNet\Constraint\SymbolicTransitionSystem.cs" />
-    <Compile Include="Source\TorXakis\DotNet\Mapping\SymbolicState.cs" />
-    <Compile Include="Source\TorXakis\DotNet\Mapping\SymbolicTransition.cs" />
-    <Compile Include="Source\TorXakis\DotNet\Mapping\SymbolicTransitionSystem.cs" />
-    <Compile Include="Source\TorXakis\DotNet\Mapping\SymbolicVariable.cs" />
-    <Compile Include="Source\TorXakis\DotNet\TorXakisAction.cs" />
-    <Compile Include="Source\TorXakis\DotNet\TorXakisAdapter.cs" />
-    <Compile Include="Source\TorXakis\DotNet\TorXakisConnection.cs" />
-    <Compile Include="Source\UppaalTron\DotNet\UppaalTronAdapter.cs" />
+    <Compile Include="Source\ActionType.cs" />
+    <Compile Include="Source\Constraint\SymbolicState.cs" />
+    <Compile Include="Source\Constraint\SymbolicTransition.cs" />
+    <Compile Include="Source\Constraint\SymbolicTransitionSystem.cs" />
+    <Compile Include="Source\Mapping\SymbolicState.cs" />
+    <Compile Include="Source\Mapping\SymbolicTransition.cs" />
+    <Compile Include="Source\Mapping\SymbolicTransitionSystem.cs" />
+    <Compile Include="Source\Mapping\SymbolicVariable.cs" />
+    <Compile Include="Source\TorXakisAction.cs" />
+    <Compile Include="Source\TorXakisAdapter.cs" />
+    <Compile Include="Source\TorXakisConnection.cs" />
+    <Compile Include="Source\UppaalTronAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +69,6 @@
     <PreBuildEvent>rd /s /q "$(TargetDir)"</PreBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis-DotNet DLLs\"</PostBuildEvent>
+    <PostBuildEvent>for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\XVR.one DLLs\"</PostBuildEvent>
   </PropertyGroup>
 </Project>

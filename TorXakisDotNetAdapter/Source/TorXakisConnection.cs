@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace TorXakis.DotNet
+namespace TorXakisDotNetAdapter
 {
     /// <summary>
     /// A single TorXakis TCP connection. The set of connections are managed by the <see cref="TorXakisAdapter"/>.

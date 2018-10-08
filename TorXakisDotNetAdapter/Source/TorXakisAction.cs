@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakis.DotNet
+namespace TorXakisDotNetAdapter
 {
     /// <summary>
     /// This container class represents an ACTION (either an INPUT or an OUTPUT).

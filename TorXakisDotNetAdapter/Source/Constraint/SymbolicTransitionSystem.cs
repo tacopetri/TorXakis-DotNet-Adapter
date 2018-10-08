@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakis.DotNet.Constraint
+namespace TorXakisDotNetAdapter.Constraint
 {
     /// <summary>
     /// An Input Output Symbolic Transition System (IOSTS).

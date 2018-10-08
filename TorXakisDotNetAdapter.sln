@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorXakis.DotNet", "TorXakis.DotNet\TorXakis.DotNet.csproj", "{8A724948-57C2-4888-AEE5-657A264AAD35}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorXakisDotNetAdapter", "TorXakisDotNetAdapter\TorXakisDotNetAdapter.csproj", "{8A724948-57C2-4888-AEE5-657A264AAD35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorXakis.DotNet.Test", "TorXakis.DotNet.Test\TorXakis.DotNet.Test.csproj", "{2F58056F-E470-4388-B37B-C38E4380B1DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorXakisDotNetAdapterTest", "TorXakisDotNetAdapterTest\TorXakisDotNetAdapterTest.csproj", "{2F58056F-E470-4388-B37B-C38E4380B1DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -10,7 +10,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace UppaalTron.DotNet
+namespace UppaalTronDotNetAdapter
 {
     /// <summary>
     /// A test adapter for UPPAAL TRON.

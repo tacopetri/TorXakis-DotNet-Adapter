@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakis.DotNet.Mapping
+namespace TorXakisDotNetAdapter.Mapping
 {
     /// <summary>
     /// A variable contained in a <see cref="SymbolicTransitionSystem"/>.

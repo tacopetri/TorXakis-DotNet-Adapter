@@ -5,9 +5,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using TorXakis.DotNet.Mapping;
+using TorXakisDotNetAdapter.Mapping;
 
-namespace TorXakis.DotNet
+namespace TorXakisDotNetAdapter
 {
     [TestClass]
     public class MappingTest

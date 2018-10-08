@@ -8,8 +8,8 @@
     <ProjectGuid>{2F58056F-E470-4388-B37B-C38E4380B1DB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TorXakis.DotNet.Test</RootNamespace>
-    <AssemblyName>TorXakis.DotNet.Test</AssemblyName>
+    <RootNamespace>TorXakisDotNetAdapter</RootNamespace>
+    <AssemblyName>TorXakisDotNetAdapterTest</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -52,18 +52,18 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\TorXakis\DotNet\ConstraintTest.cs" />
+    <Compile Include="Source\ConstraintTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\TorXakis\DotNet\MappingTest.cs" />
-    <Compile Include="Source\TorXakis\DotNet\SolverTest.cs" />
+    <Compile Include="Source\MappingTest.cs" />
+    <Compile Include="Source\SolverTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\TorXakis.DotNet\TorXakis.DotNet.csproj">
+    <ProjectReference Include="..\TorXakisDotNetAdapter\TorXakisDotNetAdapter.csproj">
       <Project>{8a724948-57c2-4888-aee5-657a264aad35}</Project>
-      <Name>TorXakis.DotNet</Name>
+      <Name>TorXakisDotNetAdapter</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />
