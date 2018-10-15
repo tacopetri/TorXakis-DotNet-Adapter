@@ -2,11 +2,11 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("TorXakisDotNetAdapterTest")]
+[assembly: AssemblyTitle("TorXakisDotNetAdapter.Tests")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("TorXakisDotNetAdapterTest")]
+[assembly: AssemblyProduct("TorXakisDotNetAdapter.Tests")]
 [assembly: AssemblyCopyright("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

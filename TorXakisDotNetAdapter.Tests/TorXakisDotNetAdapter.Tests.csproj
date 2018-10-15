@@ -8,8 +8,8 @@
     <ProjectGuid>{2F58056F-E470-4388-B37B-C38E4380B1DB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TorXakisDotNetAdapter</RootNamespace>
-    <AssemblyName>TorXakisDotNetAdapterTest</AssemblyName>
+    <RootNamespace>TorXakisDotNetAdapter.Tests</RootNamespace>
+    <AssemblyName>TorXakisDotNetAdapter.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -29,7 +29,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\TorXakisDotNetAdapterTest.xml</DocumentationFile>
+    <DocumentationFile>bin\Debug\TorXakisDotNetAdapter.Tests.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -38,7 +38,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\TorXakisDotNetAdapterTest.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\TorXakisDotNetAdapter.Tests.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Solver.Foundation, Version=3.0.2.10889, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -64,6 +64,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\TorXakisDotNetAdapter.Models\TorXakisDotNetAdapter.Models.csproj">
+      <Project>{a162fdb7-0703-4b51-ad86-89066bcf7c6b}</Project>
+      <Name>TorXakisDotNetAdapter.Models</Name>
+    </ProjectReference>
     <ProjectReference Include="..\TorXakisDotNetAdapter\TorXakisDotNetAdapter.csproj">
       <Project>{8a724948-57c2-4888-aee5-657a264aad35}</Project>
       <Name>TorXakisDotNetAdapter</Name>

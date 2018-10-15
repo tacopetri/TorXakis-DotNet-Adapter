@@ -13,13 +13,13 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace TorXakisDotNetAdapter.Generated
+namespace TorXakisDotNetAdapter.Models
 {
 <#
     Dictionary<string, Dictionary<string, string>> actions = new Dictionary<string, Dictionary<string, string>>();
 
     // Parse all model files, generating strongly typed input and output classes.
-    string projectName = Host.ResolveParameterValue("-", "-", "projects").Split('|')[0];
+    string projectName = Host.ResolveParameterValue("-", "-", "projects").Split('|')[1];
     DirectoryInfo modelDirectory= new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, projectName, "Models"));
     foreach (FileInfo modelFile in modelDirectory.GetFiles("*.txs", SearchOption.AllDirectories))
     {

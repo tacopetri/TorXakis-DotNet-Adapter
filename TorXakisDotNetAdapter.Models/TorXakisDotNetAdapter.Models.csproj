@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8A724948-57C2-4888-AEE5-657A264AAD35}</ProjectGuid>
+    <ProjectGuid>{A162FDB7-0703-4B51-AD86-89066BCF7C6B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>TorXakisDotNetAdapter</RootNamespace>
-    <AssemblyName>TorXakisDotNetAdapter</AssemblyName>
+    <RootNamespace>TorXakisDotNetAdapter.Models</RootNamespace>
+    <AssemblyName>TorXakisDotNetAdapter.Models</AssemblyName>
     <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,8 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Debug\TorXakisDotNetAdapter.xml</DocumentationFile>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DocumentationFile>bin\Debug\TorXakisDotNetAdapter.Models.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,13 +30,9 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\TorXakisDotNetAdapter.xml</DocumentationFile>
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DocumentationFile>bin\Release\TorXakisDotNetAdapter.Models.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Solver.Foundation, Version=3.0.2.10889, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Solver.Foundation.3.1.0\lib\Microsoft.Solver.Foundation.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,37 +43,33 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Source\ActionType.cs" />
-    <Compile Include="Source\Constraint\SymbolicState.cs" />
-    <Compile Include="Source\Constraint\SymbolicTransition.cs" />
-    <Compile Include="Source\Constraint\SymbolicTransitionSystem.cs" />
-    <Compile Include="Source\TorXakisActionInfo.cs" />
-    <Compile Include="Source\Mapping\SymbolicState.cs" />
-    <Compile Include="Source\Mapping\SymbolicTransition.cs" />
-    <Compile Include="Source\Mapping\SymbolicTransitionSystem.cs" />
-    <Compile Include="Source\Mapping\SymbolicVariable.cs" />
-    <Compile Include="Source\Refinement\RefinementAction.cs" />
-    <Compile Include="Source\Refinement\RefinementState.cs" />
-    <Compile Include="Source\Refinement\RefinementSystem.cs" />
-    <Compile Include="Source\Refinement\RefinementTransition.cs" />
-    <Compile Include="Source\Refinement\RefinementVariable.cs" />
-    <Compile Include="Source\TorXakisAction.cs" />
-    <Compile Include="Source\TorXakisAdapter.cs" />
-    <Compile Include="Source\TorXakisConnection.cs" />
-    <Compile Include="Source\UppaalTronAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Source\TorXakisGeneratedCode.cs">
+      <DependentUpon>TorXakisGeneratedCode.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\TorXakisDotNetAdapter\TorXakisDotNetAdapter.csproj">
+      <Project>{8a724948-57c2-4888-aee5-657a264aad35}</Project>
+      <Name>TorXakisDotNetAdapter</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Source\TorXakisGeneratedCode.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TorXakisGeneratedCode.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Models\Reference.txs" />
+    <None Include="Models\ReferenceRun.bat" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>rd /s /q "$(TargetDir)"</PreBuildEvent>
-  </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\XVR.one DLLs\"</PostBuildEvent>
   </PropertyGroup>

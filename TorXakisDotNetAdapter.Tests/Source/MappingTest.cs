@@ -7,7 +7,7 @@ using System.Linq;
 
 using TorXakisDotNetAdapter.Mapping;
 
-namespace TorXakisDotNetAdapter
+namespace TorXakisDotNetAdapter.Tests
 {
     [TestClass]
     public class MappingTest

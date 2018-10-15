@@ -5,7 +5,9 @@ VisualStudioVersion = 15.0.28010.2041
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorXakisDotNetAdapter", "TorXakisDotNetAdapter\TorXakisDotNetAdapter.csproj", "{8A724948-57C2-4888-AEE5-657A264AAD35}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorXakisDotNetAdapterTest", "TorXakisDotNetAdapterTest\TorXakisDotNetAdapterTest.csproj", "{2F58056F-E470-4388-B37B-C38E4380B1DB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorXakisDotNetAdapter.Models", "TorXakisDotNetAdapter.Models\TorXakisDotNetAdapter.Models.csproj", "{A162FDB7-0703-4B51-AD86-89066BCF7C6B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TorXakisDotNetAdapter.Tests", "TorXakisDotNetAdapter.Tests\TorXakisDotNetAdapter.Tests.csproj", "{2F58056F-E470-4388-B37B-C38E4380B1DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,6 +19,10 @@ Global
 		{8A724948-57C2-4888-AEE5-657A264AAD35}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8A724948-57C2-4888-AEE5-657A264AAD35}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8A724948-57C2-4888-AEE5-657A264AAD35}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A162FDB7-0703-4B51-AD86-89066BCF7C6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A162FDB7-0703-4B51-AD86-89066BCF7C6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A162FDB7-0703-4B51-AD86-89066BCF7C6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A162FDB7-0703-4B51-AD86-89066BCF7C6B}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2F58056F-E470-4388-B37B-C38E4380B1DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2F58056F-E470-4388-B37B-C38E4380B1DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2F58056F-E470-4388-B37B-C38E4380B1DB}.Release|Any CPU.ActiveCfg = Release|Any CPU

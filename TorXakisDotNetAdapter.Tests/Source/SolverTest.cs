@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakisDotNetAdapter
+namespace TorXakisDotNetAdapter.Tests
 {
     [TestClass]
     public class SolverTest

@@ -7,7 +7,7 @@ using System.Linq;
 
 using TorXakisDotNetAdapter.Constraint;
 
-namespace TorXakisDotNetAdapter
+namespace TorXakisDotNetAdapter.Tests
 {
     [TestClass]
     public class ConstraintTest
