@@ -64,6 +64,7 @@
     <Compile Include="Source\TorXakisAction.cs" />
     <Compile Include="Source\TorXakisAdapter.cs" />
     <Compile Include="Source\TorXakisConnection.cs" />
+    <Compile Include="Source\TorXakisModel.cs" />
     <Compile Include="Source\UppaalTronAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
