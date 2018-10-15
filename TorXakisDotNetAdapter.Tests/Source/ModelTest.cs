@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 namespace TorXakisDotNetAdapter.Tests
 {
     /// <summary>
-    /// Tests for the <see cref="TorXakisModel"/> class.
+    /// Tests for the <see cref="TorXakisModel"/> and <see cref="TorXakisModelCollection"/> classes.
     /// </summary>
     [TestClass]
     public class ModelTest
@@ -23,24 +23,20 @@ namespace TorXakisDotNetAdapter.Tests
         public void ParseActions()
         {
             // Find all model files.
-            DirectoryInfo modelDirectory = new DirectoryInfo(Path.Combine(@"..\..\..\", "TorXakisDotNetAdapter.Models", "Models"));
-            foreach (FileInfo modelFile in modelDirectory.GetFiles("*.txs", SearchOption.AllDirectories))
-            {
-                // Create model from file.
-                TorXakisModel model = new TorXakisModel(modelFile);
-                Console.WriteLine(model);
+            DirectoryInfo directory = new DirectoryInfo(Path.Combine(@"..\..\..\", "TorXakisDotNetAdapter.Models", "Models"));
+            TorXakisModelCollection collection = new TorXakisModelCollection(directory);
+            Console.WriteLine(collection);
 
-                // Parse actions from model.
-                Dictionary<string, Dictionary<string, string>> actions = model.ParseActions();
-                foreach (KeyValuePair<string, Dictionary<string, string>> kvp1 in actions)
+            // Parse actions from models.
+            Dictionary<string, Dictionary<string, string>> actions = collection.ParseActions();
+            foreach (KeyValuePair<string, Dictionary<string, string>> kvp1 in actions)
+            {
+                string info = kvp1.Key;
+                foreach (KeyValuePair<string, string> kvp2 in kvp1.Value)
                 {
-                    string info = kvp1.Key;
-                    foreach (KeyValuePair<string, string> kvp2 in kvp1.Value)
-                    {
-                        info += "\n    " + kvp2.Key + " " + kvp2.Value;
-                    }
-                    Console.WriteLine(info);
+                    info += "\n    " + kvp2.Key + " " + kvp2.Value;
                 }
+                Console.WriteLine(info);
             }
         }
     }

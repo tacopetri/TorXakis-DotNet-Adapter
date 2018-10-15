@@ -45,7 +45,7 @@ namespace TorXakisDotNetAdapter
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            return GetType().Name + " " + nameof(File) + " (" + File + ")";
+            return GetType().Name + " " + nameof(File) + " (" + File.FullName + ")";
         }
 
         #endregion
