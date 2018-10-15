@@ -55,11 +55,55 @@ namespace TorXakisDotNetAdapter
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            return GetType().Name + " " + nameof(File) + " (" + File.FullName + ")";
+            return GetType().Name + " " + nameof(File) + " (" + File.Name + ")";
         }
 
         #endregion
         #region Functionality
+
+        /// <summary>
+        /// Parses the defined <see cref="TorXakisConnection"/> types from the model.
+        /// </summary>
+        public Dictionary<int, List<string>> ParseConnections()
+        {
+            Dictionary<int, List<string>> connections = new Dictionary<int, List<string>>();
+
+            // Parse the model file, as plain text.
+            string[] lines = System.IO.File.ReadAllLines(File.FullName);
+
+            bool CLIENTSOCK = false;
+            foreach (string line in lines)
+            {
+                string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (parts.Length == 1 && parts[0] == "CLIENTSOCK")
+                {
+                    CLIENTSOCK = true;
+                    continue;
+                }
+
+                if (CLIENTSOCK && parts.Length == 7 && parts[0] == "CHAN")
+                {
+                    bool input = parts[1] == "OUT";
+
+                    string channel = parts[2];
+                    int port = int.Parse(parts[6]);
+
+                    // Make sure the port exists in the lookup.
+                    if (!connections.TryGetValue(port, out List<string> inOut))
+                    {
+                        inOut = new List<string>() { null, null };
+                        connections.Add(port, inOut);
+                    }
+
+                    // Update IN or OUT channel name.
+                    if (input) inOut[0] = channel;
+                    else inOut[1] = channel;
+                }
+            }
+
+            return connections;
+        }
 
         /// <summary>
         /// Parses the defined <see cref="TorXakisAction"/> types from the model.

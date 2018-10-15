@@ -54,7 +54,7 @@ namespace TorXakisDotNetAdapter
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            string result = GetType().Name + " " + nameof(Directory) + " (" + Directory.FullName + ")";
+            string result = GetType().Name + " " + nameof(Directory) + " (" + Directory.Name + ")";
             foreach (TorXakisModel model in Models)
                 result += "\n" + model;
             return result;

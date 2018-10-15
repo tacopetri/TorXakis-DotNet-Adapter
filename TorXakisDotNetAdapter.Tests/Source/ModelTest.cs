@@ -17,6 +17,29 @@ namespace TorXakisDotNetAdapter.Tests
     public class ModelTest
     {
         /// <summary>
+        /// Test for the <see cref="TorXakisModel.ParseConnections"/> method.
+        /// </summary>
+        [TestMethod]
+        public void ParseConnections()
+        {
+            // Find all model files.
+            DirectoryInfo directory = new DirectoryInfo(Path.Combine(@"..\..\..\", "TorXakisDotNetAdapter.Models", "Models"));
+            TorXakisModelCollection collection = new TorXakisModelCollection(directory);
+            Console.WriteLine(collection);
+
+            // Parse connections from models.
+            foreach (TorXakisModel model in collection.Models)
+            {
+                Dictionary<int, List<string>> connections = model.ParseConnections();
+                foreach (KeyValuePair<int, List<string>> kvp in connections)
+                {
+                    string info = "Port: " + kvp.Key + " Input: " + kvp.Value[0] + " Output: " + kvp.Value[1];
+                    Console.WriteLine(info);
+                }
+            }
+        }
+
+        /// <summary>
         /// Test for the <see cref="TorXakisModel.ParseActions"/> method.
         /// </summary>
         [TestMethod]

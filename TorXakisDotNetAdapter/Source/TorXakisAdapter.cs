@@ -31,9 +31,9 @@ namespace TorXakisDotNetAdapter
         public bool LogConsoleToTrace { get; set; } = true;
 
         /// <summary>
-        /// The model to test.
+        /// The <see cref="TorXakisModel"/> to test.
         /// </summary>
-        public FileInfo Model { get; private set; }
+        public TorXakisModel Model { get; private set; }
 
         /// <summary>
         /// The managed <see cref="TorXakisConnection"/> instances.
@@ -80,9 +80,10 @@ namespace TorXakisDotNetAdapter
         public TorXakisAdapter(FileInfo model)
         {
             // Sanity checks.
-            if (model == null || !model.Exists) throw new ArgumentException(nameof(model) + ": " + model);
+            if (model == null || !model.Exists)
+                throw new ArgumentException(nameof(model) + ": " + model);
 
-            Model = model;
+            Model = new TorXakisModel(model);
             ParseModel();
 
             Log("Create: " + this);
@@ -209,7 +210,7 @@ namespace TorXakisDotNetAdapter
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
-            return GetType().Name + " Model (" + Model.Name + ") Inputs (" + string.Join(", ", InputChannels.ToArray()) + ") Outputs (" + string.Join(", ", OutputChannels.ToArray()) + ")";
+            return GetType().Name + " Model (" + Model.File.Name + ") Inputs (" + string.Join(", ", InputChannels.ToArray()) + ") Outputs (" + string.Join(", ", OutputChannels.ToArray()) + ")";
         }
 
         /// <summary>
@@ -226,43 +227,7 @@ namespace TorXakisDotNetAdapter
         /// </summary>
         private void ParseModel()
         {
-            Dictionary<int, List<string>> parsed = new Dictionary<int, List<string>>();
-
-            // Parse the model file, as plain text.
-            string[] lines = File.ReadAllLines(Model.FullName);
-
-            bool CLIENTSOCK = false;
-            foreach (string line in lines)
-            {
-                string[] parts = line.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
-                if (parts.Length == 1 && parts[0] == "CLIENTSOCK")
-                {
-                    CLIENTSOCK = true;
-                    continue;
-                }
-
-                if (CLIENTSOCK && parts.Length == 7 && parts[0] == "CHAN")
-                {
-                    bool input = parts[1] == "OUT";
-
-                    string channel = parts[2];
-                    int port = int.Parse(parts[6]);
-
-                    Log("Channel: " + channel + " Port: " + port + "  <=  " + line);
-
-                    // Make sure the port exists in the lookup.
-                    if (!parsed.TryGetValue(port, out List<string> inOut))
-                    {
-                        inOut = new List<string>() { null, null };
-                        parsed.Add(port, inOut);
-                    }
-
-                    // Update IN or OUT channel name.
-                    if (input) inOut[0] = channel;
-                    else inOut[1] = channel;
-                }
-            }
+            Dictionary<int, List<string>> parsed = Model.ParseConnections();
 
             // Create the parsed connections.
             foreach (KeyValuePair<int, List<string>> kvp in parsed)
@@ -281,8 +246,8 @@ namespace TorXakisDotNetAdapter
             ProcessStartInfo startInfo = new ProcessStartInfo()
             {
                 FileName = "torxakis.exe",
-                WorkingDirectory = Model.Directory.FullName,
-                Arguments = "\"" + Model.Name + "\"",
+                WorkingDirectory = Model.File.Directory.FullName,
+                Arguments = "\"" + Model.File.Name + "\"",
 
                 UseShellExecute = false,
                 RedirectStandardInput = true,
