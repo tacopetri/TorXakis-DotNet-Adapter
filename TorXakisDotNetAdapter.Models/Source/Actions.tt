@@ -7,7 +7,7 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
-<#@ assembly name="$(SolutionDir)\TorXakisDotNetAdapter\bin\Debug\TorXakisDotNetAdapter.dll"#>
+<#@ assembly name="$(TargetDir)\TorXakisDotNetAdapter.dll"#>
 <#@ import namespace="TorXakisDotNetAdapter" #>
 using System;
 using System.Collections.Generic;
