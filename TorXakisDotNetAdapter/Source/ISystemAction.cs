@@ -8,7 +8,7 @@ namespace TorXakisDotNetAdapter
 {
     /// <summary>
     /// The interface for all system actions.
-    /// The classes that implement this are messages native to the system itself.
+    /// The classes that implement this are messages native to the SUT.
     /// </summary>
     public interface ISystemAction
     {
