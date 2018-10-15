@@ -9,9 +9,15 @@ using TorXakisDotNetAdapter.Mapping;
 
 namespace TorXakisDotNetAdapter.Tests
 {
+    /// <summary>
+    /// Tests for the <see cref="TorXakisDotNetAdapter.Mapping"/> namespace.
+    /// </summary>
     [TestClass]
     public class MappingTest
     {
+        /// <summary>
+        /// Creates a small test IOSTS.
+        /// </summary>
         [TestMethod]
         public void Create()
         {

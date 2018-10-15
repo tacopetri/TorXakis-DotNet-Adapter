@@ -10,11 +10,17 @@ using System.Text.RegularExpressions;
 
 namespace TorXakisDotNetAdapter.Tests
 {
+    /// <summary>
+    /// Tests for the <see cref="TorXakisModel"/> class.
+    /// </summary>
     [TestClass]
-    public class CodeGenerationTest
+    public class ModelTest
     {
+        /// <summary>
+        /// Test for the <see cref="TorXakisModel.ParseActions"/> method.
+        /// </summary>
         [TestMethod]
-        public void ParseTestModel()
+        public void ParseActions()
         {
             // Find all model files.
             DirectoryInfo modelDirectory = new DirectoryInfo(Path.Combine(@"..\..\..\", "TorXakisDotNetAdapter.Models", "Models"));
@@ -36,8 +42,6 @@ namespace TorXakisDotNetAdapter.Tests
                     Console.WriteLine(info);
                 }
             }
-
-
         }
     }
 }

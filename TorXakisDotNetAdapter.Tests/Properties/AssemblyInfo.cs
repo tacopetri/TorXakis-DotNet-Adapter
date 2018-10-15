@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("TorXakisDotNetAdapter.Tests")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A .NET adapter for the TorXakis model-based testing tool.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TorXakisDotNetAdapter.Tests")]

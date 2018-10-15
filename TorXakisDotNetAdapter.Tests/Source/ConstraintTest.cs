@@ -9,9 +9,15 @@ using TorXakisDotNetAdapter.Constraint;
 
 namespace TorXakisDotNetAdapter.Tests
 {
+    /// <summary>
+    /// Tests for the <see cref="TorXakisDotNetAdapter.Constraint"/> namespace.
+    /// </summary>
     [TestClass]
     public class ConstraintTest
     {
+        /// <summary>
+        /// Creates a small test IOSTS.
+        /// </summary>
         [TestMethod]
         public void Create()
         {

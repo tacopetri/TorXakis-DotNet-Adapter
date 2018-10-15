@@ -56,7 +56,7 @@
   <ItemGroup>
     <Compile Include="Source\ConstraintTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\CodeGenerationTest.cs" />
+    <Compile Include="Source\ModelTest.cs" />
     <Compile Include="Source\MappingTest.cs" />
     <Compile Include="Source\SolverTest.cs" />
   </ItemGroup>

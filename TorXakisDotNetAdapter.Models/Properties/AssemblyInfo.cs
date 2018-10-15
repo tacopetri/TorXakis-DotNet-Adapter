@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("TorXakisDotNetAdapter.Models")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("A .NET adapter for the TorXakis model-based testing tool.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("TorXakisDotNetAdapter.Models")]

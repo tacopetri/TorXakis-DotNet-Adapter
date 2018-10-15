@@ -7,15 +7,19 @@ using System.Linq;
 
 namespace TorXakisDotNetAdapter.Tests
 {
+    /// <summary>
+    /// Tests for the <see cref="Microsoft.SolverFoundation"/> namespace.
+    /// </summary>
     [TestClass]
     public class SolverTest
     {
+        /// <summary>
+        /// Implementation of example:
+        /// https://msdn.microsoft.com/en-us/library/ff628587(v=vs.93).aspx
+        /// </summary>
         [TestMethod]
         public void LinearExample()
         {
-            // Implementation of example:
-            // https://msdn.microsoft.com/en-us/library/ff628587(v=vs.93).aspx
-
             SolverContext context = SolverContext.GetContext();
             Model model = context.CreateModel();
 
@@ -45,12 +49,13 @@ namespace TorXakisDotNetAdapter.Tests
             Assert.AreEqual("2000", sa.ToString());
         }
 
+        /// <summary>
+        /// Implementation of example:
+        /// https://msdn.microsoft.com/en-us/library/ff826355(v=vs.93).aspx
+        /// </summary>
         [TestMethod]
         public void EnumExample()
         {
-            // Implementation of example:
-            // https://msdn.microsoft.com/en-us/library/ff826355(v=vs.93).aspx
-
             SolverContext context = SolverContext.GetContext();
             Model model = context.CreateModel();
 
@@ -82,6 +87,9 @@ namespace TorXakisDotNetAdapter.Tests
             Console.WriteLine("Netherlands: \t{0}", string.Join(", ", valuesNl));
         }
 
+        /// <summary>
+        /// Single channel constraint test.
+        /// </summary>
         [TestMethod]
         public void SingleChannel()
         {
@@ -109,6 +117,9 @@ namespace TorXakisDotNetAdapter.Tests
             Assert.AreEqual("CreateItem", channel.GetString());
         }
 
+        /// <summary>
+        /// Multi channel constraint test.
+        /// </summary>
         [TestMethod]
         public void MultiChannel()
         {
@@ -134,6 +145,9 @@ namespace TorXakisDotNetAdapter.Tests
             CollectionAssert.AreEqual(new List<string>() { "CreateItem", "ConnectItem" }, values);
         }
 
+        /// <summary>
+        /// New item test.
+        /// </summary>
         [TestMethod]
         public void NewItem()
         {
