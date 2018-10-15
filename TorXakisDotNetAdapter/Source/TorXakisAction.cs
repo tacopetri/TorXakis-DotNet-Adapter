@@ -125,7 +125,7 @@ namespace TorXakisDotNetAdapter
             if (object.ReferenceEquals(left, right)) return true;
 
             // If one is null, but not both, return false.
-            if (((object)left == null) || ((object)right == null)) return false;
+            if (left is null || right is null) return false;
 
             // If the types are different, return false.
             if (left.GetType() != right.GetType()) return false;

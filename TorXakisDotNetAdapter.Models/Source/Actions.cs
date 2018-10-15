@@ -7,83 +7,83 @@ using System.Text.RegularExpressions;
 namespace TorXakisDotNetAdapter.Models
 {
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class CreateItemBegin
+	public sealed class CreateItemBegin : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int createItemBeginId;
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class CreateItemEnd
+	public sealed class CreateItemEnd : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int createItemEndId;
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class CreatePathBegin
+	public sealed class CreatePathBegin : ModelAction
 	{
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class CreatePathEnd
+	public sealed class CreatePathEnd : ModelAction
 	{
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class DeleteBegin
+	public sealed class DeleteBegin : ModelAction
 	{
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class DeleteEnd
+	public sealed class DeleteEnd : ModelAction
 	{
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class NewItem
+	public sealed class NewItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int newItemId;
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class HideItem
+	public sealed class HideItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int hideItemId;
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class DisableItem
+	public sealed class DisableItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int disableItemId;
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class LockItem
+	public sealed class LockItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int lockItemId;
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class ModelSwitchItem
+	public sealed class ModelSwitchItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int modelSwitchItemId;
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class AssembledItem
+	public sealed class AssembledItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int assembledItemId;
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class ConnectItem
+	public sealed class ConnectItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int connectItemId1;
@@ -92,7 +92,7 @@ namespace TorXakisDotNetAdapter.Models
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class ConnectedItem
+	public sealed class ConnectedItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int connectedItemId1;
@@ -101,7 +101,7 @@ namespace TorXakisDotNetAdapter.Models
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class CreatePathFromNodes
+	public sealed class CreatePathFromNodes : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int createPathFromNodesId1;
@@ -112,14 +112,14 @@ namespace TorXakisDotNetAdapter.Models
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class DeleteItem
+	public sealed class DeleteItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
         public int deleteItemId;
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class DeletePath
+	public sealed class DeletePath : ModelAction
 	{
 	}
 
