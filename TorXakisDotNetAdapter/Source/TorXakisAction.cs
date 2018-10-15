@@ -130,7 +130,7 @@ namespace TorXakisDotNetAdapter
             // If the types are different, return false.
             if (left.GetType() != right.GetType()) return false;
 
-            // Check that the coordinates are equal.
+            // Check that the properties are equal.
             return left.Type == right.Type && left.Channel == right.Channel && left.Data == right.Data;
         }
 
