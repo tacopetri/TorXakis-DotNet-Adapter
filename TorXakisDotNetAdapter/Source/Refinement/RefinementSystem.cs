@@ -95,30 +95,22 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Handles the given action, which may result in a synchronized transition.
         /// </summary>
-        public bool HandleAction(ActionType type, string channel, List<RefinementVariable> parameters)
+        public bool HandleAction(ActionType type, IAction action)
         {
-            Console.WriteLine(nameof(HandleAction) + " Type: " + type + " Channel: " + channel + " Parameters:\n" + string.Join("\n", parameters.Select(x => x.ToString()).ToArray()));
+            Console.WriteLine(nameof(HandleAction) + " Type: " + type + " Action: " + action);
 
             List<RefinementTransition> validTransitions = new List<RefinementTransition>();
-            Dictionary<RefinementTransition, List<RefinementVariable>> validAssignments = new Dictionary<RefinementTransition, List<RefinementVariable>>();
             foreach (RefinementTransition transition in Transitions)
             {
                 // Transition must come from the current state.
                 if (transition.From != State) continue;
                 // Transition must have the same type (input or output).
                 if (transition.Type != type) continue;
-                // Transition must have the same channel name.
-                if (transition.Channel != channel) continue;
-                // Transition must have the same parameters (but order does not matter).
-                //if (!new HashSet<string>(transition.Variables.Select(x => x.Name)).SetEquals(new HashSet<string>(parameters.Select(x => x.Name)))) continue;
                 // Transition guard function must evaluate to true.
-                List<RefinementVariable> assignments = transition.Guard(Variables, parameters);
-                if (assignments == null) continue;
-                Console.WriteLine("Parameter assignments:\n" + string.Join("\n", assignments.Select(x => x.ToString()).ToArray()));
+                if (!transition.Guard(action)) continue;
 
                 // All checks passed!
                 validTransitions.Add(transition);
-                validAssignments[transition] = assignments;
             }
 
             Console.WriteLine("Valid transitions:\n" + string.Join("\n", validTransitions.Select(x => x.ToString()).ToArray()));
@@ -129,7 +121,7 @@ namespace TorXakisDotNetAdapter.Refinement
             RefinementTransition chosenTransition = validTransitions.First();
             Console.WriteLine("Chosen transition:\n" + chosenTransition);
 
-            chosenTransition.Update(Variables, validAssignments[chosenTransition]);
+            chosenTransition.Update(action, Variables);
 
             Console.WriteLine("From: " + State + " To: " + chosenTransition.To);
             State = chosenTransition.To;

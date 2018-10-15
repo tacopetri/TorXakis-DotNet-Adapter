@@ -10,7 +10,7 @@ namespace TorXakisDotNetAdapter
     /// The abstract class for all model actions.
     /// The derived classes are parsed from TorXakis models and their code is generated.
     /// </summary>
-    public abstract class ModelAction
+    public abstract class ModelAction : IAction
     {
         #region Definitions
 

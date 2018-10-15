@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using TorXakisDotNetAdapter.Models;
 using TorXakisDotNetAdapter.Refinement;
 
 namespace TorXakisDotNetAdapter.Tests
@@ -82,68 +82,48 @@ namespace TorXakisDotNetAdapter.Tests
 
             Guid[] guids = new Guid[] { new Guid("c87354e7-888b-4a7f-a337-d5e24324b4f1"), new Guid("10d0e86d-1d6e-4c4e-80c0-2cea387d98a5") };
             string[] systemNames = new string[] { "human_nld_fire_bevelvoerder", "object_firetool_watergun" };
-            string[] positions = new string[] { "(0,0,0)", "(1,1,1)" };
-            string[] rotations = new string[] { "(0,0,0,1)" };
+            float[][] positions = new float[][] { new float[3] { 0, 0, 0 }, new float[3] { 1, 1, 1 } };
+            float[][] rotations = new float[][] { new float[4] { 1, 0, 0, 1 }, new float[4] { 0, 1, 0, 1 } };
             string[] modelGroups = new string[] { "group_12", "default" };
             string[] models = new string[] { "asset_human_nld_ic1_fire_bevelvoerder_12", "asset_object_int_fire_watergun" };
             int[] modelVersions = new int[] { 24, 18 };
-            object[] parents = new object[] { null };
+            object[] parents = new object[] { null, null };
 
             HashSet<RefinementTransition> transitions = new HashSet<RefinementTransition>()
             {
                 new RefinementTransition("T12", states.ElementAt(0), states.ElementAt(1),
-                    ActionType.Input, "NewItem",
-                    new List<RefinementVariable>()
+                    ActionType.Input,
+                    (action) =>
                     {
-                        new RefinementVariable("id", 0),
+                        if (action is NewItem cast)
+                        {
+                            return cast.newItemId == 1;
+                        }
+                        return false;
                     },
-                    (vs, ps) =>
+                    (action, vars) =>
                     {
-                        Console.WriteLine("Received item var: " + ps.First(x => x.Name == "id").GetValue<int>());
-                        return ps;
-                    },
-                    (vs, ps) =>
-                    {
-                        int id = ps.First(x => x.Name == "id").GetValue<int>();
+                        NewItem cast = (NewItem)action;
+                        int id = cast.newItemId;
                         Console.WriteLine("Setting item var: " + id);
-                        vs.First(x=>x.Name == "item").SetValue(id);
+                        vars.First(x=>x.Name == "item").SetValue(id);
                     }
                 ),
                 new RefinementTransition("T21", states.ElementAt(1), states.ElementAt(0),
-                    ActionType.Output, "ItemEventArgsNew",
-                    new List<RefinementVariable>()
+                    ActionType.Output,
+                    (action) =>
                     {
-                        new RefinementVariable("Guid", null),
-                        new RefinementVariable("SystemName", null),
-                        new RefinementVariable("Position", null),
-                        new RefinementVariable("Rotation", null),
-                        new RefinementVariable("ModelGroup", null),
-                        new RefinementVariable("Model", null),
-                        new RefinementVariable("ModelVersion", null),
-                        new RefinementVariable("Parent", null),
-                    },
-                    (vs, ps) =>
-                    {
-                        int item = vs.First(x => x.Name == "item").GetValue<int>();
-
-                        List<RefinementVariable> result = new List<RefinementVariable>()
+                        if (action is ItemEventArgsNew cast)
                         {
-                            new RefinementVariable("Guid", guids[item-1] ),
-                            new RefinementVariable("SystemName", systemNames[item-1] ),
-                            new RefinementVariable("Position", positions[item-1] ),
-                            new RefinementVariable("Rotation", rotations[0] ),
-                            new RefinementVariable("ModelGroup", modelGroups[item-1] ),
-                            new RefinementVariable("Model", models[item-1] ),
-                            new RefinementVariable("ModelVersion", modelVersions[item-1] ),
-                            new RefinementVariable("Parent", parents[0] ),
-                        };
-                        return result;
+                            return true;
+                        }
+                        return false;
                     },
-                    (vs, ps) =>
+                    (action, vars) =>
                     {
                         int id = 0;
                         Console.WriteLine("Setting item var: " + id);
-                        vs.First(x=>x.Name == "item").SetValue(id);
+                        vars.First(x=>x.Name == "item").SetValue(id);
                     }
                 ),
             };
@@ -159,10 +139,26 @@ namespace TorXakisDotNetAdapter.Tests
             CollectionAssert.AreEqual(variables.Select(x => x.Name).ToList(), iosts.Variables.Select(x => x.Name).ToList());
 
             // Test some transitions!
-            iosts.HandleAction(ActionType.Input, "NewItem", new List<RefinementVariable>() { new RefinementVariable("id", 1) });
+            NewItem modelAction = new NewItem()
+            {
+                newItemId = 1,
+            };
+            iosts.HandleAction(ActionType.Input, modelAction);
             Console.WriteLine(iosts);
             Assert.AreEqual(states.ElementAt(1), iosts.State);
-            iosts.HandleAction(ActionType.Output, "ItemEventArgsNew", new List<RefinementVariable>());
+
+            ItemEventArgsNew systemAction = new ItemEventArgsNew()
+            {
+                GUID = guids[0],
+                SystemName = systemNames[0],
+                Position = positions[0],
+                Rotation = rotations[0],
+                ModelGroup = modelGroups[0],
+                Model = models[0],
+                ModelVersion = modelVersions[0],
+                Parent = parents[0],
+            };
+            iosts.HandleAction(ActionType.Output, systemAction);
             Console.WriteLine(iosts);
             Assert.AreEqual(states.ElementAt(0), iosts.State);
         }

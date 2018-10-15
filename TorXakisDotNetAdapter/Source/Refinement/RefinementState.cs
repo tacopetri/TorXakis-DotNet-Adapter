@@ -30,7 +30,8 @@ namespace TorXakisDotNetAdapter.Refinement
         public RefinementState(string name)
         {
             // Sanity checks.
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name) + ": " + name);
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentException("Invalid name: " + name, nameof(name));
 
             Name = name;
         }
