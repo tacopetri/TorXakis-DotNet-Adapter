@@ -8,7 +8,7 @@ namespace TorXakisDotNetAdapter
 {
     /// <summary>
     /// The abstract class for all model actions.
-    /// The derived classes are parsed from the model and their code is generated.
+    /// The derived classes are parsed from TorXakis models and their code is generated.
     /// </summary>
     public abstract class ModelAction
     {
@@ -125,7 +125,7 @@ namespace TorXakisDotNetAdapter
         }
 
         /// <summary>
-        /// Deserializes the given string into an object.
+        /// Deserializes the given string into an object instance.
         /// </summary>
         public static ModelAction Deserialize(string str)
         {
