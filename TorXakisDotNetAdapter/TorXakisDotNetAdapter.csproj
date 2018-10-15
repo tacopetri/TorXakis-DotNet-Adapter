@@ -51,6 +51,12 @@
     <Compile Include="Source\Constraint\SymbolicState.cs" />
     <Compile Include="Source\Constraint\SymbolicTransition.cs" />
     <Compile Include="Source\Constraint\SymbolicTransitionSystem.cs" />
+    <Compile Include="Source\TorXakisActionInfo.cs" />
+    <Compile Include="Source\Generated\TorXakisGeneratedCode.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TorXakisGeneratedCode.tt</DependentUpon>
+    </Compile>
     <Compile Include="Source\Mapping\SymbolicState.cs" />
     <Compile Include="Source\Mapping\SymbolicTransition.cs" />
     <Compile Include="Source\Mapping\SymbolicTransitionSystem.cs" />
@@ -67,8 +73,20 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Models\Reference.txs" />
+    <None Include="Models\ReferenceRun.bat" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="Source\Generated\TorXakisGeneratedCode.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TorXakisGeneratedCode.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent>rd /s /q "$(TargetDir)"</PreBuildEvent>
