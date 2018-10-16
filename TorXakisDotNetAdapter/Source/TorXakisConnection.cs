@@ -241,7 +241,7 @@ namespace TorXakisDotNetAdapter
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
-            return GetType().Name + " " + nameof(Port) + " (" + Port + ") " + nameof(InputChannel) + " (" + InputChannel + ") " + nameof(OutputChannel) + " (" + OutputChannel + ")";
+            return GetType().Name + " " + nameof(Port) + ": " + Port + " " + nameof(InputChannel) + ": " + InputChannel + " " + nameof(OutputChannel) + ": " + OutputChannel;
         }
 
         /// <summary>
