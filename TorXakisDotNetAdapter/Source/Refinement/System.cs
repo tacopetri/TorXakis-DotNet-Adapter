@@ -6,9 +6,9 @@ namespace TorXakisDotNetAdapter.Refinement
 {
     /// <summary>
     /// An Input Output Symbolic Transition System (IOSTS).
-    /// <para>Consists of <see cref="RefinementState"/> states and <see cref="RefinementTransition"/> transitions.</para>
+    /// <para>Consists of <see cref="State"/> states and <see cref="Transition"/> transitions.</para>
     /// </summary>
-    public sealed class RefinementSystem
+    public sealed class System
     {
         #region Definitions
 
@@ -23,29 +23,29 @@ namespace TorXakisDotNetAdapter.Refinement
         public string Name { get; private set; }
 
         /// <summary>
-        /// The collection of contained <see cref="RefinementState"/> states.
+        /// The collection of contained <see cref="State"/> states.
         /// </summary>
-        public HashSet<RefinementState> States { get; private set; }
+        public HashSet<State> States { get; private set; }
 
         /// <summary>
-        /// The initial <see cref="RefinementState"/> state.
+        /// The initial <see cref="State"/> state.
         /// </summary>
-        public RefinementState InitialState { get; private set; }
+        public State InitialState { get; private set; }
 
         /// <summary>
-        /// The current <see cref="RefinementState"/> state.
+        /// The current <see cref="State"/> state.
         /// </summary>
-        public RefinementState CurrentState { get; private set; }
+        public State CurrentState { get; private set; }
 
         /// <summary>
-        /// The collection of contained <see cref="RefinementTransition"/> transitions.
+        /// The collection of contained <see cref="Transition"/> transitions.
         /// </summary>
-        public HashSet<RefinementTransition> Transitions { get; private set; }
+        public HashSet<Transition> Transitions { get; private set; }
 
         /// <summary>
         /// The current variables: expressed as named keys bound to values.
         /// </summary>
-        public List<RefinementVariable> Variables { get; private set; }
+        public List<Variable> Variables { get; private set; }
 
         #endregion
         #region Create & Destroy
@@ -53,7 +53,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public RefinementSystem(string name, HashSet<RefinementState> states, RefinementState initialState, HashSet<RefinementTransition> transitions, List<RefinementVariable> variables)
+        public System(string name, HashSet<State> states, State initialState, HashSet<Transition> transitions, List<Variable> variables)
         {
             // Sanity checks.
             if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name) + ": " + name);
@@ -79,18 +79,18 @@ namespace TorXakisDotNetAdapter.Refinement
 
             result += "\n";
             result += "\n" + nameof(States) + ":";
-            foreach (RefinementState state in States)
+            foreach (State state in States)
                 result += "\n\t" + state;
 
             result += "\n" + nameof(InitialState) + ": " + InitialState;
             result += "\n" + nameof(CurrentState) + ": " + CurrentState;
 
             result += "\n" + nameof(Transitions) + ":";
-            foreach (RefinementTransition transition in Transitions)
+            foreach (Transition transition in Transitions)
                 result += "\n\t" + transition;
 
             result += "\n" + nameof(Variables) + ":";
-            foreach (RefinementVariable variable in Variables)
+            foreach (Variable variable in Variables)
                 result += "\n\t" + variable;
 
             return result;
@@ -106,8 +106,8 @@ namespace TorXakisDotNetAdapter.Refinement
         {
             Console.WriteLine(nameof(HandleAction) + " Type: " + type + " Action: " + action);
 
-            List<RefinementTransition> validTransitions = new List<RefinementTransition>();
-            foreach (ReactiveRefinementTransition transition in Transitions.Where(x => x is ReactiveRefinementTransition))
+            List<Transition> validTransitions = new List<Transition>();
+            foreach (ReactiveTransition transition in Transitions.Where(x => x is ReactiveTransition))
             {
                 // Transition must come from the current state.
                 if (transition.From != CurrentState) continue;
@@ -125,7 +125,7 @@ namespace TorXakisDotNetAdapter.Refinement
             if (validTransitions.Count == 0) return false;
 
             // DEBUG: For testing, we pick the first compatible transition, not a random one. (TPE)
-            RefinementTransition chosenTransition = validTransitions.First();
+            Transition chosenTransition = validTransitions.First();
             Console.WriteLine("Chosen transition:\n" + chosenTransition);
 
             chosenTransition.Update(action, Variables);

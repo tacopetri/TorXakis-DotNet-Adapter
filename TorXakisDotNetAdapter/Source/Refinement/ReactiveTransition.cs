@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace TorXakisDotNetAdapter.Refinement
 {
     /// <summary>
-    /// A reactive <see cref="RefinementTransition"/>, responding to either:
+    /// A reactive <see cref="Transition"/>, responding to either:
     /// <para><see cref="ModelAction"/> inputs from the tester</para>
     /// <para><see cref="ISystemAction"/> events from the system</para>
     /// </summary>
-    public sealed class ReactiveRefinementTransition : RefinementTransition
+    public sealed class ReactiveTransition : Transition
     {
         #region Base
 
-        /// <summary><see cref="RefinementTransition.Type"/></summary>
+        /// <summary><see cref="Transition.Type"/></summary>
         public override ActionType Type { get { return ActionType.Input; } }
 
         #endregion
@@ -41,7 +41,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public ReactiveRefinementTransition(string name, RefinementState from, RefinementState to, GuardDelegate guard, UpdateDelegate update)
+        public ReactiveTransition(string name, State from, State to, GuardDelegate guard, UpdateDelegate update)
             : base(name, from, to, update)
         {
             Guard = guard ?? throw new ArgumentNullException(nameof(guard));

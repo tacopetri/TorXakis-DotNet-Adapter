@@ -59,26 +59,26 @@ namespace TorXakisDotNetAdapter.Tests
     public class RefinementTest
     {
         /// <summary>
-        /// Test of the <see cref="RefinementFramework"/> class.
+        /// Test of the <see cref="Refinement.Framework"/> class.
         /// </summary>
         [TestMethod]
         public void Framework()
         {
             FileInfo model = new FileInfo(@"..\..\..\TorXakisDotNetAdapter.Models\Models\Reference.txs");
-            RefinementFramework framework = new RefinementFramework(model);
+            Framework framework = new Framework(model);
             Console.WriteLine(framework);
 
-            HashSet<RefinementState> states = new HashSet<RefinementState>()
+            HashSet<State> states = new HashSet<State>()
             {
-                new RefinementState("S1"),
-                new RefinementState("S2"),
+                new State("S1"),
+                new State("S2"),
             };
 
             // LOCATION VARIABLES //
 
-            List<RefinementVariable> variables = new List<RefinementVariable>()
+            List<Variable> variables = new List<Variable>()
             {
-                new RefinementVariable("item", 0),
+                new Variable("item", 0),
             };
 
             // INTERACTION VARIABLES //
@@ -92,9 +92,9 @@ namespace TorXakisDotNetAdapter.Tests
             int[] modelVersions = new int[] { 24, 18 };
             object[] parents = new object[] { null, null };
 
-            HashSet<RefinementTransition> transitions = new HashSet<RefinementTransition>()
+            HashSet<Transition> transitions = new HashSet<Transition>()
             {
-                new ReactiveRefinementTransition("T12", states.ElementAt(0), states.ElementAt(1),
+                new ReactiveTransition("T12", states.ElementAt(0), states.ElementAt(1),
                     (action) =>
                     {
                         return action is NewItem;
@@ -107,7 +107,7 @@ namespace TorXakisDotNetAdapter.Tests
                         vars.First(x => x.Name == "item").SetValue(id);
                     }
                 ),
-                new ProactiveRefinementTransition("T21", states.ElementAt(1), states.ElementAt(0),
+                new ProactiveTransition("T21", states.ElementAt(1), states.ElementAt(0),
                     (vars) =>
                     {
                         int id = vars.First(x => x.Name == "item").GetValue<int>();
@@ -132,7 +132,7 @@ namespace TorXakisDotNetAdapter.Tests
                 ),
             };
 
-            RefinementSystem system = new RefinementSystem("IOSTS", states, states.ElementAt(0), transitions, variables);
+            Refinement.System system = new Refinement.System("IOSTS", states, states.ElementAt(0), transitions, variables);
             Console.WriteLine(system);
 
             framework.AddSystem(system);

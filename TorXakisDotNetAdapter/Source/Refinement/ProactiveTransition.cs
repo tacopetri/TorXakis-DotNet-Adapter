@@ -7,15 +7,15 @@ using System.Threading.Tasks;
 namespace TorXakisDotNetAdapter.Refinement
 {
     /// <summary>
-    /// A proactive <see cref="RefinementTransition"/>, emitting either:
+    /// A proactive <see cref="Transition"/>, emitting either:
     /// <para><see cref="ModelAction"/> outputs to the tester</para>
     /// <para><see cref="ISystemAction"/> commands to the system</para>
     /// </summary>
-    public sealed class ProactiveRefinementTransition : RefinementTransition
+    public sealed class ProactiveTransition : Transition
     {
         #region Base
 
-        /// <summary><see cref="RefinementTransition.Type"/></summary>
+        /// <summary><see cref="Transition.Type"/></summary>
         public override ActionType Type { get { return ActionType.Output; } }
 
         #endregion
@@ -29,7 +29,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// The delegate signature of the <see cref="Generate"/>.
         /// </summary>
-        public delegate IAction GenerateDelegate(List<RefinementVariable> variables);
+        public delegate IAction GenerateDelegate(List<Variable> variables);
         /// <summary>
         /// The generate function: given the variables, which action should be emitted?
         /// </summary>
@@ -41,7 +41,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public ProactiveRefinementTransition(string name, RefinementState from, RefinementState to, GenerateDelegate generate, UpdateDelegate update)
+        public ProactiveTransition(string name, State from, State to, GenerateDelegate generate, UpdateDelegate update)
             : base(name, from, to, update)
         {
             Generate = generate ?? throw new ArgumentNullException(nameof(generate));

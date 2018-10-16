@@ -10,7 +10,7 @@ namespace TorXakisDotNetAdapter.Refinement
     /// <summary>
     /// The top-level class that manages all refinement.
     /// </summary>
-    public sealed class RefinementFramework
+    public sealed class Framework
     {
         #region Definitions
 
@@ -30,14 +30,14 @@ namespace TorXakisDotNetAdapter.Refinement
         public TorXakisAdapter Adapter { get; private set; }
 
         /// <summary>
-        /// The collection of contained <see cref="RefinementSystem"/> systems.
+        /// The collection of contained <see cref="System"/> systems.
         /// </summary>
-        public List<RefinementSystem> Systems { get; private set; } = new List<RefinementSystem>();
+        public List<System> Systems { get; private set; } = new List<System>();
 
         /// <summary>
-        /// The current <see cref="RefinementSystem"/> system.
+        /// The current <see cref="System"/> system.
         /// </summary>
-        public RefinementSystem CurrentSystem { get; private set; }
+        public System CurrentSystem { get; private set; }
 
         #endregion
         #region Create & Destroy
@@ -45,7 +45,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public RefinementFramework(FileInfo model)
+        public Framework(FileInfo model)
         {
             Adapter = new TorXakisAdapter(model);
             Adapter.Started += Adapter_Started;
@@ -109,9 +109,9 @@ namespace TorXakisDotNetAdapter.Refinement
         #region Systems
 
         /// <summary>
-        /// Adds the given <see cref="RefinementSystem"/> to <see cref="Systems"/>.
+        /// Adds the given <see cref="System"/> to <see cref="Systems"/>.
         /// </summary>
-        public bool AddSystem(RefinementSystem system)
+        public bool AddSystem(System system)
         {
             lock (locker)
             {
@@ -121,9 +121,9 @@ namespace TorXakisDotNetAdapter.Refinement
         }
 
         /// <summary>
-        /// Removes the given <see cref="RefinementSystem"/> from <see cref="Systems"/>.
+        /// Removes the given <see cref="System"/> from <see cref="Systems"/>.
         /// </summary>
-        public bool RemoveSystem(RefinementSystem system)
+        public bool RemoveSystem(System system)
         {
             lock (locker)
             {

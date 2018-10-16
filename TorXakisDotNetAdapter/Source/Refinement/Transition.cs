@@ -5,9 +5,9 @@ using System.Linq;
 namespace TorXakisDotNetAdapter.Refinement
 {
     /// <summary>
-    /// A transition contained in a <see cref="RefinementSystem"/>.
+    /// A transition contained in a <see cref="System"/>.
     /// </summary>
-    public abstract class RefinementTransition
+    public abstract class Transition
     {
         #region Definitions
 
@@ -25,19 +25,19 @@ namespace TorXakisDotNetAdapter.Refinement
         public string Name { get; private set; }
 
         /// <summary>
-        /// The from <see cref="RefinementState"/> state.
+        /// The from <see cref="State"/> state.
         /// </summary>
-        public RefinementState From { get; private set; }
+        public State From { get; private set; }
 
         /// <summary>
-        /// The to <see cref="RefinementState"/> state.
+        /// The to <see cref="State"/> state.
         /// </summary>
-        public RefinementState To { get; private set; }
+        public State To { get; private set; }
 
         /// <summary>
         /// The delegate signature of the <see cref="Update"/>.
         /// </summary>
-        public delegate void UpdateDelegate(IAction action, List<RefinementVariable> variables);
+        public delegate void UpdateDelegate(IAction action, List<Variable> variables);
         /// <summary>
         /// The update function: if this transition is taken, which variables must be updated?
         /// </summary>
@@ -49,7 +49,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public RefinementTransition(string name, RefinementState from, RefinementState to, UpdateDelegate update)
+        public Transition(string name, State from, State to, UpdateDelegate update)
         {
             if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
             Name = name;
