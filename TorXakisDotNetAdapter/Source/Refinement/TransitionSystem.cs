@@ -122,5 +122,82 @@ namespace TorXakisDotNetAdapter.Refinement
         }
 
         #endregion
+        #region Inputs & Outputs
+
+        /// <summary>
+        /// Returns the possible <see cref="ReactiveTransition"/> transitions,
+        /// for the <see cref="CurrentState"/>,
+        /// given the <see cref="ModelAction"/> input or <see cref="ISystemAction"/> event.
+        /// </summary>
+        public HashSet<ReactiveTransition> PossibleReactiveTransitions(IAction action)
+        {
+            HashSet<ReactiveTransition> result = new HashSet<ReactiveTransition>();
+            foreach (ReactiveTransition transition in Transitions.Where(x => x is ReactiveTransition))
+            {
+                // Transition must come from the current state.
+                if (transition.From != CurrentState) continue;
+                // Transition guard function must evaluate to true.
+                if (!transition.Guard(action)) continue;
+
+                // All checks passed!
+                result.Add(transition);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Executes the given <see cref="ReactiveTransition"/> transition,
+        /// assuming it is contained in <see cref="PossibleReactiveTransitions"/>.
+        /// </summary>
+        public void ExecuteReactiveTransition(IAction action, ReactiveTransition transition)
+        {
+            if (!PossibleReactiveTransitions(action).Contains(transition))
+                throw new ArgumentException("Transition not possible: " + transition);
+
+            // Execute the update function.
+            transition.Update(action, Variables);
+            // Transition to the new state.
+            CurrentState = transition.To;
+        }
+
+        /// <summary>
+        /// Returns the possible <see cref="ProactiveTransition"/> transitions,
+        /// for the <see cref="CurrentState"/>.
+        /// </summary>
+        public HashSet<ProactiveTransition> PossibleProactiveTransitions()
+        {
+            HashSet<ProactiveTransition> result = new HashSet<ProactiveTransition>();
+            foreach (ProactiveTransition transition in Transitions.Where(x => x is ProactiveTransition))
+            {
+                // Transition must come from the current state.
+                if (transition.From != CurrentState) continue;
+
+                // All checks passed!
+                result.Add(transition);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Executes the given <see cref="ProactiveTransition"/> transition,
+        /// assuming it is contained in <see cref="PossibleProactiveTransitions"/>.
+        /// Returns the generated <see cref="ModelAction"/> output or <see cref="ISystemAction"/> command.
+        /// </summary>
+        public IAction ExecuteProactiveTransition(ProactiveTransition transition)
+        {
+            if (!PossibleProactiveTransitions().Contains(transition))
+                throw new ArgumentException("Transition not possible: " + transition);
+
+            // Generate the action.
+            IAction action = transition.Generate(Variables);
+            // Execute the update function.
+            transition.Update(action, Variables);
+            // Transition to the new state.
+            CurrentState = transition.To;
+
+            return action;
+        }
+
+        #endregion
     }
 }
