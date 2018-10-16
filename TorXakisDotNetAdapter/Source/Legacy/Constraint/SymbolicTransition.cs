@@ -79,21 +79,17 @@ namespace TorXakisDotNetAdapter.Legacy.Constraint
         {
             // Sanity checks.
             if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name) + ": " + name);
-            if (from == null) throw new ArgumentNullException(nameof(from));
-            if (to == null) throw new ArgumentNullException(nameof(from));
             if (string.IsNullOrEmpty(channel)) throw new ArgumentException(nameof(channel) + ": " + channel);
-            if (variables == null) throw new ArgumentNullException(nameof(variables));
-            if (update == null) throw new ArgumentNullException(nameof(update));
 
             Name = name;
-            From = from;
-            To = to;
+            From = from ?? throw new ArgumentNullException(nameof(from));
+            To = to ?? throw new ArgumentNullException(nameof(to));
 
             Type = type;
             Channel = channel;
-            Variables = variables;
+            Variables = variables ?? throw new ArgumentNullException(nameof(variables));
             Guard = guard;
-            Update = update;
+            Update = update ?? throw new ArgumentNullException(nameof(update));
         }
 
         /// <summary><see cref="object.ToString"/></summary>

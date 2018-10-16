@@ -58,13 +58,12 @@ namespace TorXakisDotNetAdapter.Legacy.Mapping
             if (!states.Contains(state)) throw new ArgumentException(nameof(state) + ": " + state);
             if (transitions == null) throw new ArgumentNullException(nameof(transitions));
             if (transitions.Any(x => !states.Contains(x.From) || !states.Contains(x.To))) throw new ArgumentException(nameof(transitions) + ": " + transitions);
-            if (variables == null) throw new ArgumentNullException(nameof(variables));
 
             Name = name;
             States = states;
             State = state;
             Transitions = transitions;
-            Variables = variables;
+            Variables = variables ?? throw new ArgumentNullException(nameof(variables));
         }
 
         /// <summary><see cref="object.ToString"/></summary>
