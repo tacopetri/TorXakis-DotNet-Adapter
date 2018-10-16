@@ -198,7 +198,18 @@ namespace TorXakisDotNetAdapter.Tests
             Console.WriteLine(framework);
             Assert.AreEqual(system, framework.Systems.ElementAt(0));
 
-            // TODO: Implement!
+            // Trigger a reactive transition, which should activate a proactive one next.
+            NewItem modelInput = new NewItem()
+            {
+                newItemId = 1,
+            };
+            HashSet<Tuple<TransitionSystem, ReactiveTransition>> reactives = framework.PossibleReactiveTransitions(modelInput);
+            Console.WriteLine("Possible reactives transitions: " + string.Join(", ", reactives.Select(x => x.Item1.Name + ": " + x.Item2).ToArray()));
+            Assert.AreEqual(1, reactives.Count);
+
+            framework.HandleModelInput(modelInput);
+            Console.WriteLine(framework);
+            Assert.AreEqual(system.States.ElementAt(0), system.CurrentState);
         }
     }
 }

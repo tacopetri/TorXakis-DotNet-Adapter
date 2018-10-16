@@ -136,18 +136,76 @@ namespace TorXakisDotNetAdapter.Refinement
         /// </summary>
         private void CheckSystems()
         {
+            Log.Debug(this, nameof(CheckSystems) + " inputs: " + inputs.Count + " commands: " + events.Count);
+
             bool transitioned = false;
 
-            // If we are currently inside a refinement, only that system may be advanced.
-            if (CurrentSystem != null)
+            // If proactive transitions are possible, trigger them!
+            if (!transitioned)
             {
-                ISystemAction nextEvent = events.Peek();
-                // TODO!
+                HashSet<Tuple<TransitionSystem, ProactiveTransition>> proactives = PossibleProactiveTransitions();
+                if (proactives.Count > 0)
+                {
+                    Log.Debug(this, "Possible proactive transitions: " + string.Join(", ", proactives.Select(x => x.Item1.Name + ": " + x.Item2).ToArray()));
+                    Tuple<TransitionSystem, ProactiveTransition> selected = proactives.Random();
+                    Log.Debug(this, "Selected proactive transition: " + selected.Item1.Name + ": " + selected.Item2);
+                    IAction generated = ExecuteProactiveTransition(selected);
+
+                    if (generated is ModelAction modelOutput)
+                        SendModelOutput(modelOutput);
+                    else if (generated is ISystemAction systemCommand)
+                        SendSystemCommand(systemCommand);
+
+                    transitioned = true;
+                }
             }
-            // Otherwise, we check if a new refinement system can be started with the queued system events and/or model inputs.
-            else
+
+            // If reactive transitions are possible, due to system events, trigger them!
+            if (!transitioned)
             {
-                // TODO!
+                if (events.Count > 0)
+                {
+                    ISystemAction systemEvent = events.Dequeue();
+                    Log.Debug(this, "Dequeueing system event: " + systemEvent);
+                    HashSet<Tuple<TransitionSystem, ReactiveTransition>> reactives = PossibleReactiveTransitions(systemEvent);
+                    if (reactives.Count > 0)
+                    {
+                        Log.Debug(this, "Possible reactive transitions: " + string.Join(", ", reactives.Select(x => x.Item1.Name + ": " + x.Item2).ToArray()));
+                        Tuple<TransitionSystem, ReactiveTransition> selected = reactives.Random();
+                        Log.Debug(this, "Selected reactive transition: " + selected.Item1.Name + ": " + selected.Item2);
+                        ExecuteReactiveTransition(systemEvent, selected);
+
+                        transitioned = true;
+                    }
+                    else
+                    {
+                        Log.Error(this, "No reactive transition possible for system event: " + systemEvent);
+                    }
+                }
+            }
+
+            // If reactive transitions are possible, due to model inputs, trigger them!
+            if (!transitioned)
+            {
+                if (inputs.Count > 0)
+                {
+                    ModelAction modelInput = inputs.Dequeue();
+                    Log.Debug(this, "Dequeueing model input: " + modelInput);
+                    HashSet<Tuple<TransitionSystem, ReactiveTransition>> reactives = PossibleReactiveTransitions(modelInput);
+                    if (reactives.Count > 0)
+                    {
+                        Log.Debug(this, "Possible reactive transitions: " + string.Join(", ", reactives.Select(x => x.Item1.Name + ": " + x.Item2).ToArray()));
+                        Tuple<TransitionSystem, ReactiveTransition> selected = reactives.Random();
+                        Log.Debug(this, "Selected reactive transition: " + selected.Item1.Name + ": " + selected.Item2);
+                        ExecuteReactiveTransition(modelInput, selected);
+
+                        transitioned = true;
+                    }
+                    else
+                    {
+                        Log.Error(this, "No reactive transition possible for model input: " + modelInput);
+                    }
+                }
             }
 
             // If a transition was taken, re-evaluate immediately!
@@ -155,9 +213,103 @@ namespace TorXakisDotNetAdapter.Refinement
             // If no transition was taken, but there are still inputs or events queued: this indicates a deadlock!
             else if (inputs.Count > 0 || events.Count > 0)
             {
-                string error = "No valid transition!";
+                string error = "No valid transitions! Deadlock!";
                 Log.Error(this, error);
+                throw new Exception(error);
             }
+        }
+
+        #endregion
+        #region Systems Aggregation
+
+        /// <summary>
+        /// Aggregates <see cref="TransitionSystem.PossibleReactiveTransitions"/>.
+        /// <para>If <see cref="CurrentSystem"/> is NULL, parse all <see cref="Systems"/>.</para>
+        /// <para>If <see cref="CurrentSystem"/> is NOT NULL, only parse that.</para>
+        /// </summary>
+        public HashSet<Tuple<TransitionSystem, ReactiveTransition>> PossibleReactiveTransitions(IAction action)
+        {
+            HashSet<Tuple<TransitionSystem, ReactiveTransition>> result = new HashSet<Tuple<TransitionSystem, ReactiveTransition>>();
+
+            // If current system is set, only query that.
+            if (CurrentSystem != null)
+            {
+                foreach (ReactiveTransition transition in CurrentSystem.PossibleReactiveTransitions(action))
+                    result.Add(new Tuple<TransitionSystem, ReactiveTransition>(CurrentSystem, transition));
+            }
+            // Otherwise, query all inactive systems.
+            else
+            {
+                foreach (TransitionSystem system in Systems)
+                    foreach (ReactiveTransition transition in system.PossibleReactiveTransitions(action))
+                        result.Add(new Tuple<TransitionSystem, ReactiveTransition>(system, transition));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Aggregates <see cref="TransitionSystem.PossibleProactiveTransitions"/>.
+        /// <para>If <see cref="CurrentSystem"/> is NULL, parse all <see cref="Systems"/>.</para>
+        /// <para>If <see cref="CurrentSystem"/> is NOT NULL, only parse that.</para>
+        /// </summary>
+        public HashSet<Tuple<TransitionSystem, ProactiveTransition>> PossibleProactiveTransitions()
+        {
+            HashSet<Tuple<TransitionSystem, ProactiveTransition>> result = new HashSet<Tuple<TransitionSystem, ProactiveTransition>>();
+
+            // If current system is set, only query that.
+            if (CurrentSystem != null)
+            {
+                foreach (ProactiveTransition transition in CurrentSystem.PossibleProactiveTransitions())
+                    result.Add(new Tuple<TransitionSystem, ProactiveTransition>(CurrentSystem, transition));
+            }
+            // Otherwise, query all inactive systems.
+            else
+            {
+                foreach (TransitionSystem system in Systems)
+                    foreach (ProactiveTransition transition in system.PossibleProactiveTransitions())
+                        result.Add(new Tuple<TransitionSystem, ProactiveTransition>(system, transition));
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Executes the given <see cref="ReactiveTransition"/> transition,
+        /// assuming it is contained in <see cref="PossibleReactiveTransitions"/>.
+        /// </summary>
+        public void ExecuteReactiveTransition(IAction action, Tuple<TransitionSystem, ReactiveTransition> transition)
+        {
+            if (!PossibleReactiveTransitions(action).Contains(transition))
+                throw new ArgumentException("Transition not possible: " + transition.Item1 + ": " + transition.Item2);
+
+            if (CurrentSystem == null || CurrentSystem == transition.Item1)
+            {
+                CurrentSystem = transition.Item1;
+                transition.Item1.ExecuteReactiveTransition(action, transition.Item2);
+            }
+            else
+                throw new ArgumentException("System cannot be activated: " + transition.Item1);
+        }
+
+        /// <summary>
+        /// Executes the given <see cref="ProactiveTransition"/> transition,
+        /// assuming it is contained in <see cref="PossibleProactiveTransitions"/>.
+        /// Returns the generated <see cref="ModelAction"/> output or <see cref="ISystemAction"/> command.
+        /// </summary>
+        public IAction ExecuteProactiveTransition(Tuple<TransitionSystem, ProactiveTransition> transition)
+        {
+            if (!PossibleProactiveTransitions().Contains(transition))
+                throw new ArgumentException("Transition not possible: " + transition.Item1 + ": " + transition.Item2);
+
+            if (CurrentSystem == null || CurrentSystem == transition.Item1)
+            {
+                CurrentSystem = transition.Item1;
+                IAction generated = transition.Item1.ExecuteProactiveTransition(transition.Item2);
+                return generated;
+            }
+            else
+                throw new ArgumentException("System cannot be activated: " + transition.Item1);
         }
 
         #endregion
@@ -171,11 +323,12 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Handles the given <see cref="ModelAction"/> input.
         /// </summary>
-        public void HandleModelInput(ModelAction modelAction)
+        public void HandleModelInput(ModelAction modelInput)
         {
             lock (locker)
             {
-                inputs.Enqueue(modelAction);
+                Log.Debug(this, nameof(HandleModelInput) + ": " + modelInput);
+                inputs.Enqueue(modelInput);
                 CheckSystems();
             }
         }
@@ -183,11 +336,12 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Sends the given <see cref="ModelAction"/> output.
         /// </summary>
-        public void SendModelOutput(ModelAction modelAction)
+        public void SendModelOutput(ModelAction modelOutput)
         {
             lock (locker)
             {
-                string serialized = modelAction.Serialize();
+                Log.Debug(this, nameof(SendModelOutput) + ": " + modelOutput);
+                string serialized = modelOutput.Serialize();
                 TorXakisAction output = TorXakisAction.FromOutput(TorXakisModel.OutputChannel, serialized);
                 Adapter.SendOutput(output);
             }
@@ -202,11 +356,12 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Handles the given <see cref="ISystemAction"/> event.
         /// </summary>
-        public void HandleSystemEvent(ISystemAction systemAction)
+        public void HandleSystemEvent(ISystemAction systemEvent)
         {
             lock (locker)
             {
-                events.Enqueue(systemAction);
+                Log.Debug(this, nameof(HandleSystemEvent) + ": " + systemEvent);
+                events.Enqueue(systemEvent);
                 CheckSystems();
             }
         }
@@ -219,11 +374,12 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Sends the given <see cref="ISystemAction"/> command.
         /// </summary>
-        public void SendSystemCommand(ISystemAction systemAction)
+        public void SendSystemCommand(ISystemAction systemCommand)
         {
             lock (locker)
             {
-                ExecuteSystemCommand?.Invoke(systemAction);
+                Log.Debug(this, nameof(SendSystemCommand) + ": " + systemCommand);
+                ExecuteSystemCommand?.Invoke(systemCommand);
             }
         }
 

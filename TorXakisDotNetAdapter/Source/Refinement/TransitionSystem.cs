@@ -107,23 +107,6 @@ namespace TorXakisDotNetAdapter.Refinement
         }
 
         /// <summary>
-        /// Executes the given <see cref="ReactiveTransition"/> transition,
-        /// assuming it is contained in <see cref="PossibleReactiveTransitions"/>.
-        /// </summary>
-        public void ExecuteReactiveTransition(IAction action, ReactiveTransition transition)
-        {
-            if (!PossibleReactiveTransitions(action).Contains(transition))
-                throw new ArgumentException("Transition not possible: " + transition);
-
-            // Execute the update function.
-            Log.Debug(this, "Calling update function: " + transition);
-            transition.Update(action, Variables);
-            // Transition to the new state.
-            Log.Debug(this, "Transitioning to new state: " + transition.To);
-            CurrentState = transition.To;
-        }
-
-        /// <summary>
         /// Returns the possible <see cref="ProactiveTransition"/> transitions,
         /// for the <see cref="CurrentState"/>.
         /// </summary>
@@ -139,6 +122,23 @@ namespace TorXakisDotNetAdapter.Refinement
                 result.Add(transition);
             }
             return result;
+        }
+
+        /// <summary>
+        /// Executes the given <see cref="ReactiveTransition"/> transition,
+        /// assuming it is contained in <see cref="PossibleReactiveTransitions"/>.
+        /// </summary>
+        public void ExecuteReactiveTransition(IAction action, ReactiveTransition transition)
+        {
+            if (!PossibleReactiveTransitions(action).Contains(transition))
+                throw new ArgumentException("Transition not possible: " + transition);
+
+            // Execute the update function.
+            Log.Debug(this, "Calling update function: " + transition);
+            transition.Update(action, Variables);
+            // Transition to the new state.
+            Log.Debug(this, "Transitioning to new state: " + transition.To);
+            CurrentState = transition.To;
         }
 
         /// <summary>

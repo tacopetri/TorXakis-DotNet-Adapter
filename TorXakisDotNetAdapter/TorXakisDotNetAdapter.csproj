@@ -51,6 +51,7 @@
     <Compile Include="Source\Constraint\SymbolicState.cs" />
     <Compile Include="Source\Constraint\SymbolicTransition.cs" />
     <Compile Include="Source\Constraint\SymbolicTransitionSystem.cs" />
+    <Compile Include="Source\ExtensionMethods.cs" />
     <Compile Include="Source\IAction.cs" />
     <Compile Include="Source\ISystemAction.cs" />
     <Compile Include="Source\Logging\Log.cs" />
