@@ -62,9 +62,9 @@
     <Compile Include="Source\Refinement\Framework.cs" />
     <Compile Include="Source\Refinement\ReactiveTransition.cs" />
     <Compile Include="Source\Refinement\State.cs" />
-    <Compile Include="Source\Refinement\System.cs" />
+    <Compile Include="Source\Refinement\TransitionSystem.cs" />
     <Compile Include="Source\Refinement\Transition.cs" />
-    <Compile Include="Source\Refinement\Variable.cs" />
+    <Compile Include="Source\Refinement\VariableCollection.cs" />
     <Compile Include="Source\TorXakisAction.cs" />
     <Compile Include="Source\TorXakisAdapter.cs" />
     <Compile Include="Source\TorXakisConnection.cs" />

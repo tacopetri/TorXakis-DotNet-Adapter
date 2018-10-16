@@ -5,7 +5,7 @@ using System.Linq;
 namespace TorXakisDotNetAdapter.Refinement
 {
     /// <summary>
-    /// A state contained in a <see cref="System"/>.
+    /// A state contained in a <see cref="TransitionSystem"/>.
     /// </summary>
     public sealed class State
     {
@@ -39,7 +39,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            return "State (" + Name + ")";
+            return GetType().Name + " (" + Name + ")";
         }
 
         #endregion

@@ -29,7 +29,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// The delegate signature of the <see cref="Generate"/>.
         /// </summary>
-        public delegate IAction GenerateDelegate(List<Variable> variables);
+        public delegate IAction GenerateDelegate(VariableCollection variables);
         /// <summary>
         /// The generate function: given the variables, which action should be emitted?
         /// </summary>

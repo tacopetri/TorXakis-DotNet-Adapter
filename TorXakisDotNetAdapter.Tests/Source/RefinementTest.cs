@@ -74,14 +74,7 @@ namespace TorXakisDotNetAdapter.Tests
                 new State("S2"),
             };
 
-            // LOCATION VARIABLES //
-
-            List<Variable> variables = new List<Variable>()
-            {
-                new Variable("item", 0),
-            };
-
-            // INTERACTION VARIABLES //
+            // STATIC LOOKUP //
 
             Guid[] guids = new Guid[] { new Guid("c87354e7-888b-4a7f-a337-d5e24324b4f1"), new Guid("10d0e86d-1d6e-4c4e-80c0-2cea387d98a5") };
             string[] systemNames = new string[] { "human_nld_fire_bevelvoerder", "object_firetool_watergun" };
@@ -99,18 +92,18 @@ namespace TorXakisDotNetAdapter.Tests
                     {
                         return action is NewItem;
                     },
-                    (action, vars) =>
+                    (action, variables) =>
                     {
                         NewItem cast = (NewItem)action;
                         int id = cast.newItemId;
                         Console.WriteLine("Setting item var: " + id);
-                        vars.First(x => x.Name == "item").SetValue(id);
+                        variables.SetValue("item", id);
                     }
                 ),
                 new ProactiveTransition("T21", states.ElementAt(1), states.ElementAt(0),
-                    (vars) =>
+                    (variables) =>
                     {
-                        int id = vars.First(x => x.Name == "item").GetValue<int>();
+                        int id = variables.GetValue<int>("item");
                         return new ItemEventArgsNew()
                         {
                             GUID = guids[id-1],
@@ -123,16 +116,16 @@ namespace TorXakisDotNetAdapter.Tests
                             Parent = parents[id-1],
                         };
                     },
-                    (action, vars) =>
+                    (action, variables) =>
                     {
                         int id = 0;
                         Console.WriteLine("Setting item var: " + id);
-                        vars.First(x=>x.Name == "item").SetValue(id);
+                        variables.SetValue("item", id);
                     }
                 ),
             };
 
-            Refinement.System system = new Refinement.System("IOSTS", states, states.ElementAt(0), transitions, variables);
+            TransitionSystem system = new TransitionSystem("IOSTS", states, states.ElementAt(0), transitions);
             Console.WriteLine(system);
 
             framework.AddSystem(system);
@@ -140,10 +133,9 @@ namespace TorXakisDotNetAdapter.Tests
 
             // Have the properties been initialized correctly?
             CollectionAssert.AreEqual(states.ToList(), system.States.ToList());
+            Assert.AreEqual(states.ElementAt(0), system.InitialState);
             Assert.AreEqual(states.ElementAt(0), system.CurrentState);
             CollectionAssert.AreEqual(transitions.ToList(), system.Transitions.ToList());
-            CollectionAssert.AreEqual(variables, system.Variables);
-            CollectionAssert.AreEqual(variables.Select(x => x.Name).ToList(), system.Variables.Select(x => x.Name).ToList());
 
             // Test some transitions!
             NewItem modelAction = new NewItem()

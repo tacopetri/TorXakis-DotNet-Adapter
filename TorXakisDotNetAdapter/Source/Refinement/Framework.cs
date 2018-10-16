@@ -30,14 +30,14 @@ namespace TorXakisDotNetAdapter.Refinement
         public TorXakisAdapter Adapter { get; private set; }
 
         /// <summary>
-        /// The collection of contained <see cref="System"/> systems.
+        /// The collection of contained <see cref="TransitionSystem"/> systems.
         /// </summary>
-        public List<System> Systems { get; private set; } = new List<System>();
+        public List<TransitionSystem> Systems { get; private set; } = new List<TransitionSystem>();
 
         /// <summary>
-        /// The current <see cref="System"/> system.
+        /// The current <see cref="TransitionSystem"/> system.
         /// </summary>
-        public System CurrentSystem { get; private set; }
+        public TransitionSystem CurrentSystem { get; private set; }
 
         #endregion
         #region Create & Destroy
@@ -109,9 +109,9 @@ namespace TorXakisDotNetAdapter.Refinement
         #region Systems
 
         /// <summary>
-        /// Adds the given <see cref="System"/> to <see cref="Systems"/>.
+        /// Adds the given <see cref="TransitionSystem"/> to <see cref="Systems"/>.
         /// </summary>
-        public bool AddSystem(System system)
+        public bool AddSystem(TransitionSystem system)
         {
             lock (locker)
             {
@@ -121,9 +121,9 @@ namespace TorXakisDotNetAdapter.Refinement
         }
 
         /// <summary>
-        /// Removes the given <see cref="System"/> from <see cref="Systems"/>.
+        /// Removes the given <see cref="TransitionSystem"/> from <see cref="Systems"/>.
         /// </summary>
-        public bool RemoveSystem(System system)
+        public bool RemoveSystem(TransitionSystem system)
         {
             lock (locker)
             {

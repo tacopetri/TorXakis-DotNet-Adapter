@@ -5,7 +5,7 @@ using System.Linq;
 namespace TorXakisDotNetAdapter.Refinement
 {
     /// <summary>
-    /// A transition contained in a <see cref="System"/>.
+    /// A transition contained in a <see cref="TransitionSystem"/>.
     /// </summary>
     public abstract class Transition
     {
@@ -37,7 +37,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// The delegate signature of the <see cref="Update"/>.
         /// </summary>
-        public delegate void UpdateDelegate(IAction action, List<Variable> variables);
+        public delegate void UpdateDelegate(IAction action, VariableCollection variables);
         /// <summary>
         /// The update function: if this transition is taken, which variables must be updated?
         /// </summary>

@@ -8,7 +8,7 @@ namespace TorXakisDotNetAdapter.Refinement
     /// An Input Output Symbolic Transition System (IOSTS).
     /// <para>Consists of <see cref="State"/> states and <see cref="Transition"/> transitions.</para>
     /// </summary>
-    public sealed class System
+    public sealed class TransitionSystem
     {
         #region Definitions
 
@@ -43,9 +43,9 @@ namespace TorXakisDotNetAdapter.Refinement
         public HashSet<Transition> Transitions { get; private set; }
 
         /// <summary>
-        /// The current variables: expressed as named keys bound to values.
+        /// The contained <see cref="VariableCollection"/>, holding all variables.
         /// </summary>
-        public List<Variable> Variables { get; private set; }
+        public VariableCollection Variables { get; private set; } = new VariableCollection();
 
         #endregion
         #region Create & Destroy
@@ -53,7 +53,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public System(string name, HashSet<State> states, State initialState, HashSet<Transition> transitions, List<Variable> variables)
+        public TransitionSystem(string name, HashSet<State> states, State initialState, HashSet<Transition> transitions)
         {
             // Sanity checks.
             if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name) + ": " + name);
@@ -62,20 +62,18 @@ namespace TorXakisDotNetAdapter.Refinement
             if (!states.Contains(initialState)) throw new ArgumentException(nameof(initialState) + ": " + initialState);
             if (transitions == null) throw new ArgumentNullException(nameof(transitions));
             if (transitions.Any(x => !states.Contains(x.From) || !states.Contains(x.To))) throw new ArgumentException(nameof(transitions) + ": " + transitions);
-            if (variables == null) throw new ArgumentNullException(nameof(variables));
 
             Name = name;
             States = states;
             InitialState = initialState;
             CurrentState = initialState;
             Transitions = transitions;
-            Variables = variables;
         }
 
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            string result = "System (" + Name + ")";
+            string result = GetType().Name + " (" + Name + ")";
 
             result += "\n";
             result += "\n" + nameof(States) + ":";
@@ -89,9 +87,7 @@ namespace TorXakisDotNetAdapter.Refinement
             foreach (Transition transition in Transitions)
                 result += "\n\t" + transition;
 
-            result += "\n" + nameof(Variables) + ":";
-            foreach (Variable variable in Variables)
-                result += "\n\t" + variable;
+            result += "\n" + nameof(Variables) + ": " + Variables;
 
             return result;
         }
