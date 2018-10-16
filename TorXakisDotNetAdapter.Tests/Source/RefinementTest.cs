@@ -86,7 +86,6 @@ namespace TorXakisDotNetAdapter.Tests
                     {
                         NewItem cast = (NewItem)action;
                         int id = cast.newItemId;
-                        Console.WriteLine("Setting id var: " + id);
                         variables.SetValue(nameof(id), id);
                     }
                 ),
@@ -108,7 +107,6 @@ namespace TorXakisDotNetAdapter.Tests
                     },
                     (action, variables) =>
                     {
-                        Console.WriteLine("Clearing id var!");
                         variables.ClearValue("id");
                     }
                 ),
@@ -134,31 +132,23 @@ namespace TorXakisDotNetAdapter.Tests
             TransitionSystem system = CreateTransitionSystem();
             Console.WriteLine(system);
 
-
-        }
-
-        /// <summary>
-        /// Test of the <see cref="Refinement.Framework"/> class.
-        /// </summary>
-        [TestMethod]
-        public void Framework()
-        {
-            FileInfo model = new FileInfo(@"..\..\..\TorXakisDotNetAdapter.Models\Models\Reference.txs");
-            Framework framework = new Framework(model);
-            TransitionSystem system = CreateTransitionSystem();
-            framework.AddSystem(system);
-            Console.WriteLine(framework);
-
-            // Test some transitions!
-            NewItem modelAction = new NewItem()
+            // Determine possible reactive transitions.
+            NewItem modelInput = new NewItem()
             {
                 newItemId = 1,
             };
-            system.HandleAction(ActionType.Input, modelAction);
+            HashSet<ReactiveTransition> reactives = system.PossibleReactiveTransitions(modelInput);
+            Console.WriteLine("Possible reactive transitions: " + string.Join(", ", reactives.Select(x => x.ToString()).ToArray()));
+            Assert.AreEqual(1, reactives.Count);
+            Assert.AreEqual(system.Transitions.ElementAt(0), reactives.First());
+
+            // Execute and check reactive transition.
+            system.ExecuteReactiveTransition(modelInput, reactives.First());
             Console.WriteLine(system);
             Assert.AreEqual(system.States.ElementAt(1), system.CurrentState);
 
-            ItemEventArgsNew systemAction = new ItemEventArgsNew()
+            // Determine possible proactive transitions.
+            ItemEventArgsNew systemEvent = new ItemEventArgsNew()
             {
                 GUID = guids[0],
                 SystemName = systemNames[0],
@@ -169,9 +159,34 @@ namespace TorXakisDotNetAdapter.Tests
                 ModelVersion = modelVersions[0],
                 Parent = parents[0],
             };
-            system.HandleAction(ActionType.Output, systemAction);
+            HashSet<ProactiveTransition> proactives = system.PossibleProactiveTransitions();
+            Console.WriteLine("Possible proactive transitions: " + string.Join(", ", proactives.Select(x => x.ToString()).ToArray()));
+            Assert.AreEqual(1, proactives.Count);
+            Assert.AreEqual(system.Transitions.ElementAt(1), proactives.First());
+
+            // Execute and check proactive transition.
+            IAction generatedAction = system.ExecuteProactiveTransition(proactives.First());
             Console.WriteLine(system);
             Assert.AreEqual(system.States.ElementAt(0), system.CurrentState);
+        }
+
+        /// <summary>
+        /// Test of the <see cref="Refinement.Framework"/> class.
+        /// </summary>
+        [TestMethod]
+        public void Framework()
+        {
+            FileInfo model = new FileInfo(@"..\..\..\TorXakisDotNetAdapter.Models\Models\Reference.txs");
+            Framework framework = new Framework(model);
+            Console.WriteLine(framework);
+            Assert.AreEqual(model, framework.Adapter.Model.File);
+
+            TransitionSystem system = CreateTransitionSystem();
+            framework.AddSystem(system);
+            Console.WriteLine(framework);
+            Assert.AreEqual(system, framework.Systems.ElementAt(0));
+
+            // TODO: Implement!
         }
     }
 }

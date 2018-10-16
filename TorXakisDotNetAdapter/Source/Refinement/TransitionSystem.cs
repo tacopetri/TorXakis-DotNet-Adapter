@@ -82,46 +82,6 @@ namespace TorXakisDotNetAdapter.Refinement
         }
 
         #endregion
-        #region Functionality
-
-        /// <summary>
-        /// Handles the given action, which may result in a synchronized transition.
-        /// </summary>
-        public bool HandleAction(ActionType type, IAction action)
-        {
-            Console.WriteLine(nameof(HandleAction) + " Type: " + type + " Action: " + action);
-
-            List<Transition> validTransitions = new List<Transition>();
-            foreach (ReactiveTransition transition in Transitions.Where(x => x is ReactiveTransition))
-            {
-                // Transition must come from the current state.
-                if (transition.From != CurrentState) continue;
-                // Transition must have the same type (input or output).
-                if (transition.Type != type) continue;
-                // Transition guard function must evaluate to true.
-                if (!transition.Guard(action)) continue;
-
-                // All checks passed!
-                validTransitions.Add(transition);
-            }
-
-            Console.WriteLine("Valid transitions:\n" + string.Join("\n", validTransitions.Select(x => x.ToString()).ToArray()));
-
-            if (validTransitions.Count == 0) return false;
-
-            // DEBUG: For testing, we pick the first compatible transition, not a random one. (TPE)
-            Transition chosenTransition = validTransitions.First();
-            Console.WriteLine("Chosen transition:\n" + chosenTransition);
-
-            chosenTransition.Update(action, Variables);
-
-            Console.WriteLine("From: " + CurrentState + " To: " + chosenTransition.To);
-            CurrentState = chosenTransition.To;
-
-            return true;
-        }
-
-        #endregion
         #region Inputs & Outputs
 
         /// <summary>
@@ -155,8 +115,10 @@ namespace TorXakisDotNetAdapter.Refinement
                 throw new ArgumentException("Transition not possible: " + transition);
 
             // Execute the update function.
+            Console.WriteLine("Calling update function: " + transition);
             transition.Update(action, Variables);
             // Transition to the new state.
+            Console.WriteLine("Transitioning to new state: " + transition.To);
             CurrentState = transition.To;
         }
 
@@ -189,14 +151,22 @@ namespace TorXakisDotNetAdapter.Refinement
                 throw new ArgumentException("Transition not possible: " + transition);
 
             // Generate the action.
+            Console.WriteLine("Calling generate function: " + transition);
             IAction action = transition.Generate(Variables);
             // Execute the update function.
+            Console.WriteLine("Calling update function: " + transition);
             transition.Update(action, Variables);
             // Transition to the new state.
+            Console.WriteLine("Transitioning to new state: " + transition.To);
             CurrentState = transition.To;
 
             return action;
         }
+
+        #endregion
+        #region Functionality
+
+        // TODO: Implement!
 
         #endregion
     }

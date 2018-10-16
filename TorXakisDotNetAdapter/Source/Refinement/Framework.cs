@@ -32,7 +32,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// The collection of contained <see cref="TransitionSystem"/> systems.
         /// </summary>
-        public List<TransitionSystem> Systems { get; private set; } = new List<TransitionSystem>();
+        public HashSet<TransitionSystem> Systems { get; private set; } = new HashSet<TransitionSystem>();
 
         /// <summary>
         /// The current <see cref="TransitionSystem"/> system.
@@ -58,7 +58,7 @@ namespace TorXakisDotNetAdapter.Refinement
             string result = GetType().Name
                 + "\n" + nameof(Adapter) + ": " + Adapter
                 + "\n" + nameof(Systems) + " (" + Systems.Count + "): " + string.Join(", ", Systems.Select(x => x.Name).ToArray())
-                + "\n" + nameof(CurrentSystem) + ": " + CurrentSystem?.Name;
+                + "\n" + nameof(CurrentSystem) + ": " + CurrentSystem;
             return result;
         }
 
@@ -115,8 +115,7 @@ namespace TorXakisDotNetAdapter.Refinement
         {
             lock (locker)
             {
-                Systems.Add(system);
-                return true;
+                return Systems.Add(system);
             }
         }
 

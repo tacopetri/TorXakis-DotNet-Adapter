@@ -70,6 +70,7 @@ namespace TorXakisDotNetAdapter.Refinement
             }
 
             // All checks passed, assign the value!
+            Console.WriteLine("Setting variable! Name: " + name + " Type: " + value.GetType().Name + " Value: " + value);
             variables[name] = value;
         }
 
@@ -91,6 +92,7 @@ namespace TorXakisDotNetAdapter.Refinement
                 throw new ArgumentException("Cannot convert type! Name: " + name + " Set: " + existing + " (" + existing.GetType() + ")" + " Get: " + typeof(T));
 
             // All checks passed, return the value!
+            Console.WriteLine("Getting variable! Name: " + name + " Type: " + existing.GetType().Name + " Value: " + existing);
             return (T)existing;
         }
 
@@ -106,6 +108,7 @@ namespace TorXakisDotNetAdapter.Refinement
                 throw new ArgumentException("Variable not set: " + name);
 
             // All checks passed, clear the value!
+            Console.WriteLine("Clearing variable! Name: " + name + " Type: " + existing.GetType().Name + " Value: " + existing);
             variables.Remove(name);
         }
 

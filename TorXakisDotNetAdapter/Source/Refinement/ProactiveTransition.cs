@@ -31,7 +31,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// </summary>
         public delegate IAction GenerateDelegate(VariableCollection variables);
         /// <summary>
-        /// The generate function: given the variables, which action should be emitted?
+        /// The generate function: given the variables, which action should be performed?
         /// </summary>
         public GenerateDelegate Generate { get; private set; }
 
