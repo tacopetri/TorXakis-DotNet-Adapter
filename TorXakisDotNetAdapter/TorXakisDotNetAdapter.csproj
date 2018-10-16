@@ -58,7 +58,9 @@
     <Compile Include="Source\Mapping\SymbolicTransition.cs" />
     <Compile Include="Source\Mapping\SymbolicTransitionSystem.cs" />
     <Compile Include="Source\Mapping\SymbolicVariable.cs" />
+    <Compile Include="Source\Refinement\ProactiveRefinementTransition.cs" />
     <Compile Include="Source\Refinement\RefinementFramework.cs" />
+    <Compile Include="Source\Refinement\ReactiveRefinementTransition.cs" />
     <Compile Include="Source\Refinement\RefinementState.cs" />
     <Compile Include="Source\Refinement\RefinementSystem.cs" />
     <Compile Include="Source\Refinement\RefinementTransition.cs" />

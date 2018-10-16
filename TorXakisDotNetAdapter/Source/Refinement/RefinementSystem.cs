@@ -107,7 +107,7 @@ namespace TorXakisDotNetAdapter.Refinement
             Console.WriteLine(nameof(HandleAction) + " Type: " + type + " Action: " + action);
 
             List<RefinementTransition> validTransitions = new List<RefinementTransition>();
-            foreach (RefinementTransition transition in Transitions)
+            foreach (ReactiveRefinementTransition transition in Transitions.Where(x => x is ReactiveRefinementTransition))
             {
                 // Transition must come from the current state.
                 if (transition.From != CurrentState) continue;

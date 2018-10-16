@@ -138,7 +138,29 @@ namespace TorXakisDotNetAdapter.Refinement
         /// </summary>
         private void CheckSystems()
         {
-            // TODO!
+            bool transitioned = false;
+
+            // If we are currently inside a refinement, only that system may be advanced.
+            if (CurrentSystem != null)
+            {
+                ISystemAction nextEvent = events.Peek();
+                // TODO!
+            }
+            // Otherwise, we check if a new refinement system can be started with the queued system events and/or model inputs.
+            else
+            {
+                // TODO!
+            }
+
+            // If a transition was taken, re-evaluate immediately!
+            if (transitioned) CheckSystems();
+            // If no transition was taken, but there are still inputs or events queued: this indicates a deadlock!
+            else if (inputs.Count > 0 || events.Count > 0)
+            {
+                string error = "No valid transition!";
+                Console.WriteLine(error);
+                //throw new Exception(error);
+            }
         }
 
         #endregion

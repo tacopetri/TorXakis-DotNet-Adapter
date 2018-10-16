@@ -94,33 +94,34 @@ namespace TorXakisDotNetAdapter.Tests
 
             HashSet<RefinementTransition> transitions = new HashSet<RefinementTransition>()
             {
-                new RefinementTransition("T12", states.ElementAt(0), states.ElementAt(1),
-                    ActionType.Input,
+                new ReactiveRefinementTransition("T12", states.ElementAt(0), states.ElementAt(1),
                     (action) =>
                     {
-                        if (action is NewItem cast)
-                        {
-                            return cast.newItemId == 1;
-                        }
-                        return false;
+                        return action is NewItem;
                     },
                     (action, vars) =>
                     {
                         NewItem cast = (NewItem)action;
                         int id = cast.newItemId;
                         Console.WriteLine("Setting item var: " + id);
-                        vars.First(x=>x.Name == "item").SetValue(id);
+                        vars.First(x => x.Name == "item").SetValue(id);
                     }
                 ),
-                new RefinementTransition("T21", states.ElementAt(1), states.ElementAt(0),
-                    ActionType.Output,
-                    (action) =>
+                new ProactiveRefinementTransition("T21", states.ElementAt(1), states.ElementAt(0),
+                    (vars) =>
                     {
-                        if (action is ItemEventArgsNew cast)
+                        int id = vars.First(x => x.Name == "item").GetValue<int>();
+                        return new ItemEventArgsNew()
                         {
-                            return true;
-                        }
-                        return false;
+                            GUID = guids[id-1],
+                            SystemName = systemNames[id-1],
+                            Position = positions[id-1],
+                            Rotation = rotations[id-1],
+                            ModelGroup = modelGroups[id-1],
+                            Model = models[id-1],
+                            ModelVersion = modelVersions[id-1],
+                            Parent = parents[id-1],
+                        };
                     },
                     (action, vars) =>
                     {
