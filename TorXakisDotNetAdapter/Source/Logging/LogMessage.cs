@@ -64,7 +64,7 @@ namespace TorXakisDotNetAdapter.Logging
                 + "[" + Sender.GetType().Name + "] "
                 + "[" + Level.ToString().ToUpperInvariant() + "] "
                 + Message
-                + Exception == null ? "" : "\n" + Exception;
+                + (Exception == null ? "" : "\n" + Exception);
         }
 
         #endregion
