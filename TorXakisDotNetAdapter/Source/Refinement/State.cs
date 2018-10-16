@@ -39,7 +39,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            return GetType().Name + " (" + Name + ")";
+            return Name;
         }
 
         #endregion

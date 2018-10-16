@@ -27,7 +27,7 @@ namespace TorXakisDotNetAdapter.Refinement
         #region Variables & Properties
 
         /// <summary>
-        /// The delegate signature of the <see cref="Generate"/>.
+        /// The delegate signature of the <see cref="Generate"/> function.
         /// </summary>
         public delegate IAction GenerateDelegate(VariableCollection variables);
         /// <summary>

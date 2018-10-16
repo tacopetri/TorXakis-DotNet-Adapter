@@ -73,23 +73,12 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            string result = GetType().Name + " (" + Name + ")";
-
-            result += "\n";
-            result += "\n" + nameof(States) + ":";
-            foreach (State state in States)
-                result += "\n\t" + state;
-
-            result += "\n" + nameof(InitialState) + ": " + InitialState;
-            result += "\n" + nameof(CurrentState) + ": " + CurrentState;
-
-            result += "\n" + nameof(Transitions) + ":";
-            foreach (Transition transition in Transitions)
-                result += "\n\t" + transition;
-
-            result += "\n" + nameof(Variables) + ": " + Variables;
-
-            return result;
+            return Name + " (" + GetType().Name + ")"
+                + "\n\t" + nameof(States) + ": " + string.Join(", ", States.Select(x => x.ToString()).ToArray())
+                + "\n\t" + nameof(InitialState) + ": " + InitialState
+                + "\n\t" + nameof(CurrentState) + ": " + CurrentState
+                + "\n\t" + nameof(Transitions) + ": " + string.Join(", ", Transitions.Select(x => x.ToString()).ToArray())
+                + "\n\t" + nameof(Variables) + ": " + Variables;
         }
 
         #endregion

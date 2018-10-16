@@ -212,7 +212,10 @@ namespace TorXakisDotNetAdapter
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
-            return GetType().Name + " Model (" + Model.File.Name + ") Inputs (" + string.Join(", ", InputChannels.ToArray()) + ") Outputs (" + string.Join(", ", OutputChannels.ToArray()) + ")";
+            return GetType().Name
+                + "\n\t" + nameof(Model) + ": " + Model.File.Name
+                + "\n\t" + nameof(InputChannels) + ": " + string.Join(", ", InputChannels.ToArray())
+                + "\n\t" + nameof(OutputChannels) + ": " + string.Join(", ", OutputChannels.ToArray());
         }
 
         /// <summary>

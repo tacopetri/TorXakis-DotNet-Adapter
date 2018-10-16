@@ -27,11 +27,11 @@ namespace TorXakisDotNetAdapter.Refinement
         #region Variables & Properties
 
         /// <summary>
-        /// The delegate signature of the <see cref="Guard"/>.
+        /// The delegate signature of the <see cref="Guard"/> function.
         /// </summary>
         public delegate bool GuardDelegate(IAction action);
         /// <summary>
-        /// The guard constraint: is this transition valid given the parameter values?
+        /// The guard constraint: is this transition valid given the action?
         /// </summary>
         public GuardDelegate Guard { get; private set; }
 

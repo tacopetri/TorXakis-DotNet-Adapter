@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 namespace TorXakisDotNetAdapter.Refinement
 {
     /// <summary>
-    /// The top-level class that manages all refinement.
+    /// The top-level class that manages all action refinement operations.
     /// </summary>
     public sealed class Framework
     {

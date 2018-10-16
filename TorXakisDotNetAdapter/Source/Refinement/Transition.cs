@@ -61,7 +61,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            return GetType().Name + " (" + Name + ") " + From + " -> " + To;
+            return Name + " (" + Type + ", " + From + " -> " + To + ")";
         }
 
         #endregion

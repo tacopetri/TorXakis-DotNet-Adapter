@@ -43,10 +43,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            string result = GetType().Name;
-            foreach (KeyValuePair<string, object> kvp in variables)
-                result += "\n\t" + kvp.Key + " (" + kvp.Value.GetType() + "): " + kvp.Value;
-            return result;
+            return string.Join(", ", variables.Select(x => x.Key + " (" + x.Value.GetType() + ", " + x.Value + ")").ToArray());
         }
 
         #endregion
@@ -69,7 +66,7 @@ namespace TorXakisDotNetAdapter.Refinement
             if (variables.TryGetValue(name, out object existing))
             {
                 if (existing.GetType() != value.GetType())
-                    throw new InvalidOperationException("Cannot switch type! Name: " + name + " Old: " + existing + " (" + existing.GetType() + ")" + " New: " + value + " (" + value.GetType() + ")");
+                    throw new ArgumentException("Cannot switch type! Name: " + name + " Old: " + existing + " (" + existing.GetType() + ")" + " New: " + value + " (" + value.GetType() + ")");
             }
 
             // All checks passed, assign the value!
@@ -88,13 +85,28 @@ namespace TorXakisDotNetAdapter.Refinement
                 throw new ArgumentNullException(nameof(name));
 
             if (!variables.TryGetValue(name, out object existing))
-                throw new InvalidOperationException("Variable not set: " + name);
+                throw new ArgumentException("Variable not set: " + name);
 
             if (existing.GetType() != typeof(T))
-                throw new InvalidOperationException("Cannot convert type! Name: " + name + " Set: " + existing + " (" + existing.GetType() + ")" + " Get: " + typeof(T));
+                throw new ArgumentException("Cannot convert type! Name: " + name + " Set: " + existing + " (" + existing.GetType() + ")" + " Get: " + typeof(T));
 
             // All checks passed, return the value!
             return (T)existing;
+        }
+
+        /// <summary>
+        /// Type-safe value clearing for a named variable.
+        /// </summary>
+        public void ClearValue(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException(nameof(name));
+
+            if (!variables.TryGetValue(name, out object existing))
+                throw new ArgumentException("Variable not set: " + name);
+
+            // All checks passed, clear the value!
+            variables.Remove(name);
         }
 
         #endregion

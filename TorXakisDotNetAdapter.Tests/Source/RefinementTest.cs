@@ -58,32 +58,22 @@ namespace TorXakisDotNetAdapter.Tests
     [TestClass]
     public class RefinementTest
     {
-        /// <summary>
-        /// Test of the <see cref="Refinement.Framework"/> class.
-        /// </summary>
-        [TestMethod]
-        public void Framework()
-        {
-            FileInfo model = new FileInfo(@"..\..\..\TorXakisDotNetAdapter.Models\Models\Reference.txs");
-            Framework framework = new Framework(model);
-            Console.WriteLine(framework);
+        private static readonly Guid[] guids = new Guid[] { new Guid("c87354e7-888b-4a7f-a337-d5e24324b4f1"), new Guid("10d0e86d-1d6e-4c4e-80c0-2cea387d98a5") };
+        private static readonly string[] systemNames = new string[] { "human_nld_fire_bevelvoerder", "object_firetool_watergun" };
+        private static readonly float[][] positions = new float[][] { new float[3] { 0, 0, 0 }, new float[3] { 1, 1, 1 } };
+        private static readonly float[][] rotations = new float[][] { new float[4] { 1, 0, 0, 1 }, new float[4] { 0, 1, 0, 1 } };
+        private static readonly string[] modelGroups = new string[] { "group_12", "default" };
+        private static readonly string[] models = new string[] { "asset_human_nld_ic1_fire_bevelvoerder_12", "asset_object_int_fire_watergun" };
+        private static readonly int[] modelVersions = new int[] { 24, 18 };
+        private static readonly object[] parents = new object[] { null, null };
 
+        private TransitionSystem CreateTransitionSystem()
+        {
             HashSet<State> states = new HashSet<State>()
             {
                 new State("S1"),
                 new State("S2"),
             };
-
-            // STATIC LOOKUP //
-
-            Guid[] guids = new Guid[] { new Guid("c87354e7-888b-4a7f-a337-d5e24324b4f1"), new Guid("10d0e86d-1d6e-4c4e-80c0-2cea387d98a5") };
-            string[] systemNames = new string[] { "human_nld_fire_bevelvoerder", "object_firetool_watergun" };
-            float[][] positions = new float[][] { new float[3] { 0, 0, 0 }, new float[3] { 1, 1, 1 } };
-            float[][] rotations = new float[][] { new float[4] { 1, 0, 0, 1 }, new float[4] { 0, 1, 0, 1 } };
-            string[] modelGroups = new string[] { "group_12", "default" };
-            string[] models = new string[] { "asset_human_nld_ic1_fire_bevelvoerder_12", "asset_object_int_fire_watergun" };
-            int[] modelVersions = new int[] { 24, 18 };
-            object[] parents = new object[] { null, null };
 
             HashSet<Transition> transitions = new HashSet<Transition>()
             {
@@ -96,46 +86,68 @@ namespace TorXakisDotNetAdapter.Tests
                     {
                         NewItem cast = (NewItem)action;
                         int id = cast.newItemId;
-                        Console.WriteLine("Setting item var: " + id);
-                        variables.SetValue("item", id);
+                        Console.WriteLine("Setting id var: " + id);
+                        variables.SetValue(nameof(id), id);
                     }
                 ),
                 new ProactiveTransition("T21", states.ElementAt(1), states.ElementAt(0),
                     (variables) =>
                     {
-                        int id = variables.GetValue<int>("item");
+                        int id = variables.GetValue<int>(nameof(id));
                         return new ItemEventArgsNew()
                         {
-                            GUID = guids[id-1],
-                            SystemName = systemNames[id-1],
-                            Position = positions[id-1],
-                            Rotation = rotations[id-1],
-                            ModelGroup = modelGroups[id-1],
-                            Model = models[id-1],
-                            ModelVersion = modelVersions[id-1],
-                            Parent = parents[id-1],
+                            GUID = guids[id - 1],
+                            SystemName = systemNames[id - 1],
+                            Position = positions[id - 1],
+                            Rotation = rotations[id - 1],
+                            ModelGroup = modelGroups[id - 1],
+                            Model = models[id - 1],
+                            ModelVersion = modelVersions[id - 1],
+                            Parent = parents[id - 1],
                         };
                     },
                     (action, variables) =>
                     {
-                        int id = 0;
-                        Console.WriteLine("Setting item var: " + id);
-                        variables.SetValue("item", id);
+                        Console.WriteLine("Clearing id var!");
+                        variables.ClearValue("id");
                     }
                 ),
             };
 
             TransitionSystem system = new TransitionSystem("IOSTS", states, states.ElementAt(0), transitions);
-            Console.WriteLine(system);
-
-            framework.AddSystem(system);
-            Console.WriteLine(framework);
 
             // Have the properties been initialized correctly?
             CollectionAssert.AreEqual(states.ToList(), system.States.ToList());
             Assert.AreEqual(states.ElementAt(0), system.InitialState);
             Assert.AreEqual(states.ElementAt(0), system.CurrentState);
             CollectionAssert.AreEqual(transitions.ToList(), system.Transitions.ToList());
+
+            return system;
+        }
+
+        /// <summary>
+        /// Test of the <see cref="Refinement.TransitionSystem"/> class.
+        /// </summary>
+        [TestMethod]
+        public void TransitionSystem()
+        {
+            TransitionSystem system = CreateTransitionSystem();
+            Console.WriteLine(system);
+
+
+        }
+
+        /// <summary>
+        /// Test of the <see cref="Refinement.Framework"/> class.
+        /// </summary>
+        [TestMethod]
+        public void Framework()
+        {
+            FileInfo model = new FileInfo(@"..\..\..\TorXakisDotNetAdapter.Models\Models\Reference.txs");
+            Framework framework = new Framework(model);
+            TransitionSystem system = CreateTransitionSystem();
+            framework.AddSystem(system);
+            Console.WriteLine(framework);
 
             // Test some transitions!
             NewItem modelAction = new NewItem()
@@ -144,7 +156,7 @@ namespace TorXakisDotNetAdapter.Tests
             };
             system.HandleAction(ActionType.Input, modelAction);
             Console.WriteLine(system);
-            Assert.AreEqual(states.ElementAt(1), system.CurrentState);
+            Assert.AreEqual(system.States.ElementAt(1), system.CurrentState);
 
             ItemEventArgsNew systemAction = new ItemEventArgsNew()
             {
@@ -159,7 +171,7 @@ namespace TorXakisDotNetAdapter.Tests
             };
             system.HandleAction(ActionType.Output, systemAction);
             Console.WriteLine(system);
-            Assert.AreEqual(states.ElementAt(0), system.CurrentState);
+            Assert.AreEqual(system.States.ElementAt(0), system.CurrentState);
         }
     }
 }
