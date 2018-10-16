@@ -29,6 +29,16 @@ namespace TorXakisDotNetAdapter
             { "String", typeof(string) },
         };
 
+        /// <summary>
+        /// The hard-coded input channel name.
+        /// </summary>
+        public const string InputChannel = "Input";
+
+        /// <summary>
+        /// The hard-coded output channel name.
+        /// </summary>
+        public const string OutputChannel = "Output";
+
         #endregion
         #region Variables & Properties
 

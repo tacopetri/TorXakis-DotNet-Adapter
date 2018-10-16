@@ -20,13 +20,15 @@ namespace TorXakisDotNetAdapter
     {
         #region Definitions
 
-        /// <summary>
-        /// A lock object to make this class thread-safe.
-        /// </summary>
-        private static readonly object locker = new object();
+        // TODO: Implement!
 
         #endregion
         #region Variables & Properties
+
+        /// <summary>
+        /// A lock object to make this class thread-safe.
+        /// </summary>
+        private readonly object locker = new object();
 
         /// <summary>
         /// The assigned TCP port.

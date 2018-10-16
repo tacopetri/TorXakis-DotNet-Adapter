@@ -28,9 +28,14 @@ namespace TorXakisDotNetAdapter.Refinement
         public HashSet<RefinementState> States { get; private set; }
 
         /// <summary>
+        /// The initial <see cref="RefinementState"/> state.
+        /// </summary>
+        public RefinementState InitialState { get; private set; }
+
+        /// <summary>
         /// The current <see cref="RefinementState"/> state.
         /// </summary>
-        public RefinementState State { get; private set; }
+        public RefinementState CurrentState { get; private set; }
 
         /// <summary>
         /// The collection of contained <see cref="RefinementTransition"/> transitions.
@@ -48,20 +53,21 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public RefinementSystem(string name, HashSet<RefinementState> states, RefinementState state, HashSet<RefinementTransition> transitions, List<RefinementVariable> variables)
+        public RefinementSystem(string name, HashSet<RefinementState> states, RefinementState initialState, HashSet<RefinementTransition> transitions, List<RefinementVariable> variables)
         {
             // Sanity checks.
             if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name) + ": " + name);
             if (states == null) throw new ArgumentNullException(nameof(states));
-            if (state == null) throw new ArgumentNullException(nameof(state));
-            if (!states.Contains(state)) throw new ArgumentException(nameof(state) + ": " + state);
+            if (initialState == null) throw new ArgumentNullException(nameof(initialState));
+            if (!states.Contains(initialState)) throw new ArgumentException(nameof(initialState) + ": " + initialState);
             if (transitions == null) throw new ArgumentNullException(nameof(transitions));
             if (transitions.Any(x => !states.Contains(x.From) || !states.Contains(x.To))) throw new ArgumentException(nameof(transitions) + ": " + transitions);
             if (variables == null) throw new ArgumentNullException(nameof(variables));
 
             Name = name;
             States = states;
-            State = state;
+            InitialState = initialState;
+            CurrentState = initialState;
             Transitions = transitions;
             Variables = variables;
         }
@@ -69,14 +75,15 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            string result = "IOSTS (" + Name + ")";
+            string result = "System (" + Name + ")";
 
             result += "\n";
             result += "\n" + nameof(States) + ":";
             foreach (RefinementState state in States)
                 result += "\n\t" + state;
 
-            result += "\n" + nameof(State) + ": " + State;
+            result += "\n" + nameof(InitialState) + ": " + InitialState;
+            result += "\n" + nameof(CurrentState) + ": " + CurrentState;
 
             result += "\n" + nameof(Transitions) + ":";
             foreach (RefinementTransition transition in Transitions)
@@ -103,7 +110,7 @@ namespace TorXakisDotNetAdapter.Refinement
             foreach (RefinementTransition transition in Transitions)
             {
                 // Transition must come from the current state.
-                if (transition.From != State) continue;
+                if (transition.From != CurrentState) continue;
                 // Transition must have the same type (input or output).
                 if (transition.Type != type) continue;
                 // Transition guard function must evaluate to true.
@@ -123,8 +130,8 @@ namespace TorXakisDotNetAdapter.Refinement
 
             chosenTransition.Update(action, Variables);
 
-            Console.WriteLine("From: " + State + " To: " + chosenTransition.To);
-            State = chosenTransition.To;
+            Console.WriteLine("From: " + CurrentState + " To: " + chosenTransition.To);
+            CurrentState = chosenTransition.To;
 
             return true;
         }

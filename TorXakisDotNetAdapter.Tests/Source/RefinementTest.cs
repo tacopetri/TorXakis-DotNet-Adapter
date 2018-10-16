@@ -1,8 +1,7 @@
-﻿using Microsoft.SolverFoundation.Common;
-using Microsoft.SolverFoundation.Services;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using TorXakisDotNetAdapter.Models;
 using TorXakisDotNetAdapter.Refinement;
@@ -60,11 +59,15 @@ namespace TorXakisDotNetAdapter.Tests
     public class RefinementTest
     {
         /// <summary>
-        /// Creates a small test IOSTS.
+        /// Test of the <see cref="RefinementFramework"/> class.
         /// </summary>
         [TestMethod]
-        public void Create()
+        public void Framework()
         {
+            FileInfo model = new FileInfo(@"..\..\..\TorXakisDotNetAdapter.Models\Models\Reference.txs");
+            RefinementFramework framework = new RefinementFramework(model);
+            Console.WriteLine(framework);
+
             HashSet<RefinementState> states = new HashSet<RefinementState>()
             {
                 new RefinementState("S1"),
@@ -128,24 +131,27 @@ namespace TorXakisDotNetAdapter.Tests
                 ),
             };
 
-            RefinementSystem iosts = new RefinementSystem("IOSTS", states, states.ElementAt(0), transitions, variables);
-            Console.WriteLine(iosts);
+            RefinementSystem system = new RefinementSystem("IOSTS", states, states.ElementAt(0), transitions, variables);
+            Console.WriteLine(system);
+
+            framework.AddSystem(system);
+            Console.WriteLine(framework);
 
             // Have the properties been initialized correctly?
-            CollectionAssert.AreEqual(states.ToList(), iosts.States.ToList());
-            Assert.AreEqual(states.ElementAt(0), iosts.State);
-            CollectionAssert.AreEqual(transitions.ToList(), iosts.Transitions.ToList());
-            CollectionAssert.AreEqual(variables, iosts.Variables);
-            CollectionAssert.AreEqual(variables.Select(x => x.Name).ToList(), iosts.Variables.Select(x => x.Name).ToList());
+            CollectionAssert.AreEqual(states.ToList(), system.States.ToList());
+            Assert.AreEqual(states.ElementAt(0), system.CurrentState);
+            CollectionAssert.AreEqual(transitions.ToList(), system.Transitions.ToList());
+            CollectionAssert.AreEqual(variables, system.Variables);
+            CollectionAssert.AreEqual(variables.Select(x => x.Name).ToList(), system.Variables.Select(x => x.Name).ToList());
 
             // Test some transitions!
             NewItem modelAction = new NewItem()
             {
                 newItemId = 1,
             };
-            iosts.HandleAction(ActionType.Input, modelAction);
-            Console.WriteLine(iosts);
-            Assert.AreEqual(states.ElementAt(1), iosts.State);
+            system.HandleAction(ActionType.Input, modelAction);
+            Console.WriteLine(system);
+            Assert.AreEqual(states.ElementAt(1), system.CurrentState);
 
             ItemEventArgsNew systemAction = new ItemEventArgsNew()
             {
@@ -158,9 +164,9 @@ namespace TorXakisDotNetAdapter.Tests
                 ModelVersion = modelVersions[0],
                 Parent = parents[0],
             };
-            iosts.HandleAction(ActionType.Output, systemAction);
-            Console.WriteLine(iosts);
-            Assert.AreEqual(states.ElementAt(0), iosts.State);
+            system.HandleAction(ActionType.Output, systemAction);
+            Console.WriteLine(system);
+            Assert.AreEqual(states.ElementAt(0), system.CurrentState);
         }
     }
 }
