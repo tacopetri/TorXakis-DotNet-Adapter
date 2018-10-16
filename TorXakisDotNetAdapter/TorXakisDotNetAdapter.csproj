@@ -53,6 +53,9 @@
     <Compile Include="Source\Constraint\SymbolicTransitionSystem.cs" />
     <Compile Include="Source\IAction.cs" />
     <Compile Include="Source\ISystemAction.cs" />
+    <Compile Include="Source\Logging\Log.cs" />
+    <Compile Include="Source\Logging\LogLevel.cs" />
+    <Compile Include="Source\Logging\LogMessage.cs" />
     <Compile Include="Source\ModelAction.cs" />
     <Compile Include="Source\Mapping\SymbolicState.cs" />
     <Compile Include="Source\Mapping\SymbolicTransition.cs" />
