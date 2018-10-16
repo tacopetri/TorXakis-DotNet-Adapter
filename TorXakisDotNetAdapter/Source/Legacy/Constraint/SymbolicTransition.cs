@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakisDotNetAdapter.Constraint
+namespace TorXakisDotNetAdapter.Legacy.Constraint
 {
     /// <summary>
     /// A transition contained in a <see cref="SymbolicTransitionSystem"/>.

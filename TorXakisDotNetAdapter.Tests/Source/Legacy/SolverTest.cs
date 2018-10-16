@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace TorXakisDotNetAdapter.Tests
+namespace TorXakisDotNetAdapter.Tests.Legacy
 {
     /// <summary>
     /// Tests for the <see cref="Microsoft.SolverFoundation"/> namespace.
@@ -18,7 +18,7 @@ namespace TorXakisDotNetAdapter.Tests
         /// https://msdn.microsoft.com/en-us/library/ff628587(v=vs.93).aspx
         /// </summary>
         [TestMethod]
-        public void LinearExample()
+        public void SolverLinear()
         {
             SolverContext context = SolverContext.GetContext();
             Model model = context.CreateModel();
@@ -54,7 +54,7 @@ namespace TorXakisDotNetAdapter.Tests
         /// https://msdn.microsoft.com/en-us/library/ff826355(v=vs.93).aspx
         /// </summary>
         [TestMethod]
-        public void EnumExample()
+        public void SolverEnum()
         {
             SolverContext context = SolverContext.GetContext();
             Model model = context.CreateModel();
@@ -91,7 +91,7 @@ namespace TorXakisDotNetAdapter.Tests
         /// Single channel constraint test.
         /// </summary>
         [TestMethod]
-        public void SingleChannel()
+        public void SolverSingleChannel()
         {
             SolverContext context = SolverContext.GetContext();
             Model model = context.CreateModel();
@@ -121,7 +121,7 @@ namespace TorXakisDotNetAdapter.Tests
         /// Multi channel constraint test.
         /// </summary>
         [TestMethod]
-        public void MultiChannel()
+        public void SolverMultiChannel()
         {
             SolverContext context = SolverContext.GetContext();
             Model model = context.CreateModel();
@@ -149,7 +149,7 @@ namespace TorXakisDotNetAdapter.Tests
         /// New item test.
         /// </summary>
         [TestMethod]
-        public void NewItem()
+        public void SolverNewItem()
         {
             SolverContext solverContext = SolverContext.GetContext();
             Model solverModel = solverContext.CreateModel();

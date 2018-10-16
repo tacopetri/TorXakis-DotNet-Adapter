@@ -1,11 +1,9 @@
-﻿using Microsoft.SolverFoundation.Common;
-using Microsoft.SolverFoundation.Services;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using TorXakisDotNetAdapter.Logging;
 
-namespace TorXakisDotNetAdapter.Constraint
+namespace TorXakisDotNetAdapter.Legacy.Mapping
 {
     /// <summary>
     /// An Input Output Symbolic Transition System (IOSTS).
@@ -43,7 +41,7 @@ namespace TorXakisDotNetAdapter.Constraint
         /// <summary>
         /// The current variables: expressed as named keys bound to values.
         /// </summary>
-        public List<Parameter> Variables { get; private set; }
+        public List<SymbolicVariable> Variables { get; private set; }
 
         #endregion
         #region Create & Destroy
@@ -51,7 +49,7 @@ namespace TorXakisDotNetAdapter.Constraint
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public SymbolicTransitionSystem(string name, HashSet<SymbolicState> states, SymbolicState state, HashSet<SymbolicTransition> transitions, List<Parameter> variables)
+        public SymbolicTransitionSystem(string name, HashSet<SymbolicState> states, SymbolicState state, HashSet<SymbolicTransition> transitions, List<SymbolicVariable> variables)
         {
             // Sanity checks.
             if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name) + ": " + name);
@@ -86,8 +84,8 @@ namespace TorXakisDotNetAdapter.Constraint
                 result += "\n\t" + transition;
 
             result += "\n" + nameof(Variables) + ":";
-            foreach (Parameter variable in Variables)
-                result += "\n\t" + variable.Name + ": " + variable.ToString();
+            foreach (SymbolicVariable variable in Variables)
+                result += "\n\t" + variable;
 
             return result;
         }
@@ -95,16 +93,15 @@ namespace TorXakisDotNetAdapter.Constraint
         #endregion
         #region Functionality
 
-        private readonly Dictionary<SymbolicTransition, Model> modelCache = new Dictionary<SymbolicTransition, Model>();
-
         /// <summary>
         /// Handles the given action, which may result in a synchronized transition.
         /// </summary>
-        public bool HandleAction(ActionType type, string channel, Dictionary<string, object> parameters)
+        public bool HandleAction(ActionType type, string channel, List<SymbolicVariable> parameters)
         {
-            Log.Debug(this, nameof(HandleAction) + " Type: " + type + " Channel: " + channel + " Parameters:\n" + string.Join("\n", parameters.Select(x => x.Key + ": " + x.Value).ToArray()));
+            Log.Debug(this, nameof(HandleAction) + " Type: " + type + " Channel: " + channel + " Parameters:\n" + string.Join("\n", parameters.Select(x => x.ToString()).ToArray()));
 
             List<SymbolicTransition> validTransitions = new List<SymbolicTransition>();
+            Dictionary<SymbolicTransition, List<SymbolicVariable>> validAssignments = new Dictionary<SymbolicTransition, List<SymbolicVariable>>();
             foreach (SymbolicTransition transition in Transitions)
             {
                 // Transition must come from the current state.
@@ -113,60 +110,16 @@ namespace TorXakisDotNetAdapter.Constraint
                 if (transition.Type != type) continue;
                 // Transition must have the same channel name.
                 if (transition.Channel != channel) continue;
-
-                bool valid = true;
-                try
-                {
-                    SolverContext solver = SolverContext.GetContext();
-
-                    if (!modelCache.TryGetValue(transition, out Model model))
-                    {
-                        solver.ClearModel();
-                        model = solver.CreateModel();
-                        modelCache.Add(transition, model);
-
-                        Log.Debug(this, "Created new model: " + model);
-
-                        // Add location variables, and interaction variables.
-                        //model.AddParameters(Variables.ToArray());
-                        model.AddDecisions(transition.Variables.ToArray());
-
-                        // Let the transition add its guard expression.
-                        transition.Guard(model, Variables, transition.Variables);
-                    }
-                    else
-                    {
-                        Log.Debug(this, "Re-using existing model: " + model);
-
-                        solver.ClearModel();
-                        solver.CurrentModel = model;
-                    }
-
-                    // Does it solve?
-                    Solution solution = solver.Solve(new HybridLocalSearchDirective() { TimeLimit = 1000, });
-
-                    Log.Debug(this, "Succesfully solved: " + transition);
-                    foreach (Decision decision in transition.Variables)
-                        Log.Debug(this, string.Format("<Decision> {0}: {1}", decision.Name, decision));
-
-                    Report report = solution.GetReport();
-                    Log.Debug(this, string.Format("{0}", report));
-
-                    solver.ClearModel();
-                }
-                catch (Exception e)
-                {
-                    Log.Error(this, "Exception solving: " + transition + "\n" + e);
-                    valid = false;
-                }
-
                 // Transition must have the same parameters (but order does not matter).
-                //if (!transition.Parameters.SetEquals(new HashSet<string>(parameters.Keys))) continue;
+                //if (!new HashSet<string>(transition.Variables.Select(x => x.Name)).SetEquals(new HashSet<string>(parameters.Select(x => x.Name)))) continue;
                 // Transition guard function must evaluate to true.
-                //if (!transition.GuardFunction(Variables, parameters)) continue;
+                List<SymbolicVariable> assignments = transition.Guard(Variables, parameters);
+                if (assignments == null) continue;
+                Log.Debug(this, "Parameter assignments:\n" + string.Join("\n", assignments.Select(x => x.ToString()).ToArray()));
 
                 // All checks passed!
-                if (valid) validTransitions.Add(transition);
+                validTransitions.Add(transition);
+                validAssignments[transition] = assignments;
             }
 
             Log.Debug(this, "Valid transitions:\n" + string.Join("\n", validTransitions.Select(x => x.ToString()).ToArray()));
@@ -177,7 +130,7 @@ namespace TorXakisDotNetAdapter.Constraint
             SymbolicTransition chosenTransition = validTransitions.First();
             Log.Debug(this, "Chosen transition:\n" + chosenTransition);
 
-            chosenTransition.Update(Variables, chosenTransition.Variables);
+            chosenTransition.Update(Variables, validAssignments[chosenTransition]);
 
             Log.Debug(this, "From: " + State + " To: " + chosenTransition.To);
             State = chosenTransition.To;

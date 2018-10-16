@@ -48,9 +48,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Source\ActionType.cs" />
-    <Compile Include="Source\Constraint\SymbolicState.cs" />
-    <Compile Include="Source\Constraint\SymbolicTransition.cs" />
-    <Compile Include="Source\Constraint\SymbolicTransitionSystem.cs" />
+    <Compile Include="Source\Legacy\Constraint\SymbolicState.cs" />
+    <Compile Include="Source\Legacy\Constraint\SymbolicTransition.cs" />
+    <Compile Include="Source\Legacy\Constraint\SymbolicTransitionSystem.cs" />
     <Compile Include="Source\ExtensionMethods.cs" />
     <Compile Include="Source\IAction.cs" />
     <Compile Include="Source\ISystemAction.cs" />
@@ -58,10 +58,10 @@
     <Compile Include="Source\Logging\LogLevel.cs" />
     <Compile Include="Source\Logging\LogMessage.cs" />
     <Compile Include="Source\ModelAction.cs" />
-    <Compile Include="Source\Mapping\SymbolicState.cs" />
-    <Compile Include="Source\Mapping\SymbolicTransition.cs" />
-    <Compile Include="Source\Mapping\SymbolicTransitionSystem.cs" />
-    <Compile Include="Source\Mapping\SymbolicVariable.cs" />
+    <Compile Include="Source\Legacy\Mapping\SymbolicState.cs" />
+    <Compile Include="Source\Legacy\Mapping\SymbolicTransition.cs" />
+    <Compile Include="Source\Legacy\Mapping\SymbolicTransitionSystem.cs" />
+    <Compile Include="Source\Legacy\Mapping\SymbolicVariable.cs" />
     <Compile Include="Source\Refinement\ProactiveTransition.cs" />
     <Compile Include="Source\Refinement\Framework.cs" />
     <Compile Include="Source\Refinement\ReactiveTransition.cs" />

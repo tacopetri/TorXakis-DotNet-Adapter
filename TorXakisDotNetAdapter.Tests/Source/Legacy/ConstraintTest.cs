@@ -4,13 +4,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using TorXakisDotNetAdapter.Constraint;
+using TorXakisDotNetAdapter.Legacy.Constraint;
 using TorXakisDotNetAdapter.Logging;
 
-namespace TorXakisDotNetAdapter.Tests
+namespace TorXakisDotNetAdapter.Tests.Legacy
 {
     /// <summary>
-    /// Tests for the <see cref="TorXakisDotNetAdapter.Constraint"/> namespace.
+    /// Tests for the <see cref="TorXakisDotNetAdapter.Legacy.Constraint"/> namespace.
     /// </summary>
     [TestClass]
     public class ConstraintTest
@@ -30,7 +30,7 @@ namespace TorXakisDotNetAdapter.Tests
         /// Creates a small test IOSTS.
         /// </summary>
         [TestMethod]
-        public void Create()
+        public void Constraint()
         {
             HashSet<SymbolicState> states = new HashSet<SymbolicState>()
             {

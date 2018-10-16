@@ -4,13 +4,13 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorXakisDotNetAdapter.Legacy.Mapping;
 using TorXakisDotNetAdapter.Logging;
-using TorXakisDotNetAdapter.Mapping;
 
-namespace TorXakisDotNetAdapter.Tests
+namespace TorXakisDotNetAdapter.Tests.Legacy
 {
     /// <summary>
-    /// Tests for the <see cref="TorXakisDotNetAdapter.Mapping"/> namespace.
+    /// Tests for the <see cref="TorXakisDotNetAdapter.Legacy.Mapping"/> namespace.
     /// </summary>
     [TestClass]
     public class MappingTest
@@ -30,7 +30,7 @@ namespace TorXakisDotNetAdapter.Tests
         /// Creates a small test IOSTS.
         /// </summary>
         [TestMethod]
-        public void Create()
+        public void Mapping()
         {
             HashSet<SymbolicState> states = new HashSet<SymbolicState>()
             {
