@@ -37,18 +37,24 @@ namespace TorXakisDotNetAdapter.Logging
         /// </summary>
         public string Message { get; private set; }
 
+        /// <summary>
+        /// The <see cref="System.Exception"/> that is associated with this event: used for debugging/tracing applications.
+        /// </summary>
+        public Exception Exception { get; private set; }
+
         #endregion
         #region Create & Destroy
 
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public LogMessage(object sender, LogLevel level, string message)
+        public LogMessage(object sender, LogLevel level, string message, Exception exception = null)
         {
             Sender = sender;
             UTC = DateTime.UtcNow;
             Level = level;
             Message = message;
+            Exception = exception;
         }
 
         /// <summary><see cref="Object.ToString"/></summary>
@@ -57,7 +63,8 @@ namespace TorXakisDotNetAdapter.Logging
             return "[" + UTC.ToLocalTime().ToString("HH:mm:ss.fff") + "] "
                 + "[" + Sender.GetType().Name + "] "
                 + "[" + Level.ToString().ToUpperInvariant() + "] "
-                + Message;
+                + Message
+                + Exception == null ? "" : "\n" + Exception;
         }
 
         #endregion

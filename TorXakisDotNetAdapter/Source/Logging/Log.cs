@@ -19,42 +19,42 @@ namespace TorXakisDotNetAdapter.Logging
         /// <summary>
         /// Invokes the <see cref="Message"/> event.
         /// </summary>
-        private static void OnMessage(object sender, LogLevel level, string message)
+        private static void OnMessage(object sender, LogLevel level, string message, Exception exception)
         {
-            LogMessage log = new LogMessage(sender, level, message);
+            LogMessage log = new LogMessage(sender, level, message, exception);
             Message?.Invoke(log);
         }
 
         /// <summary>
         /// Sends the given <see cref="LogLevel.Debug"/> message.
         /// </summary>
-        public static void Debug(object sender, string message)
+        public static void Debug(object sender, string message, Exception exception = null)
         {
-            OnMessage(sender, LogLevel.Debug, message);
+            OnMessage(sender, LogLevel.Debug, message, exception);
         }
 
         /// <summary>
         /// Sends the given <see cref="LogLevel.Info"/> message.
         /// </summary>
-        public static void Info(object sender, string message)
+        public static void Info(object sender, string message, Exception exception = null)
         {
-            OnMessage(sender, LogLevel.Info, message);
+            OnMessage(sender, LogLevel.Info, message, exception);
         }
 
         /// <summary>
         /// Sends the given <see cref="LogLevel.Warn"/> message.
         /// </summary>
-        public static void Warn(object sender, string message)
+        public static void Warn(object sender, string message, Exception exception = null)
         {
-            OnMessage(sender, LogLevel.Warn, message);
+            OnMessage(sender, LogLevel.Warn, message, exception);
         }
 
         /// <summary>
         /// Sends the given <see cref="LogLevel.Error"/> message.
         /// </summary>
-        public static void Error(object sender, string message)
+        public static void Error(object sender, string message, Exception exception = null)
         {
-            OnMessage(sender, LogLevel.Error, message);
+            OnMessage(sender, LogLevel.Error, message, exception);
         }
     }
 }

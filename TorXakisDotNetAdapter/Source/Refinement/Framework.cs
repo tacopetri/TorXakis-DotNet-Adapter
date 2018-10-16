@@ -2,8 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
+using TorXakisDotNetAdapter.Logging;
 
 namespace TorXakisDotNetAdapter.Refinement
 {
@@ -157,8 +156,7 @@ namespace TorXakisDotNetAdapter.Refinement
             else if (inputs.Count > 0 || events.Count > 0)
             {
                 string error = "No valid transition!";
-                Console.WriteLine(error);
-                //throw new Exception(error);
+                Log.Error(this, error);
             }
         }
 

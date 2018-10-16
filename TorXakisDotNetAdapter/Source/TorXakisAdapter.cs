@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
+using TorXakisDotNetAdapter.Logging;
 
 namespace TorXakisDotNetAdapter
 {
@@ -88,7 +89,7 @@ namespace TorXakisDotNetAdapter
             Model = new TorXakisModel(model);
             ParseModel();
 
-            Log("Create: " + this);
+            Log.Info(this, "Created: " + this);
         }
 
         /// <summary>
@@ -158,7 +159,7 @@ namespace TorXakisDotNetAdapter
         {
             if (string.IsNullOrEmpty(e.Data)) return;
 
-            if (LogConsoleToTrace) Log("Info: " + e.Data);
+            if (LogConsoleToTrace) Log.Info(this, "Info: " + e.Data);
             ConsoleOutputReceived?.Invoke(e.Data);
         }
 
@@ -174,7 +175,7 @@ namespace TorXakisDotNetAdapter
         {
             if (string.IsNullOrEmpty(e.Data)) return;
 
-            if (LogConsoleToTrace) Log("Error: " + e.Data);
+            if (LogConsoleToTrace) Log.Error(this, "Error: " + e.Data);
             ConsoleErrorReceived?.Invoke(e.Data);
         }
 
@@ -186,7 +187,7 @@ namespace TorXakisDotNetAdapter
         /// <summary>Fires the event: <see cref="Started"/></summary>
         private void OnStarted()
         {
-            Log("Started: " + this);
+            Log.Info(this, "Started: " + this);
             Started?.Invoke();
         }
 
@@ -202,7 +203,7 @@ namespace TorXakisDotNetAdapter
             if (action.Type != ActionType.Input)
                 throw new ArgumentException("Not input: " + action);
 
-            Log(nameof(InputReceived) + ": " + action);
+            Log.Info(this, nameof(InputReceived) + ": " + action);
             InputReceived?.Invoke(action);
         }
 
@@ -216,15 +217,6 @@ namespace TorXakisDotNetAdapter
                 + "\n\t" + nameof(Model) + ": " + Model.File.Name
                 + "\n\t" + nameof(InputChannels) + ": " + string.Join(", ", InputChannels.ToArray())
                 + "\n\t" + nameof(OutputChannels) + ": " + string.Join(", ", OutputChannels.ToArray());
-        }
-
-        /// <summary>
-        /// Logs the given message, which automatically appends accurate timing information.
-        /// </summary>
-        private void Log(string message, Exception e = null)
-        {
-            string line = "[" + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + message;
-            Trace.WriteLine(line + "\n" + e);
         }
 
         /// <summary>
@@ -261,7 +253,7 @@ namespace TorXakisDotNetAdapter
                 WindowStyle = ProcessWindowStyle.Maximized,
             };
 
-            Log("Starting process: " + startInfo.FileName + "\n" + "Working directory: " + startInfo.WorkingDirectory + "\n" + "Arguments: " + startInfo.Arguments);
+            Log.Info(this, "Starting process: " + startInfo.FileName + "\n" + "Working directory: " + startInfo.WorkingDirectory + "\n" + "Arguments: " + startInfo.Arguments);
 
             process = new Process()
             {
@@ -344,7 +336,7 @@ namespace TorXakisDotNetAdapter
 
                 TorXakisConnection connection = connections.Values.FirstOrDefault(x => x.OutputChannel == action.Channel);
                 if (connection == null) throw new Exception("Connection not found for: " + action);
-                Log(nameof(SendOutput) + ": " + action);
+                Log.Info(this, nameof(SendOutput) + ": " + action);
                 return connection.SendOutput(action);
             }
         }
@@ -364,12 +356,12 @@ namespace TorXakisDotNetAdapter
                     try
                     {
                         process.StandardInput.WriteLine(command);
-                        Log(nameof(SendConsoleCommand) + ": " + command);
+                        Log.Info(this, nameof(SendConsoleCommand) + ": " + command);
                         return true;
                     }
                     catch (Exception e)
                     {
-                        Log(nameof(SendConsoleCommand) + " Exception!", e);
+                        Log.Error(this, nameof(SendConsoleCommand) + " Exception!", e);
                         return false;
                     }
                 }

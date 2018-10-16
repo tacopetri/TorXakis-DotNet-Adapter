@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using TorXakisDotNetAdapter.Logging;
 
 namespace TorXakisDotNetAdapter.Tests
 {
@@ -16,6 +17,17 @@ namespace TorXakisDotNetAdapter.Tests
     [TestClass]
     public class ModelTest
     {
+        /// <summary><see cref="ClassInitializeAttribute"/></summary>
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            // Forward log messages to console.
+            Log.Message += (message) =>
+            {
+                Console.WriteLine(message);
+            };
+        }
+
         /// <summary>
         /// Test for the <see cref="TorXakisModel.ParseConnections"/> method.
         /// </summary>

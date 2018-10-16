@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
+using TorXakisDotNetAdapter.Logging;
 using TorXakisDotNetAdapter.Mapping;
 
 namespace TorXakisDotNetAdapter.Tests
@@ -15,6 +15,17 @@ namespace TorXakisDotNetAdapter.Tests
     [TestClass]
     public class MappingTest
     {
+        /// <summary><see cref="ClassInitializeAttribute"/></summary>
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            // Forward log messages to console.
+            Log.Message += (message) =>
+            {
+                Console.WriteLine(message);
+            };
+        }
+
         /// <summary>
         /// Creates a small test IOSTS.
         /// </summary>

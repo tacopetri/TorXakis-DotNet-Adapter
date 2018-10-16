@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using TorXakisDotNetAdapter.Models;
 using TorXakisDotNetAdapter.Refinement;
+using TorXakisDotNetAdapter.Logging;
 
 namespace TorXakisDotNetAdapter.Tests
 {
@@ -58,6 +59,17 @@ namespace TorXakisDotNetAdapter.Tests
     [TestClass]
     public class RefinementTest
     {
+        /// <summary><see cref="ClassInitializeAttribute"/></summary>
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            // Forward log messages to console.
+            Log.Message += (message) =>
+            {
+                Console.WriteLine(message);
+            };
+        }
+
         private static readonly Guid[] guids = new Guid[] { new Guid("c87354e7-888b-4a7f-a337-d5e24324b4f1"), new Guid("10d0e86d-1d6e-4c4e-80c0-2cea387d98a5") };
         private static readonly string[] systemNames = new string[] { "human_nld_fire_bevelvoerder", "object_firetool_watergun" };
         private static readonly float[][] positions = new float[][] { new float[3] { 0, 0, 0 }, new float[3] { 1, 1, 1 } };

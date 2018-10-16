@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorXakisDotNetAdapter.Logging;
 
 namespace TorXakisDotNetAdapter.Refinement
 {
@@ -115,10 +116,10 @@ namespace TorXakisDotNetAdapter.Refinement
                 throw new ArgumentException("Transition not possible: " + transition);
 
             // Execute the update function.
-            Console.WriteLine("Calling update function: " + transition);
+            Log.Debug(this, "Calling update function: " + transition);
             transition.Update(action, Variables);
             // Transition to the new state.
-            Console.WriteLine("Transitioning to new state: " + transition.To);
+            Log.Debug(this, "Transitioning to new state: " + transition.To);
             CurrentState = transition.To;
         }
 
@@ -151,13 +152,13 @@ namespace TorXakisDotNetAdapter.Refinement
                 throw new ArgumentException("Transition not possible: " + transition);
 
             // Generate the action.
-            Console.WriteLine("Calling generate function: " + transition);
+            Log.Debug(this, "Calling generate function: " + transition);
             IAction action = transition.Generate(Variables);
             // Execute the update function.
-            Console.WriteLine("Calling update function: " + transition);
+            Log.Debug(this, "Calling update function: " + transition);
             transition.Update(action, Variables);
             // Transition to the new state.
-            Console.WriteLine("Transitioning to new state: " + transition.To);
+            Log.Debug(this, "Transitioning to new state: " + transition.To);
             CurrentState = transition.To;
 
             return action;

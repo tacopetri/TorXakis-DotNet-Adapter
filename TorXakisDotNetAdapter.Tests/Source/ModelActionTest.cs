@@ -7,7 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-
+using TorXakisDotNetAdapter.Logging;
 using TorXakisDotNetAdapter.Models;
 
 namespace TorXakisDotNetAdapter.Tests
@@ -18,6 +18,17 @@ namespace TorXakisDotNetAdapter.Tests
     [TestClass]
     public class ModelActionTest
     {
+        /// <summary><see cref="ClassInitializeAttribute"/></summary>
+        [ClassInitialize]
+        public static void ClassInitialize(TestContext context)
+        {
+            // Forward log messages to console.
+            Log.Message += (message) =>
+            {
+                Console.WriteLine(message);
+            };
+        }
+
         // Define action types with 0, 1 and 2 properties.
         private readonly List<Tuple<ModelAction, string>> actions = new List<Tuple<ModelAction, string>>()
         {

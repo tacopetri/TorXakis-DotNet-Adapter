@@ -9,6 +9,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using TorXakisDotNetAdapter.Logging;
 
 namespace TorXakisDotNetAdapter
 {
@@ -201,11 +202,11 @@ namespace TorXakisDotNetAdapter
 
                 tcpListener = new TcpListener(IPAddress.Any, Port);
                 tcpListener.Start();
-                Log("Waiting for TCP connection: " + tcpListener.LocalEndpoint);
+                Log.Info(this, "Waiting for TCP connection: " + tcpListener.LocalEndpoint);
 
                 tcpClient = tcpListener.AcceptTcpClient();
                 tcpClient.NoDelay = true;
-                Log("Connected TCP client: " + tcpListener.LocalEndpoint);
+                Log.Info(this, "Connected TCP client: " + tcpListener.LocalEndpoint);
 
                 NetworkStream stream = tcpClient.GetStream();
                 // TorXakis expects UTF-8 encoding without BOM!
@@ -227,7 +228,7 @@ namespace TorXakisDotNetAdapter
             }
             catch (Exception e)
             {
-                Log(nameof(ThreadLoop) + " exception: " + this, e);
+                Log.Error(this, nameof(ThreadLoop) + " exception: " + this, e);
             }
             finally
             {
@@ -242,15 +243,6 @@ namespace TorXakisDotNetAdapter
         public override string ToString()
         {
             return GetType().Name + " " + nameof(Port) + ": " + Port + " " + nameof(InputChannel) + ": " + InputChannel + " " + nameof(OutputChannel) + ": " + OutputChannel;
-        }
-
-        /// <summary>
-        /// Logs the given message, which automatically appends accurate timing information.
-        /// </summary>
-        private void Log(string message, Exception e = null)
-        {
-            string line = "[" + DateTime.Now.ToString("HH:mm:ss.fff") + "] " + message;
-            Trace.WriteLine(line + "\n" + e);
         }
 
         #endregion
@@ -286,7 +278,7 @@ namespace TorXakisDotNetAdapter
                     }
                     catch (Exception e)
                     {
-                        Log(nameof(SendOutput) + " exception: " + this, e);
+                        Log.Error(this, nameof(SendOutput) + " exception: " + this, e);
                         return false;
                     }
                 }
@@ -343,7 +335,7 @@ namespace TorXakisDotNetAdapter
         /// </summary>
         private void OnStateChanged()
         {
-            Log(State + ": " + this);
+            Log.Info(this, State + ": " + this);
             StateChanged?.Invoke(this);
         }
 

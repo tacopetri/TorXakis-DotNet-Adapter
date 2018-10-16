@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorXakisDotNetAdapter.Logging;
 
 namespace TorXakisDotNetAdapter.Mapping
 {
@@ -97,7 +98,7 @@ namespace TorXakisDotNetAdapter.Mapping
         /// </summary>
         public bool HandleAction(ActionType type, string channel, List<SymbolicVariable> parameters)
         {
-            Console.WriteLine(nameof(HandleAction) + " Type: " + type + " Channel: " + channel + " Parameters:\n" + string.Join("\n", parameters.Select(x => x.ToString()).ToArray()));
+            Log.Debug(this, nameof(HandleAction) + " Type: " + type + " Channel: " + channel + " Parameters:\n" + string.Join("\n", parameters.Select(x => x.ToString()).ToArray()));
 
             List<SymbolicTransition> validTransitions = new List<SymbolicTransition>();
             Dictionary<SymbolicTransition, List<SymbolicVariable>> validAssignments = new Dictionary<SymbolicTransition, List<SymbolicVariable>>();
@@ -114,24 +115,24 @@ namespace TorXakisDotNetAdapter.Mapping
                 // Transition guard function must evaluate to true.
                 List<SymbolicVariable> assignments = transition.Guard(Variables, parameters);
                 if (assignments == null) continue;
-                Console.WriteLine("Parameter assignments:\n" + string.Join("\n", assignments.Select(x => x.ToString()).ToArray()));
+                Log.Debug(this, "Parameter assignments:\n" + string.Join("\n", assignments.Select(x => x.ToString()).ToArray()));
 
                 // All checks passed!
                 validTransitions.Add(transition);
                 validAssignments[transition] = assignments;
             }
 
-            Console.WriteLine("Valid transitions:\n" + string.Join("\n", validTransitions.Select(x => x.ToString()).ToArray()));
+            Log.Debug(this, "Valid transitions:\n" + string.Join("\n", validTransitions.Select(x => x.ToString()).ToArray()));
 
             if (validTransitions.Count == 0) return false;
 
             // DEBUG: For testing, we pick the first compatible transition, not a random one. (TPE)
             SymbolicTransition chosenTransition = validTransitions.First();
-            Console.WriteLine("Chosen transition:\n" + chosenTransition);
+            Log.Debug(this, "Chosen transition:\n" + chosenTransition);
 
             chosenTransition.Update(Variables, validAssignments[chosenTransition]);
 
-            Console.WriteLine("From: " + State + " To: " + chosenTransition.To);
+            Log.Debug(this, "From: " + State + " To: " + chosenTransition.To);
             State = chosenTransition.To;
 
             return true;

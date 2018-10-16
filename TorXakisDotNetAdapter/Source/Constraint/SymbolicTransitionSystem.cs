@@ -3,6 +3,7 @@ using Microsoft.SolverFoundation.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using TorXakisDotNetAdapter.Logging;
 
 namespace TorXakisDotNetAdapter.Constraint
 {
@@ -101,7 +102,7 @@ namespace TorXakisDotNetAdapter.Constraint
         /// </summary>
         public bool HandleAction(ActionType type, string channel, Dictionary<string, object> parameters)
         {
-            Console.WriteLine(nameof(HandleAction) + " Type: " + type + " Channel: " + channel + " Parameters:\n" + string.Join("\n", parameters.Select(x => x.Key + ": " + x.Value).ToArray()));
+            Log.Debug(this, nameof(HandleAction) + " Type: " + type + " Channel: " + channel + " Parameters:\n" + string.Join("\n", parameters.Select(x => x.Key + ": " + x.Value).ToArray()));
 
             List<SymbolicTransition> validTransitions = new List<SymbolicTransition>();
             foreach (SymbolicTransition transition in Transitions)
@@ -124,7 +125,7 @@ namespace TorXakisDotNetAdapter.Constraint
                         model = solver.CreateModel();
                         modelCache.Add(transition, model);
 
-                        Console.WriteLine("Created new model: " + model);
+                        Log.Debug(this, "Created new model: " + model);
 
                         // Add location variables, and interaction variables.
                         //model.AddParameters(Variables.ToArray());
@@ -135,7 +136,7 @@ namespace TorXakisDotNetAdapter.Constraint
                     }
                     else
                     {
-                        Console.WriteLine("Re-using existing model: " + model);
+                        Log.Debug(this, "Re-using existing model: " + model);
 
                         solver.ClearModel();
                         solver.CurrentModel = model;
@@ -144,18 +145,18 @@ namespace TorXakisDotNetAdapter.Constraint
                     // Does it solve?
                     Solution solution = solver.Solve(new HybridLocalSearchDirective() { TimeLimit = 1000, });
 
-                    Console.WriteLine("Succesfully solved: " + transition);
+                    Log.Debug(this, "Succesfully solved: " + transition);
                     foreach (Decision decision in transition.Variables)
-                        Console.WriteLine("<Decision> {0}: {1}", decision.Name, decision);
+                        Log.Debug(this, string.Format("<Decision> {0}: {1}", decision.Name, decision));
 
                     Report report = solution.GetReport();
-                    Console.Write("{0}", report);
+                    Log.Debug(this, string.Format("{0}", report));
 
                     solver.ClearModel();
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine("Exception solving: " + transition + "\n" + e);
+                    Log.Error(this, "Exception solving: " + transition + "\n" + e);
                     valid = false;
                 }
 
@@ -168,17 +169,17 @@ namespace TorXakisDotNetAdapter.Constraint
                 if (valid) validTransitions.Add(transition);
             }
 
-            Console.WriteLine("Valid transitions:\n" + string.Join("\n", validTransitions.Select(x => x.ToString()).ToArray()));
+            Log.Debug(this, "Valid transitions:\n" + string.Join("\n", validTransitions.Select(x => x.ToString()).ToArray()));
 
             if (validTransitions.Count == 0) return false;
 
             // DEBUG: For testing, we pick the first compatible transition, not a random one. (TPE)
             SymbolicTransition chosenTransition = validTransitions.First();
-            Console.WriteLine("Chosen transition:\n" + chosenTransition);
+            Log.Debug(this, "Chosen transition:\n" + chosenTransition);
 
             chosenTransition.Update(Variables, chosenTransition.Variables);
 
-            Console.WriteLine("From: " + State + " To: " + chosenTransition.To);
+            Log.Debug(this, "From: " + State + " To: " + chosenTransition.To);
             State = chosenTransition.To;
 
             return true;
