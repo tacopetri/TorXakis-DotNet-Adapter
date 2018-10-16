@@ -43,7 +43,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
-            return string.Join(", ", variables.Select(x => x.Key + " (" + x.Value.GetType() + ", " + x.Value + ")").ToArray());
+            return variables.Count == 0 ? "None" : string.Join(", ", variables.Select(x => x.Key + " (" + x.Value.GetType() + ", " + x.Value + ")").ToArray());
         }
 
         #endregion
