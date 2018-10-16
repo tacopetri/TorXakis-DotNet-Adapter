@@ -60,11 +60,19 @@ namespace TorXakisDotNetAdapter.Logging
         /// <summary><see cref="Object.ToString"/></summary>
         public override string ToString()
         {
+            return "[" + Level.ToString().ToUpperInvariant() + "] " + Message;
+        }
+
+        /// <summary>
+        /// Verbose variant of <see cref="ToString"/> that includes ALL properties.
+        /// </summary>
+        public string ToStringFull()
+        {
             return "[" + UTC.ToLocalTime().ToString("HH:mm:ss.fff") + "] "
-                + "[" + Sender.GetType().Name + "] "
-                + "[" + Level.ToString().ToUpperInvariant() + "] "
-                + Message
-                + (Exception == null ? "" : "\n" + Exception);
+               + "[" + Sender.GetType().Name + "] "
+               + "[" + Level.ToString().ToUpperInvariant() + "] "
+               + Message
+               + (Exception == null ? "" : "\n" + Exception);
         }
 
         #endregion
