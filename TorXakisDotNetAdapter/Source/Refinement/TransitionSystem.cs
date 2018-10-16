@@ -71,7 +71,7 @@ namespace TorXakisDotNetAdapter.Refinement
             Transitions = transitions;
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             return Name + " (" + GetType().Name + ")"

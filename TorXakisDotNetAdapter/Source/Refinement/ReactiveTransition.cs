@@ -46,7 +46,7 @@ namespace TorXakisDotNetAdapter.Refinement
             Guard = guard ?? throw new ArgumentNullException(nameof(guard));
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             return base.ToString();

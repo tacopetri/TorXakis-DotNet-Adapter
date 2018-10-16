@@ -57,7 +57,7 @@ namespace TorXakisDotNetAdapter.Logging
             Exception = exception;
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             return "[" + Level.ToString().ToUpperInvariant() + "] " + Message;

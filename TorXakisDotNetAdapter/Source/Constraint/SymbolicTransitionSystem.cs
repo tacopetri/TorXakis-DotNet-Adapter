@@ -69,7 +69,7 @@ namespace TorXakisDotNetAdapter.Constraint
             Variables = variables;
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             string result = "IOSTS (" + Name + ")";

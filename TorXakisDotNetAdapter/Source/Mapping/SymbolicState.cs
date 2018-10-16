@@ -35,7 +35,7 @@ namespace TorXakisDotNetAdapter.Mapping
             Name = name;
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             return "State (" + Name + ")";

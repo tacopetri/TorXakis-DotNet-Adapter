@@ -41,7 +41,7 @@ namespace TorXakisDotNetAdapter.Refinement
 
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             return variables.Count == 0 ? "None" : string.Join(", ", variables.Select(x => x.Key + " (" + x.Value.GetType().Name + ", " + x.Value + ")").ToArray());

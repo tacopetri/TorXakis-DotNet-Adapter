@@ -51,7 +51,7 @@ namespace TorXakisDotNetAdapter.Refinement
             Adapter.InputReceived += Adapter_InputReceived;
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             string result = GetType().Name
@@ -136,7 +136,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// </summary>
         private void CheckSystems()
         {
-            Log.Debug(this, nameof(CheckSystems) + " inputs: " + inputs.Count + " commands: " + events.Count);
+            Log.Debug(this, nameof(CheckSystems) + " inputs: " + inputs.Count + " commands: " + events.Count + "\n" + this);
 
             bool transitioned = false;
 
@@ -209,7 +209,15 @@ namespace TorXakisDotNetAdapter.Refinement
             }
 
             // If a transition was taken, re-evaluate immediately!
-            if (transitioned) CheckSystems();
+            if (transitioned)
+            {
+                if (CurrentSystem.CurrentState == CurrentSystem.InitialState)
+                {
+                    Log.Debug(this, "System has looped: " + CurrentSystem);
+                    CurrentSystem = null;
+                }
+                CheckSystems();
+            }
             // If no transition was taken, but there are still inputs or events queued: this indicates a deadlock!
             else if (inputs.Count > 0 || events.Count > 0)
             {

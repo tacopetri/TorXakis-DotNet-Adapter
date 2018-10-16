@@ -96,7 +96,7 @@ namespace TorXakisDotNetAdapter.Constraint
             Update = update;
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             string result = "Transition (" + Name + ") " + From + " -> " + To;

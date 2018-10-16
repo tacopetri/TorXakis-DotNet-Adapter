@@ -62,7 +62,7 @@ namespace TorXakisDotNetAdapter
             File = file;
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             return GetType().Name + " " + nameof(File) + " (" + File.Name + ")";

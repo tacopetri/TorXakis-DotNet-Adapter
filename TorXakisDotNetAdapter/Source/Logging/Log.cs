@@ -22,7 +22,7 @@ namespace TorXakisDotNetAdapter.Logging
         private static void OnMessage(object sender, LogLevel level, string message, Exception exception)
         {
             LogMessage log = new LogMessage(sender, level, message, exception);
-            Message?.Invoke(log);
+            Message?.GetInvocationList()?.FirstOrDefault()?.DynamicInvoke(log);
         }
 
         /// <summary>

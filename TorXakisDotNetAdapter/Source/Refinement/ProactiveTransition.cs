@@ -46,7 +46,7 @@ namespace TorXakisDotNetAdapter.Refinement
             Generate = generate ?? throw new ArgumentNullException(nameof(generate));
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             return base.ToString();

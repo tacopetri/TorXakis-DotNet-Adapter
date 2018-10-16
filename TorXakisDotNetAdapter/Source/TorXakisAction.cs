@@ -97,7 +97,7 @@ namespace TorXakisDotNetAdapter
             }
         }
 
-        /// <summary><see cref="Object.ToString"/></summary>
+        /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             return Channel + " " + (Type == ActionType.Input ? "?" : "!") + " " + Data;
