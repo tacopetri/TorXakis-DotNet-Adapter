@@ -278,13 +278,13 @@ namespace TorXakisDotNetAdapter.Tests
         }
 
         /// <summary>
-        /// Test of the <see cref="Refinement.Framework"/> class.
+        /// Test of the <see cref="Refinement.RefinementFramework"/> class.
         /// </summary>
         [TestMethod]
-        public void Framework()
+        public void RefinementFramework()
         {
             FileInfo model = new FileInfo(@"..\..\..\TorXakisDotNetAdapter.Models\Models\Reference.txs");
-            Framework framework = new Framework(model);
+            RefinementFramework framework = new RefinementFramework(model);
             Assert.AreEqual(model, framework.Connector.Model.File);
 
             TransitionSystem system1 = CreateTransitionSystem1();

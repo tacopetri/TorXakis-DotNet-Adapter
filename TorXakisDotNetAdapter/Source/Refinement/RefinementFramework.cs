@@ -9,7 +9,7 @@ namespace TorXakisDotNetAdapter.Refinement
     /// <summary>
     /// The top-level class that manages all action refinement operations.
     /// </summary>
-    public sealed class Framework
+    public sealed class RefinementFramework
     {
         #region Definitions
 
@@ -44,7 +44,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public Framework(FileInfo model)
+        public RefinementFramework(FileInfo model)
         {
             Connector = new TorXakisConnector(model);
             Connector.Started += Connector_Started;
