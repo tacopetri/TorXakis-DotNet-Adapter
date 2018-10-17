@@ -180,7 +180,7 @@ namespace TorXakisDotNetAdapter.Refinement
                     else
                     {
                         // Since all system events are being looped through this, not being able to handle one is not an error per se. (TPE)
-                        if (false) Log.Error(this, "No reactive transition possible for system event: " + systemEvent);
+                        if (true) Log.Error(this, "No reactive transition possible for system event: " + systemEvent);
                     }
                 }
             }
@@ -223,7 +223,7 @@ namespace TorXakisDotNetAdapter.Refinement
             else if (inputs.Count > 0 || events.Count > 0)
             {
                 // Since all system events are being looped through this, not being able to handle one is not an error per se. (TPE)
-                if (false)
+                if (true)
                 {
                     string error = "No valid transitions! Deadlock!";
                     Log.Error(this, error);
