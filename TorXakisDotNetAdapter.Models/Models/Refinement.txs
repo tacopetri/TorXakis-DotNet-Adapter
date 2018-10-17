@@ -121,6 +121,8 @@ PROCDEF CreateItem [Sync :: Internal; Input, Output :: External] (id :: Int)
  >->
  Output ! ModelSwitchItem(id)
  >->
+ Output ! ModelSwitchItem(id)
+ >->
  Output ! AssembledItem(id)
  >->
  Sync ? end :: Internal [[ IF isCreateItemEnd(end)
