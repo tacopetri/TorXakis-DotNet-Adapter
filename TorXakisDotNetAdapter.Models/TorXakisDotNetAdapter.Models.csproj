@@ -64,16 +64,26 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Models\Reference.txs" />
-    <None Include="Models\ReferenceRun.bat" />
-    <None Include="Models\Refinement.txs" />
-    <None Include="Models\RefinementRun.bat" />
+    <None Include="Models\Reference.txs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Models\ReferenceRun.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Models\Refinement.txs">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Models\RefinementRun.bat">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis\"</PostBuildEvent>
+    <PostBuildEvent>for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis\"
+
+xcopy "$(TargetDir)\Models" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis\Models" /Y /I /E</PostBuildEvent>
   </PropertyGroup>
 </Project>
