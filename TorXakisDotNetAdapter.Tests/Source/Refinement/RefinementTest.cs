@@ -95,12 +95,13 @@ namespace TorXakisDotNetAdapter.Tests
 
             HashSet<Transition> transitions = new HashSet<Transition>()
             {
-                new ReactiveTransition(nameof(NewItem),
+                new ReactiveTransition(typeof(NewItem),
                     states.First(x => x.Name == "Wait"),
                     states.First(x => x.Name == "Act"),
                     (action) =>
                     {
-                        return action is NewItem;
+                        NewItem cast = (NewItem)action;
+                        return 1 <= cast.newItemId && cast.newItemId <= guids.Length;
                     },
                     (action, variables) =>
                     {
@@ -109,7 +110,7 @@ namespace TorXakisDotNetAdapter.Tests
                         variables.SetValue(nameof(id), id);
                     }
                 ),
-                new ProactiveTransition(nameof(ItemEventArgsNew),
+                new ProactiveTransition(typeof(ItemEventArgsNew),
                     states.First(x => x.Name == "Act"),
                     states.First(x => x.Name == "Wait"),
                     (variables) =>
@@ -155,12 +156,13 @@ namespace TorXakisDotNetAdapter.Tests
 
             HashSet<Transition> transitions = new HashSet<Transition>()
             {
-                new ReactiveTransition(nameof(ItemEventArgsNew),
+                new ReactiveTransition(typeof(ItemEventArgsNew),
                     states.First(x => x.Name == "Wait"),
                     states.First(x => x.Name == "Act"),
                     (action) =>
                     {
-                        return action is ItemEventArgsNew;
+                        ItemEventArgsNew cast = (ItemEventArgsNew)action;
+                        return guids.ToList().IndexOf(cast.GUID) != -1;
                     },
                     (action, variables) =>
                     {
@@ -169,7 +171,7 @@ namespace TorXakisDotNetAdapter.Tests
                         variables.SetValue(nameof(id), id);
                     }
                 ),
-                new ProactiveTransition(nameof(NewItem),
+                new ProactiveTransition(typeof(NewItem),
                     states.First(x => x.Name == "Act"),
                     states.First(x => x.Name == "Wait"),
                     (variables) =>
@@ -231,7 +233,7 @@ namespace TorXakisDotNetAdapter.Tests
 
             // Execute and check proactive transition.
             IAction generatedAction = system.ExecuteProactiveTransition(proactives.First());
-            Console.WriteLine("Generated action " + generatedAction);
+            Console.WriteLine("Generated action: " + generatedAction);
             Assert.AreEqual(typeof(ItemEventArgsNew), generatedAction.GetType());
             Assert.AreEqual(guids[0], (generatedAction as ItemEventArgsNew).GUID);
             Console.WriteLine(system);
@@ -278,7 +280,7 @@ namespace TorXakisDotNetAdapter.Tests
 
             // Execute and check proactive transition.
             IAction generatedAction = system.ExecuteProactiveTransition(proactives.First());
-            Console.WriteLine("Generated action " + generatedAction);
+            Console.WriteLine("Generated action: " + generatedAction);
             Assert.AreEqual(typeof(NewItem), generatedAction.GetType());
             Assert.AreEqual(1, (generatedAction as NewItem).newItemId);
             Console.WriteLine(system);

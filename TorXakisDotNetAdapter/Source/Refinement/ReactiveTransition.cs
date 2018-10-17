@@ -14,8 +14,7 @@ namespace TorXakisDotNetAdapter.Refinement
     {
         #region Base
 
-        /// <summary><see cref="Transition.Type"/></summary>
-        public override ActionType Type { get { return ActionType.Input; } }
+        // TODO: Implement!
 
         #endregion
         #region Definitions
@@ -40,8 +39,8 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public ReactiveTransition(string name, State from, State to, GuardDelegate guard, UpdateDelegate update)
-            : base(name, from, to, update)
+        public ReactiveTransition(Type action, State from, State to, GuardDelegate guard, UpdateDelegate update)
+            : base(action, from, to, update)
         {
             Guard = guard ?? throw new ArgumentNullException(nameof(guard));
         }

@@ -12,18 +12,15 @@ namespace TorXakisDotNetAdapter.Refinement
     {
         #region Definitions
 
-        /// <summary>
-        /// The <see cref="ActionType"/> value: input or output?
-        /// </summary>
-        public abstract ActionType Type { get; }
+        // TODO: Implement!
 
         #endregion
         #region Variables & Properties
 
         /// <summary>
-        /// The user-friendly name.
+        /// The <see cref="System.Type"/> of the associated <see cref="IAction"/> action.
         /// </summary>
-        public string Name { get; private set; }
+        public Type Action { get; private set; }
 
         /// <summary>
         /// The from <see cref="State"/> state.
@@ -50,10 +47,11 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public Transition(string name, State from, State to, UpdateDelegate update)
+        public Transition(Type action, State from, State to, UpdateDelegate update)
         {
-            if (string.IsNullOrEmpty(name)) throw new ArgumentNullException(nameof(name));
-            Name = name;
+            if (action == null || !typeof(IAction).IsAssignableFrom(action))
+                throw new ArgumentException("Invalid action type: " + action, nameof(action));
+            Action = action;
             From = from ?? throw new ArgumentNullException(nameof(from));
             To = to ?? throw new ArgumentNullException(nameof(to));
             Update = update ?? throw new ArgumentNullException(nameof(update));
@@ -62,7 +60,13 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
-            return Name + " (" + Type + ", " + From + " -> " + To + ")";
+            Type display = null;
+            if (typeof(ModelAction).IsAssignableFrom(Action))
+                display = typeof(ModelAction);
+            else if (typeof(ISystemAction).IsAssignableFrom(Action))
+                display = typeof(ISystemAction);
+
+            return Action.Name + " (" + display.Name + ", " + From + " -> " + To + ")";
         }
 
         #endregion

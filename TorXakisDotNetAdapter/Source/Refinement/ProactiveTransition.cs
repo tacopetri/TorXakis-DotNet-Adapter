@@ -14,12 +14,6 @@ namespace TorXakisDotNetAdapter.Refinement
     {
         #region Base
 
-        /// <summary><see cref="Transition.Type"/></summary>
-        public override ActionType Type { get { return ActionType.Output; } }
-
-        #endregion
-        #region Definitions
-
         // TODO: Implement!
 
         #endregion
@@ -40,8 +34,8 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public ProactiveTransition(string name, State from, State to, GenerateDelegate generate, UpdateDelegate update)
-            : base(name, from, to, update)
+        public ProactiveTransition(Type action, State from, State to, GenerateDelegate generate, UpdateDelegate update)
+            : base(action, from, to, update)
         {
             Generate = generate ?? throw new ArgumentNullException(nameof(generate));
         }

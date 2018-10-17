@@ -97,6 +97,8 @@ namespace TorXakisDotNetAdapter.Refinement
             {
                 // Transition must come from the current state.
                 if (transition.From != CurrentState) continue;
+                // Transition must have the exact type of the given action.
+                if (transition.Action != action.GetType()) continue;
                 // Transition guard function must evaluate to true.
                 if (!transition.Guard(action)) continue;
 
