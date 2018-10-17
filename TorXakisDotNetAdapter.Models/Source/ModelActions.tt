@@ -37,7 +37,7 @@ namespace TorXakisDotNetAdapter.Models
         {
 #>
         /// <summary>Generated from TorXakis model.</summary>
-        public <#=                kvp2.Value.ToLower() #> <#=                kvp2.Key #>;
+        public <#=                kvp2.Value.ToLower() #> <#=                kvp2.Key #> { get; set; }
 <#
         }
 #>

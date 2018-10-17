@@ -105,15 +105,15 @@ namespace TorXakisDotNetAdapter.Refinement
                 StringBuilder sb = new StringBuilder();
                 sb.Append(GetType().Name);
 
-                FieldInfo[] fields = GetType().GetFields(BindingFlags.Instance | BindingFlags.Public);
-                if (fields.Length > 0)
+                PropertyInfo[] properties = GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public);
+                if (properties.Length > 0)
                 {
                     sb.Append("(");
-                    for (int i = 0; i < fields.Length; i++)
+                    for (int i = 0; i < properties.Length; i++)
                     {
                         if (i > 0) sb.Append(",");
-                        FieldInfo field = fields[i];
-                        sb.Append(field.GetValue(this).ToString());
+                        PropertyInfo property = properties[i];
+                        sb.Append(property.GetValue(this).ToString());
                     }
                     sb.Append(")");
                 }
@@ -148,19 +148,19 @@ namespace TorXakisDotNetAdapter.Refinement
             // Assign the serialized property values on the new instance.
             if (parts.Length > 1)
             {
-                FieldInfo[] fields = type.GetFields(BindingFlags.Instance | BindingFlags.Public);
+                PropertyInfo[] properties = type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
                 string[] values = parts[1].TrimEnd(')').Split(',');
-                for (int i = 0; i < fields.Length; i++)
+                for (int i = 0; i < properties.Length; i++)
                 {
-                    FieldInfo field = fields[i];
+                    PropertyInfo property = properties[i];
                     string value = values[i];
 
-                    if (field.FieldType == typeof(bool))
-                        field.SetValue(action, bool.Parse(value));
-                    else if (field.FieldType == typeof(int))
-                        field.SetValue(action, int.Parse(value));
-                    else if (field.FieldType == typeof(string))
-                        field.SetValue(action, value);
+                    if (property.PropertyType == typeof(bool))
+                        property.SetValue(action, bool.Parse(value));
+                    else if (property.PropertyType == typeof(int))
+                        property.SetValue(action, int.Parse(value));
+                    else if (property.PropertyType == typeof(string))
+                        property.SetValue(action, value);
                 }
             }
 
