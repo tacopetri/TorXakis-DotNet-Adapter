@@ -9,6 +9,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using TorXakisDotNetAdapter.Logging;
 using TorXakisDotNetAdapter.Models;
+using TorXakisDotNetAdapter.Refinement;
 
 namespace TorXakisDotNetAdapter.Tests
 {

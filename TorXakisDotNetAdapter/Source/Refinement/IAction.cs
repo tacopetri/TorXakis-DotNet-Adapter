@@ -4,13 +4,13 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace TorXakisDotNetAdapter
+namespace TorXakisDotNetAdapter.Refinement
 {
     /// <summary>
-    /// The interface for all system actions.
-    /// The classes that implement this are messages native to the SUT.
+    /// The interface for all actions.
+    /// Can mean a <see cref="ModelAction"/> or a  <see cref="ISystemAction"/>.
     /// </summary>
-    public interface ISystemAction : IAction
+    public interface IAction
     {
         #region Definitions
 

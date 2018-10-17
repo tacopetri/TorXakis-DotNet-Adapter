@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace TorXakisDotNetAdapter
+namespace TorXakisDotNetAdapter.Refinement
 {
     /// <summary>
     /// The abstract class for all model actions.
