@@ -74,7 +74,20 @@ namespace TorXakisDotNetAdapter
             {
                 foreach (KeyValuePair<string, Dictionary<string, string>> kvp in model.ParseActions())
                 {
-                    actions.Add(kvp.Key, kvp.Value);
+                    // If an action with that name already exists: check that all properties match!
+                    if (actions.TryGetValue(kvp.Key, out Dictionary<string, string> existing))
+                    {
+                        if (!existing.Keys.SequenceEqual(kvp.Value.Keys) || !existing.Values.SequenceEqual(kvp.Value.Values))
+                        {
+                            string oldList = string.Join(", ", existing.Select(x => x.Key + ": " + x.Value).ToArray());
+                            string newList = string.Join(", ", kvp.Value.Select(x => x.Key + ": " + x.Value).ToArray());
+                            throw new Exception("Cannot change signature of model action: " + kvp.Key + "\n" + "Old: " + oldList + "\n" + "New: " + newList);
+                        }
+                    }
+                    else
+                    {
+                        actions.Add(kvp.Key, kvp.Value);
+                    }
                 }
             }
 
