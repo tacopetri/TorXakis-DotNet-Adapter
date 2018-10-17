@@ -5,7 +5,7 @@ using System.Linq;
 namespace TorXakisDotNetAdapter
 {
     /// <summary>
-    /// Actions are categorized into inputs and outputs.
+    /// Actions are categorized into INPUTS and OUTPUTS.
     /// </summary>
     public enum ActionType
     {

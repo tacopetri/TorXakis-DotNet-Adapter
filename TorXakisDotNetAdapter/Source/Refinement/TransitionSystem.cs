@@ -101,7 +101,7 @@ namespace TorXakisDotNetAdapter.Refinement
                 // Transition must have the exact type of the given action.
                 if (transition.Action != action.GetType()) continue;
                 // Transition guard function must evaluate to true.
-                if (!transition.Guard(action)) continue;
+                if (!transition.CheckGuard(action)) continue;
 
                 // All checks passed!
                 result.Add(transition);
@@ -138,7 +138,7 @@ namespace TorXakisDotNetAdapter.Refinement
 
             // Execute the update function.
             Log.Debug(this, "Calling update function: " + transition);
-            transition.Update(action, Variables);
+            transition.PerformUpdate(action, Variables);
             // Transition to the new state.
             Log.Debug(this, "Transitioning to new state: " + transition.To);
             CurrentState = transition.To;
@@ -156,10 +156,10 @@ namespace TorXakisDotNetAdapter.Refinement
 
             // Generate the action.
             Log.Debug(this, "Calling generate function: " + transition);
-            IAction action = transition.Generate(Variables);
+            IAction action = transition.PerformGenerate(Variables);
             // Execute the update function.
             Log.Debug(this, "Calling update function: " + transition);
-            transition.Update(action, Variables);
+            transition.PerformUpdate(action, Variables);
             // Transition to the new state.
             Log.Debug(this, "Transitioning to new state: " + transition.To);
             CurrentState = transition.To;

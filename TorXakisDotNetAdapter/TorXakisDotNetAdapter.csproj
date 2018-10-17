@@ -63,11 +63,14 @@
     <Compile Include="Source\Legacy\Mapping\SymbolicTransitionSystem.cs" />
     <Compile Include="Source\Legacy\Mapping\SymbolicVariable.cs" />
     <Compile Include="Source\Refinement\ProactiveTransition.cs" />
+    <Compile Include="Source\Refinement\ProactiveTransitionT.cs" />
+    <Compile Include="Source\Refinement\ReactiveTransitionT.cs" />
     <Compile Include="Source\Refinement\RefinementFramework.cs" />
     <Compile Include="Source\Refinement\ReactiveTransition.cs" />
     <Compile Include="Source\Refinement\State.cs" />
     <Compile Include="Source\Refinement\TransitionSystem.cs" />
     <Compile Include="Source\Refinement\Transition.cs" />
+    <Compile Include="Source\Refinement\TransitionType.cs" />
     <Compile Include="Source\Refinement\VariableCollection.cs" />
     <Compile Include="Source\TorXakisAction.cs" />
     <Compile Include="Source\TorXakisConnector.cs" />

@@ -95,22 +95,20 @@ namespace TorXakisDotNetAdapter.Tests
 
             HashSet<Transition> transitions = new HashSet<Transition>()
             {
-                new ReactiveTransition(typeof(NewItem),
+                new ReactiveTransition<NewItem>(
                     states.First(x => x.Name == "Wait"),
                     states.First(x => x.Name == "Act"),
                     (action) =>
                     {
-                        NewItem cast = (NewItem)action;
-                        return 1 <= cast.newItemId && cast.newItemId <= guids.Length;
+                        return 1 <= action.newItemId && action.newItemId <= guids.Length;
                     },
                     (action, variables) =>
                     {
-                        NewItem cast = (NewItem)action;
-                        int id = cast.newItemId;
+                        int id = action.newItemId;
                         variables.SetValue(nameof(id), id);
                     }
                 ),
-                new ProactiveTransition(typeof(ItemEventArgsNew),
+                new ProactiveTransition<ItemEventArgsNew>(
                     states.First(x => x.Name == "Act"),
                     states.First(x => x.Name == "Wait"),
                     (variables) =>
@@ -156,22 +154,20 @@ namespace TorXakisDotNetAdapter.Tests
 
             HashSet<Transition> transitions = new HashSet<Transition>()
             {
-                new ReactiveTransition(typeof(ItemEventArgsNew),
+                new ReactiveTransition<ItemEventArgsNew>(
                     states.First(x => x.Name == "Wait"),
                     states.First(x => x.Name == "Act"),
                     (action) =>
                     {
-                        ItemEventArgsNew cast = (ItemEventArgsNew)action;
-                        return guids.ToList().IndexOf(cast.GUID) != -1;
+                        return guids.ToList().IndexOf(action.GUID) != -1;
                     },
                     (action, variables) =>
                     {
-                        ItemEventArgsNew cast = (ItemEventArgsNew)action;
-                        int id = guids.ToList().IndexOf(cast.GUID) + 1;
+                        int id = guids.ToList().IndexOf(action.GUID) + 1;
                         variables.SetValue(nameof(id), id);
                     }
                 ),
-                new ProactiveTransition(typeof(NewItem),
+                new ProactiveTransition<NewItem>(
                     states.First(x => x.Name == "Act"),
                     states.First(x => x.Name == "Wait"),
                     (variables) =>

@@ -7,31 +7,20 @@ namespace TorXakisDotNetAdapter.Refinement
 {
     /// <summary>
     /// A reactive <see cref="Transition"/>, responding to either:
-    /// <para><see cref="ModelAction"/> inputs from the tester</para>
-    /// <para><see cref="ISystemAction"/> events from the system</para>
+    /// <para><see cref="ModelAction"/> inputs from the tester.</para>
+    /// <para><see cref="ISystemAction"/> events from the system.</para>
     /// </summary>
-    public sealed class ReactiveTransition : Transition
+    public abstract class ReactiveTransition : Transition
     {
-        #region Base
-
-        // TODO: Implement!
-
-        #endregion
         #region Definitions
 
-        // TODO: Implement!
+        /// <summary><see cref="Transition.Type"/></summary>
+        public override TransitionType Type { get { return TransitionType.Reactive; } }
 
         #endregion
         #region Variables & Properties
 
-        /// <summary>
-        /// The delegate signature of the <see cref="Guard"/> function.
-        /// </summary>
-        public delegate bool GuardDelegate(IAction action);
-        /// <summary>
-        /// The guard constraint: is this transition valid given the action?
-        /// </summary>
-        public GuardDelegate Guard { get; private set; }
+        // TODO: Implement!
 
         #endregion
         #region Create & Destroy
@@ -39,16 +28,10 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public ReactiveTransition(Type action, State from, State to, GuardDelegate guard, UpdateDelegate update)
-            : base(action, from, to, update)
+        public ReactiveTransition(State from, State to)
+            : base(from, to)
         {
-            Guard = guard ?? throw new ArgumentNullException(nameof(guard));
-        }
 
-        /// <summary><see cref="object.ToString"/></summary>
-        public override string ToString()
-        {
-            return base.ToString();
         }
 
         #endregion
@@ -57,6 +40,5 @@ namespace TorXakisDotNetAdapter.Refinement
         // TODO: Implement!
 
         #endregion
-
     }
 }

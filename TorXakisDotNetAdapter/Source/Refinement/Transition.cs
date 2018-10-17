@@ -12,15 +12,18 @@ namespace TorXakisDotNetAdapter.Refinement
     {
         #region Definitions
 
-        // TODO: Implement!
+        /// <summary>
+        /// The associated <see cref="TransitionType"/> value.
+        /// </summary>
+        public virtual TransitionType Type { get; }
+
+        /// <summary>
+        /// The <see cref="System.Type"/> of the associated <see cref="IAction"/> action.
+        /// </summary>
+        public virtual Type Action { get; }
 
         #endregion
         #region Variables & Properties
-
-        /// <summary>
-        /// The <see cref="Type"/> of the associated <see cref="IAction"/> action.
-        /// </summary>
-        public Type Action { get; private set; }
 
         /// <summary>
         /// The from <see cref="State"/> state.
@@ -32,29 +35,16 @@ namespace TorXakisDotNetAdapter.Refinement
         /// </summary>
         public State To { get; private set; }
 
-        /// <summary>
-        /// The delegate signature of the <see cref="Update"/>.
-        /// </summary>
-        public delegate void UpdateDelegate(IAction action, VariableCollection variables);
-        /// <summary>
-        /// The update function: if this transition is taken, which variables must be updated?
-        /// </summary>
-        public UpdateDelegate Update { get; private set; }
-
         #endregion
         #region Create & Destroy
 
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public Transition(Type action, State from, State to, UpdateDelegate update)
+        public Transition(State from, State to)
         {
-            if (action == null || !typeof(IAction).IsAssignableFrom(action))
-                throw new ArgumentException("Invalid action type: " + action, nameof(action));
-            Action = action;
             From = from ?? throw new ArgumentNullException(nameof(from));
             To = to ?? throw new ArgumentNullException(nameof(to));
-            Update = update ?? throw new ArgumentNullException(nameof(update));
         }
 
         /// <summary><see cref="object.ToString"/></summary>
@@ -66,13 +56,29 @@ namespace TorXakisDotNetAdapter.Refinement
             else if (typeof(ISystemAction).IsAssignableFrom(Action))
                 display = typeof(ISystemAction);
 
-            return Action.Name + " (" + display.Name + ", " + From + " -> " + To + ")";
+            return Action.Name + " (" + Type + ", " + display.Name + ", " + From + " -> " + To + ")";
         }
 
         #endregion
         #region Functionality
 
-        // TODO: Implement!
+        /// <summary>
+        /// The guard constraint: is this transition valid given the action?
+        /// <para>Only valid for <see cref="TransitionType.Reactive"/> transitions!</para>
+        /// </summary>
+        public abstract bool CheckGuard(IAction action);
+
+        /// <summary>
+        /// The generate function: given the variables, which action should be performed?
+        /// <para>Only valid for <see cref="TransitionType.Proactive"/> transitions!</para>
+        /// </summary>
+        public abstract IAction PerformGenerate(VariableCollection variables);
+
+        /// <summary>
+        /// The update function: if this transition is taken with the given action, which variables must be updated?
+        /// <para>Valid for both <see cref="TransitionType.Reactive"/> and <see cref="TransitionType.Proactive"/> transitions!</para>
+        /// </summary>
+        public abstract void PerformUpdate(IAction action, VariableCollection variables);
 
         #endregion
     }
