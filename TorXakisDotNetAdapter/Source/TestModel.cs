@@ -72,7 +72,7 @@ namespace TorXakisDotNetAdapter
         #region Functionality
 
         /// <summary>
-        /// Parses the defined <see cref="TorXakisConnection"/> types from the model.
+        /// Parses the defined <see cref="Connection"/> types from the model.
         /// </summary>
         public Dictionary<int, List<string>> ParseConnections()
         {

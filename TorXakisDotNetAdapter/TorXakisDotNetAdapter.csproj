@@ -71,7 +71,7 @@
     <Compile Include="Source\Refinement\VariableCollection.cs" />
     <Compile Include="Source\TorXakisAction.cs" />
     <Compile Include="Source\TorXakisAdapter.cs" />
-    <Compile Include="Source\TorXakisConnection.cs" />
+    <Compile Include="Source\Connection.cs" />
     <Compile Include="Source\TestModel.cs" />
     <Compile Include="Source\TestModelCollection.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

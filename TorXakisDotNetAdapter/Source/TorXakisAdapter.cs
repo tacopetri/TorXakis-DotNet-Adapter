@@ -39,9 +39,9 @@ namespace TorXakisDotNetAdapter
         public TestModel Model { get; private set; }
 
         /// <summary>
-        /// The managed <see cref="TorXakisConnection"/> instances.
+        /// The managed <see cref="Connection"/> instances.
         /// </summary>
-        private readonly Dictionary<int, TorXakisConnection> connections = new Dictionary<int, TorXakisConnection>();
+        private readonly Dictionary<int, Connection> connections = new Dictionary<int, Connection>();
 
         /// <summary>
         /// The set of user-friendly input channel names.
@@ -50,7 +50,7 @@ namespace TorXakisDotNetAdapter
         {
             get
             {
-                foreach (TorXakisConnection connection in connections.Values)
+                foreach (Connection connection in connections.Values)
                     if (!string.IsNullOrEmpty(connection.InputChannel))
                         yield return connection.InputChannel;
             }
@@ -63,7 +63,7 @@ namespace TorXakisDotNetAdapter
         {
             get
             {
-                foreach (TorXakisConnection connection in connections.Values)
+                foreach (Connection connection in connections.Values)
                     if (!string.IsNullOrEmpty(connection.OutputChannel))
                         yield return connection.OutputChannel;
             }
@@ -108,7 +108,7 @@ namespace TorXakisDotNetAdapter
         {
             lock (locker)
             {
-                foreach (TorXakisConnection connection in connections.Values)
+                foreach (Connection connection in connections.Values)
                 {
                     connection.Start();
                 }
@@ -124,7 +124,7 @@ namespace TorXakisDotNetAdapter
         {
             lock (locker)
             {
-                foreach (TorXakisConnection connection in connections.Values)
+                foreach (Connection connection in connections.Values)
                 {
                     connection.Stop();
                 }
@@ -229,7 +229,7 @@ namespace TorXakisDotNetAdapter
             // Create the parsed connections.
             foreach (KeyValuePair<int, List<string>> kvp in parsed)
             {
-                TorXakisConnection connection = new TorXakisConnection(kvp.Key, kvp.Value[0], kvp.Value[1]);
+                Connection connection = new Connection(kvp.Key, kvp.Value[0], kvp.Value[1]);
                 AddConnection(connection);
             }
         }
@@ -275,11 +275,11 @@ namespace TorXakisDotNetAdapter
         #region Connections
 
         /// <summary>
-        /// Adds the given <see cref="TorXakisConnection"/> to <see cref="connections"/>.
+        /// Adds the given <see cref="Connection"/> to <see cref="connections"/>.
         /// </summary>
-        private void AddConnection(TorXakisConnection connection)
+        private void AddConnection(Connection connection)
         {
-            if (connections.TryGetValue(connection.Port, out TorXakisConnection existing))
+            if (connections.TryGetValue(connection.Port, out Connection existing))
                 throw new ArgumentException("Port is already taken by: " + existing);
 
             connections.Add(connection.Port, connection);
@@ -288,9 +288,9 @@ namespace TorXakisDotNetAdapter
         }
 
         /// <summary>
-        /// Adds the given <see cref="TorXakisConnection"/> to <see cref="connections"/>.
+        /// Adds the given <see cref="Connection"/> to <see cref="connections"/>.
         /// </summary>
-        private void RemoveConnection(TorXakisConnection connection)
+        private void RemoveConnection(Connection connection)
         {
             if (!connections.ContainsKey(connection.Port))
                 throw new ArgumentException("Port is not registered: " + connection);
@@ -301,19 +301,19 @@ namespace TorXakisDotNetAdapter
         }
 
         /// <summary>
-        /// Callback for <see cref="TorXakisConnection.StateChanged"/>.
+        /// Callback for <see cref="Connection.StateChanged"/>.
         /// </summary>
-        private void Connection_StateChanged(TorXakisConnection connection)
+        private void Connection_StateChanged(Connection connection)
         {
             // Once all connections have been established, we are ready to begin the test run.
-            if (connections.All(x => x.Value.State == TorXakisConnection.States.Connected))
+            if (connections.All(x => x.Value.State == Connection.States.Connected))
             {
                 // TODO!
             }
         }
 
         /// <summary>
-        /// Callback for <see cref="TorXakisConnection.InputReceived"/>.
+        /// Callback for <see cref="Connection.InputReceived"/>.
         /// </summary>
         private void Connection_InputReceived(TorXakisAction action)
         {
@@ -334,7 +334,7 @@ namespace TorXakisDotNetAdapter
                 if (action.Type != ActionType.Output)
                     throw new ArgumentException("Not output: " + action);
 
-                TorXakisConnection connection = connections.Values.FirstOrDefault(x => x.OutputChannel == action.Channel);
+                Connection connection = connections.Values.FirstOrDefault(x => x.OutputChannel == action.Channel);
                 if (connection == null) throw new Exception("Connection not found for: " + action);
                 Log.Info(this, nameof(SendOutput) + ": " + action);
                 return connection.SendOutput(action);

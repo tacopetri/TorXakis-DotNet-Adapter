@@ -15,9 +15,8 @@ namespace TorXakisDotNetAdapter
 {
     /// <summary>
     /// A single TorXakis TCP connection. The set of connections are managed by the <see cref="TorXakisAdapter"/>.
-    /// <para>https://github.com/TorXakis/TorXakis</para>
     /// </summary>
-    internal sealed class TorXakisConnection : IDisposable
+    internal sealed class Connection : IDisposable
     {
         #region Definitions
 
@@ -77,7 +76,7 @@ namespace TorXakisDotNetAdapter
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public TorXakisConnection(int port, string inputChannel, string outputChannel)
+        public Connection(int port, string inputChannel, string outputChannel)
         {
             // Sanity checks.
             if (port < 0) throw new ArgumentException(nameof(port) + ": " + port);
@@ -90,7 +89,7 @@ namespace TorXakisDotNetAdapter
         /// <summary>
         /// Destructor.
         /// </summary>
-        ~TorXakisConnection()
+        ~Connection()
         {
             // Make sure to always shut down cleanly!
             Stop();
@@ -328,7 +327,7 @@ namespace TorXakisDotNetAdapter
         /// <summary>
         /// Signals that the <see cref="States"/> value has chaged.
         /// </summary>
-        public event Action<TorXakisConnection> StateChanged;
+        public event Action<Connection> StateChanged;
 
         /// <summary>
         /// Fires the <see cref="StateChanged"/>event.
