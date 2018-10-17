@@ -57,7 +57,7 @@
     <Compile Include="Source\ModelActionTest.cs" />
     <Compile Include="Source\Legacy\ConstraintTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Source\TestModelTest.cs" />
+    <Compile Include="Source\TorXakisModelTest.cs" />
     <Compile Include="Source\Legacy\MappingTest.cs" />
     <Compile Include="Source\RefinementTest.cs" />
     <Compile Include="Source\Legacy\SolverTest.cs" />

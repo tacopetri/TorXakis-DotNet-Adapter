@@ -15,7 +15,7 @@ namespace TorXakisDotNetAdapter.Tests
     /// Tests for the <see cref="TorXakisModel"/> and <see cref="TorXakisModelCollection"/> classes.
     /// </summary>
     [TestClass]
-    public class TestModelTest
+    public class TorXakisModelTest
     {
         /// <summary><see cref="ClassInitializeAttribute"/></summary>
         [ClassInitialize]
