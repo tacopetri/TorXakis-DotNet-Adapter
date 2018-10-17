@@ -34,9 +34,9 @@ namespace TorXakisDotNetAdapter
         public bool LogConsoleToTrace { get; set; } = true;
 
         /// <summary>
-        /// The <see cref="TorXakisModel"/> to test.
+        /// The <see cref="TestModel"/> to test.
         /// </summary>
-        public TorXakisModel Model { get; private set; }
+        public TestModel Model { get; private set; }
 
         /// <summary>
         /// The managed <see cref="TorXakisConnection"/> instances.
@@ -86,7 +86,7 @@ namespace TorXakisDotNetAdapter
             if (model == null || !model.Exists)
                 throw new ArgumentException(nameof(model) + ": " + model);
 
-            Model = new TorXakisModel(model);
+            Model = new TestModel(model);
             ParseModel();
 
             Log.Info(this, "Created: " + this);

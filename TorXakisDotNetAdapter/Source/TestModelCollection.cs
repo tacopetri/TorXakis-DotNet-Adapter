@@ -8,9 +8,9 @@ using System.Text.RegularExpressions;
 namespace TorXakisDotNetAdapter
 {
     /// <summary>
-    /// A collection of <see cref="TorXakisModel"/> objects.
+    /// A collection of <see cref="TestModel"/> objects.
     /// </summary>
-    public sealed class TorXakisModelCollection
+    public sealed class TestModelCollection
     {
         #region Definitions
 
@@ -20,14 +20,14 @@ namespace TorXakisDotNetAdapter
         #region Variables & Properties
 
         /// <summary>
-        /// The model directory.
+        /// The test model directory.
         /// </summary>
         public DirectoryInfo Directory { get; private set; }
 
         /// <summary>
-        /// The contained <see cref="TorXakisModel"/> instances.
+        /// The contained <see cref="TestModel"/> instances.
         /// </summary>
-        public List<TorXakisModel> Models { get; private set; } = new List<TorXakisModel>();
+        public List<TestModel> Models { get; private set; } = new List<TestModel>();
 
         #endregion
         #region Create & Destroy
@@ -35,7 +35,7 @@ namespace TorXakisDotNetAdapter
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public TorXakisModelCollection(DirectoryInfo directory)
+        public TestModelCollection(DirectoryInfo directory)
         {
             // Sanity checks.
             if (directory == null || !directory.Exists)
@@ -44,9 +44,9 @@ namespace TorXakisDotNetAdapter
             Directory = directory;
 
             // Find model files inside directory (recursive).
-            foreach (FileInfo file in Directory.GetFiles("*" + TorXakisModel.FileExtension, SearchOption.AllDirectories))
+            foreach (FileInfo file in Directory.GetFiles("*" + TestModel.FileExtension, SearchOption.AllDirectories))
             {
-                TorXakisModel model = new TorXakisModel(file);
+                TestModel model = new TestModel(file);
                 Models.Add(model);
             }
         }
@@ -55,7 +55,7 @@ namespace TorXakisDotNetAdapter
         public override string ToString()
         {
             string result = GetType().Name + " " + nameof(Directory) + " (" + Directory.Name + ")";
-            foreach (TorXakisModel model in Models)
+            foreach (TestModel model in Models)
                 result += "\n" + model;
             return result;
         }
@@ -64,13 +64,13 @@ namespace TorXakisDotNetAdapter
         #region Functionality
 
         /// <summary>
-        /// Aggregates <see cref="TorXakisModel.ParseActions"/>.
+        /// Aggregates <see cref="TestModel.ParseActions"/>.
         /// </summary>
         public Dictionary<string, Dictionary<string, string>> ParseActions()
         {
             Dictionary<string, Dictionary<string, string>> actions = new Dictionary<string, Dictionary<string, string>>();
 
-            foreach (TorXakisModel model in Models)
+            foreach (TestModel model in Models)
             {
                 foreach (KeyValuePair<string, Dictionary<string, string>> kvp in model.ParseActions())
                 {

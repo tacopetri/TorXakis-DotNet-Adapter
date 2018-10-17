@@ -10,7 +10,7 @@ namespace TorXakisDotNetAdapter
     /// <summary>
     /// Provides an object-oriented parser for TorXakis models (.txs files).
     /// </summary>
-    public sealed class TorXakisModel
+    public sealed class TestModel
     {
         #region Definitions
 
@@ -43,7 +43,7 @@ namespace TorXakisDotNetAdapter
         #region Variables & Properties
 
         /// <summary>
-        /// The model file.
+        /// The test model file.
         /// </summary>
         public FileInfo File { get; private set; }
 
@@ -53,7 +53,7 @@ namespace TorXakisDotNetAdapter
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public TorXakisModel(FileInfo file)
+        public TestModel(FileInfo file)
         {
             // Sanity checks.
             if (file == null || !file.Exists || file.Extension.ToLowerInvariant() != FileExtension)

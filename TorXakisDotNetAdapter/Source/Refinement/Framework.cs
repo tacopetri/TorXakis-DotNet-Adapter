@@ -97,7 +97,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="TorXakisAdapter.InputReceived"/></summary>
         private void Adapter_InputReceived(TorXakisAction action)
         {
-            if (action.Type == ActionType.Input && action.Channel == TorXakisModel.InputChannel)
+            if (action.Type == ActionType.Input && action.Channel == TestModel.InputChannel)
             {
                 ModelAction input = ModelAction.Deserialize(action.Data);
                 HandleModelInput(input);
@@ -350,7 +350,7 @@ namespace TorXakisDotNetAdapter.Refinement
             {
                 Log.Debug(this, nameof(SendModelOutput) + ": " + modelOutput);
                 string serialized = modelOutput.Serialize();
-                TorXakisAction output = TorXakisAction.FromOutput(TorXakisModel.OutputChannel, serialized);
+                TorXakisAction output = TorXakisAction.FromOutput(TestModel.OutputChannel, serialized);
                 Adapter.SendOutput(output);
             }
         }
