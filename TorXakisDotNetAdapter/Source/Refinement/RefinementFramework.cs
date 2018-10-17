@@ -38,6 +38,30 @@ namespace TorXakisDotNetAdapter.Refinement
         /// </summary>
         public TransitionSystem CurrentSystem { get; private set; }
 
+        /// <summary>
+        /// The <see cref="ModelAction"/> types that are contained somewhere in <see cref="ReactiveTransition"/> transitions,
+        /// of the contained <see cref="TransitionSystem"/> systems. This allows pre-filtering of incoming model inputs.
+        /// </summary>
+        public HashSet<Type> ModelInputs { get; private set; } = new HashSet<Type>();
+
+        /// <summary>
+        /// The <see cref="ModelAction"/> types that are contained somewhere in <see cref="ProactiveTransition"/> transitions,
+        /// of the contained <see cref="TransitionSystem"/> systems. This allows pre-filtering of outgoing model outputs.
+        /// </summary>
+        public HashSet<Type> ModelOutputs { get; private set; } = new HashSet<Type>();
+
+        /// <summary>
+        /// The <see cref="ISystemAction"/> types that are contained somewhere in <see cref="ProactiveTransition"/> transitions,
+        /// of the contained <see cref="TransitionSystem"/> systems. This allows pre-filtering of outgoing system commands.
+        /// </summary>
+        public HashSet<Type> SystemCommands { get; private set; } = new HashSet<Type>();
+
+        /// <summary>
+        /// The <see cref="ISystemAction"/> types that are contained somewhere in <see cref="ReactiveTransition"/> transitions,
+        /// of the contained <see cref="TransitionSystem"/> systems. This allows pre-filtering of incoming system events.
+        /// </summary>
+        public HashSet<Type> SystemEvents { get; private set; } = new HashSet<Type>();
+
         #endregion
         #region Create & Destroy
 
@@ -54,11 +78,14 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
-            string result = GetType().Name
+            return GetType().Name
                 + "\n" + nameof(Connector) + ": " + Connector
                 + "\n" + nameof(Systems) + " (" + Systems.Count + "): " + string.Join(", ", Systems.Select(x => x.Name).ToArray())
-                + "\n" + nameof(CurrentSystem) + ": " + CurrentSystem;
-            return result;
+                + "\n" + nameof(CurrentSystem) + ": " + CurrentSystem
+                + "\n" + nameof(ModelInputs) + " (" + ModelInputs.Count + "): " + string.Join(", ", ModelInputs.Select(x => x.Name).ToArray())
+                + "\n" + nameof(ModelOutputs) + " (" + ModelOutputs.Count + "): " + string.Join(", ", ModelOutputs.Select(x => x.Name).ToArray())
+                + "\n" + nameof(SystemCommands) + " (" + SystemCommands.Count + "): " + string.Join(", ", SystemCommands.Select(x => x.Name).ToArray())
+                + "\n" + nameof(SystemEvents) + " (" + SystemEvents.Count + "): " + string.Join(", ", SystemEvents.Select(x => x.Name).ToArray());
         }
 
         #endregion
@@ -114,7 +141,9 @@ namespace TorXakisDotNetAdapter.Refinement
         {
             lock (locker)
             {
-                return Systems.Add(system);
+                bool success = Systems.Add(system);
+                if (success) IndexSystems();
+                return success;
             }
         }
 
@@ -125,7 +154,43 @@ namespace TorXakisDotNetAdapter.Refinement
         {
             lock (locker)
             {
-                return Systems.Remove(system);
+                bool success = Systems.Remove(system);
+                if (success) IndexSystems();
+                return success;
+            }
+        }
+
+        /// <summary>
+        /// Indexes the <see cref="ModelInputs"/> and <see cref="SystemEvents"/>,
+        /// plus <see cref="ModelOutputs"/> and <see cref="SystemCommands"/>,
+        /// whenever a <see cref="TransitionSystem"/> is added or removed.
+        /// </summary>
+        private void IndexSystems()
+        {
+            ModelInputs.Clear();
+            ModelOutputs.Clear();
+            SystemCommands.Clear();
+            SystemEvents.Clear();
+
+            foreach (TransitionSystem system in Systems)
+            {
+                foreach (Transition transition in system.Transitions)
+                {
+                    if (transition is ReactiveTransition reactive)
+                    {
+                        if (typeof(ModelAction).IsAssignableFrom(reactive.Action))
+                            ModelInputs.Add(reactive.Action);
+                        else if (typeof(ISystemAction).IsAssignableFrom(reactive.Action))
+                            SystemEvents.Add(reactive.Action);
+                    }
+                    else if (transition is ProactiveTransition proactive)
+                    {
+                        if (typeof(ModelAction).IsAssignableFrom(proactive.Action))
+                            ModelOutputs.Add(proactive.Action);
+                        else if (typeof(ISystemAction).IsAssignableFrom(proactive.Action))
+                            SystemCommands.Add(proactive.Action);
+                    }
+                }
             }
         }
 
@@ -340,6 +405,10 @@ namespace TorXakisDotNetAdapter.Refinement
         {
             lock (locker)
             {
+                // Pre-filter incompatible types.
+                if (modelInput is null) throw new ArgumentNullException(nameof(modelInput));
+                if (!ModelInputs.Contains(modelInput.GetType())) return;
+
                 Log.Debug(this, nameof(HandleModelInput) + ": " + modelInput);
                 inputs.Enqueue(modelInput);
                 CheckSystems();
@@ -353,6 +422,10 @@ namespace TorXakisDotNetAdapter.Refinement
         {
             lock (locker)
             {
+                // Pre-filter incompatible types.
+                if (modelOutput is null) throw new ArgumentNullException(nameof(modelOutput));
+                if (!ModelOutputs.Contains(modelOutput.GetType())) return;
+
                 Log.Debug(this, nameof(SendModelOutput) + ": " + modelOutput);
                 string serialized = modelOutput.Serialize();
                 TorXakisAction output = TorXakisAction.FromOutput(TorXakisModel.OutputChannel, serialized);
@@ -373,6 +446,10 @@ namespace TorXakisDotNetAdapter.Refinement
         {
             lock (locker)
             {
+                // Pre-filter incompatible types.
+                if (systemEvent is null) throw new ArgumentNullException(nameof(systemEvent));
+                if (!SystemEvents.Contains(systemEvent.GetType())) return;
+
                 Log.Debug(this, nameof(HandleSystemEvent) + ": " + systemEvent);
                 events.Enqueue(systemEvent);
                 CheckSystems();
@@ -391,6 +468,10 @@ namespace TorXakisDotNetAdapter.Refinement
         {
             lock (locker)
             {
+                // Pre-filter incompatible types.
+                if (systemCommand is null) throw new ArgumentNullException(nameof(systemCommand));
+                if (!SystemCommands.Contains(systemCommand.GetType())) return;
+
                 Log.Debug(this, nameof(SendSystemCommand) + ": " + systemCommand);
                 ExecuteSystemCommand?.Invoke(systemCommand);
             }
