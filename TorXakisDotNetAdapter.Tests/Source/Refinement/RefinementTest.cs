@@ -89,13 +89,15 @@ namespace TorXakisDotNetAdapter.Tests
         {
             HashSet<State> states = new HashSet<State>()
             {
-                new State("S1"),
-                new State("S2"),
+                new State("Wait"),
+                new State("Act"),
             };
 
             HashSet<Transition> transitions = new HashSet<Transition>()
             {
-                new ReactiveTransition("T12", states.ElementAt(0), states.ElementAt(1),
+                new ReactiveTransition(nameof(NewItem),
+                    states.First(x => x.Name == "Wait"),
+                    states.First(x => x.Name == "Act"),
                     (action) =>
                     {
                         return action is NewItem;
@@ -107,7 +109,9 @@ namespace TorXakisDotNetAdapter.Tests
                         variables.SetValue(nameof(id), id);
                     }
                 ),
-                new ProactiveTransition("T21", states.ElementAt(1), states.ElementAt(0),
+                new ProactiveTransition(nameof(ItemEventArgsNew),
+                    states.First(x => x.Name == "Act"),
+                    states.First(x => x.Name == "Wait"),
                     (variables) =>
                     {
                         int id = variables.GetValue<int>(nameof(id));
@@ -130,7 +134,7 @@ namespace TorXakisDotNetAdapter.Tests
                 ),
             };
 
-            TransitionSystem system = new TransitionSystem("IOSTS-1", states, states.ElementAt(0), transitions);
+            TransitionSystem system = new TransitionSystem(nameof(NewItem), states, states.First(x => x.Name == "Wait"), transitions);
 
             // Have the properties been initialized correctly?
             CollectionAssert.AreEqual(states.ToList(), system.States.ToList());
@@ -145,13 +149,15 @@ namespace TorXakisDotNetAdapter.Tests
         {
             HashSet<State> states = new HashSet<State>()
             {
-                new State("S1"),
-                new State("S2"),
+                new State("Wait"),
+                new State("Act"),
             };
 
             HashSet<Transition> transitions = new HashSet<Transition>()
             {
-                new ReactiveTransition("T12", states.ElementAt(0), states.ElementAt(1),
+                new ReactiveTransition(nameof(ItemEventArgsNew),
+                    states.First(x => x.Name == "Wait"),
+                    states.First(x => x.Name == "Act"),
                     (action) =>
                     {
                         return action is ItemEventArgsNew;
@@ -163,7 +169,9 @@ namespace TorXakisDotNetAdapter.Tests
                         variables.SetValue(nameof(id), id);
                     }
                 ),
-                new ProactiveTransition("T21", states.ElementAt(1), states.ElementAt(0),
+                new ProactiveTransition(nameof(NewItem),
+                    states.First(x => x.Name == "Act"),
+                    states.First(x => x.Name == "Wait"),
                     (variables) =>
                     {
                         int id = variables.GetValue<int>(nameof(id));
@@ -179,7 +187,7 @@ namespace TorXakisDotNetAdapter.Tests
                 ),
             };
 
-            TransitionSystem system = new TransitionSystem("IOSTS-2", states, states.ElementAt(0), transitions);
+            TransitionSystem system = new TransitionSystem(nameof(ItemEventArgsNew), states, states.First(x => x.Name == "Wait"), transitions);
 
             // Have the properties been initialized correctly?
             CollectionAssert.AreEqual(states.ToList(), system.States.ToList());
