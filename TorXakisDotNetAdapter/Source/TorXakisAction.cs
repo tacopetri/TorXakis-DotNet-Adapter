@@ -5,7 +5,7 @@ using System.Linq;
 namespace TorXakisDotNetAdapter
 {
     /// <summary>
-    /// This container class represents an ACTION (either an INPUT or an OUTPUT).
+    /// This container class represents an ACTION (either an INPUT or an OUTPUT), native to the TorXakis test tool.
     /// It combines <see cref="Type"/>, <see cref="Channel"/> and <see cref="Data"/> information.
     /// </summary>
     public sealed class TorXakisAction

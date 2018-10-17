@@ -10,7 +10,7 @@ namespace TorXakisDotNetAdapter
     /// <summary>
     /// Provides an object-oriented parser for TorXakis models (.txs files).
     /// </summary>
-    public sealed class TestModel
+    public sealed class TorXakisModel
     {
         #region Definitions
 
@@ -53,7 +53,7 @@ namespace TorXakisDotNetAdapter
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public TestModel(FileInfo file)
+        public TorXakisModel(FileInfo file)
         {
             // Sanity checks.
             if (file == null || !file.Exists || file.Extension.ToLowerInvariant() != FileExtension)
@@ -72,7 +72,7 @@ namespace TorXakisDotNetAdapter
         #region Functionality
 
         /// <summary>
-        /// Parses the defined <see cref="Connection"/> types from the model.
+        /// Parses the defined <see cref="TorXakisConnection"/> types from the model.
         /// </summary>
         public Dictionary<int, List<string>> ParseConnections()
         {

@@ -285,7 +285,7 @@ namespace TorXakisDotNetAdapter.Tests
         {
             FileInfo model = new FileInfo(@"..\..\..\TorXakisDotNetAdapter.Models\Models\Reference.txs");
             Framework framework = new Framework(model);
-            Assert.AreEqual(model, framework.Adapter.Model.File);
+            Assert.AreEqual(model, framework.Connector.Model.File);
 
             TransitionSystem system1 = CreateTransitionSystem1();
             framework.AddSystem(system1);

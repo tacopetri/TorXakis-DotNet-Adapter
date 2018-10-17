@@ -24,9 +24,9 @@ namespace TorXakisDotNetAdapter.Refinement
         private readonly object locker = new object();
 
         /// <summary>
-        /// The managed <see cref="TorXakisAdapter"/> instance.
+        /// The managed <see cref="TorXakisConnector"/> instance.
         /// </summary>
-        public TorXakisAdapter Adapter { get; private set; }
+        public TorXakisConnector Connector { get; private set; }
 
         /// <summary>
         /// The collection of contained <see cref="TransitionSystem"/> systems.
@@ -46,47 +46,47 @@ namespace TorXakisDotNetAdapter.Refinement
         /// </summary>
         public Framework(FileInfo model)
         {
-            Adapter = new TorXakisAdapter(model);
-            Adapter.Started += Adapter_Started;
-            Adapter.InputReceived += Adapter_InputReceived;
+            Connector = new TorXakisConnector(model);
+            Connector.Started += Connector_Started;
+            Connector.InputReceived += Connector_InputReceived;
         }
 
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             string result = GetType().Name
-                + "\n" + nameof(Adapter) + ": " + Adapter
+                + "\n" + nameof(Connector) + ": " + Connector
                 + "\n" + nameof(Systems) + " (" + Systems.Count + "): " + string.Join(", ", Systems.Select(x => x.Name).ToArray())
                 + "\n" + nameof(CurrentSystem) + ": " + CurrentSystem;
             return result;
         }
 
         #endregion
-        #region Adapter
+        #region Connector
 
-        /// <summary><see cref="TorXakisAdapter.Start"/></summary>
+        /// <summary><see cref="TorXakisConnector.Start"/></summary>
         public void Start()
         {
             lock (locker)
             {
-                Adapter.Start();
+                Connector.Start();
             }
         }
 
-        /// <summary><see cref="TorXakisAdapter.Stop"/></summary>
+        /// <summary><see cref="TorXakisConnector.Stop"/></summary>
         public void Stop()
         {
             lock (locker)
             {
-                Adapter.Stop();
+                Connector.Stop();
             }
         }
 
-        /// <summary><see cref="TorXakisAdapter.Started"/></summary>
+        /// <summary><see cref="TorXakisConnector.Started"/></summary>
         public event Action Started;
 
-        /// <summary><see cref="TorXakisAdapter.Started"/></summary>
-        private void Adapter_Started()
+        /// <summary><see cref="TorXakisConnector.Started"/></summary>
+        private void Connector_Started()
         {
             lock (locker)
             {
@@ -94,10 +94,10 @@ namespace TorXakisDotNetAdapter.Refinement
             }
         }
 
-        /// <summary><see cref="TorXakisAdapter.InputReceived"/></summary>
-        private void Adapter_InputReceived(TorXakisAction action)
+        /// <summary><see cref="TorXakisConnector.InputReceived"/></summary>
+        private void Connector_InputReceived(TorXakisAction action)
         {
-            if (action.Type == ActionType.Input && action.Channel == TestModel.InputChannel)
+            if (action.Type == ActionType.Input && action.Channel == TorXakisModel.InputChannel)
             {
                 ModelAction input = ModelAction.Deserialize(action.Data);
                 HandleModelInput(input);
@@ -350,8 +350,8 @@ namespace TorXakisDotNetAdapter.Refinement
             {
                 Log.Debug(this, nameof(SendModelOutput) + ": " + modelOutput);
                 string serialized = modelOutput.Serialize();
-                TorXakisAction output = TorXakisAction.FromOutput(TestModel.OutputChannel, serialized);
-                Adapter.SendOutput(output);
+                TorXakisAction output = TorXakisAction.FromOutput(TorXakisModel.OutputChannel, serialized);
+                Connector.SendOutput(output);
             }
         }
 

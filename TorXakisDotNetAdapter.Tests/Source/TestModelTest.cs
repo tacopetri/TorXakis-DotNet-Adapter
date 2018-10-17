@@ -12,7 +12,7 @@ using TorXakisDotNetAdapter.Logging;
 namespace TorXakisDotNetAdapter.Tests
 {
     /// <summary>
-    /// Tests for the <see cref="TestModel"/> and <see cref="TestModelCollection"/> classes.
+    /// Tests for the <see cref="TorXakisModel"/> and <see cref="TorXakisModelCollection"/> classes.
     /// </summary>
     [TestClass]
     public class TestModelTest
@@ -29,18 +29,18 @@ namespace TorXakisDotNetAdapter.Tests
         }
 
         /// <summary>
-        /// Test for the <see cref="TestModel.ParseConnections"/> method.
+        /// Test for the <see cref="TorXakisModel.ParseConnections"/> method.
         /// </summary>
         [TestMethod]
         public void ParseConnections()
         {
             // Find all model files.
             DirectoryInfo directory = new DirectoryInfo(Path.Combine(@"..\..\..\", "TorXakisDotNetAdapter.Models", "Models"));
-            TestModelCollection collection = new TestModelCollection(directory);
+            TorXakisModelCollection collection = new TorXakisModelCollection(directory);
             Console.WriteLine(collection);
 
             // Parse connections from models.
-            foreach (TestModel model in collection.Models)
+            foreach (TorXakisModel model in collection.Models)
             {
                 Dictionary<int, List<string>> connections = model.ParseConnections();
                 foreach (KeyValuePair<int, List<string>> kvp in connections)
@@ -52,14 +52,14 @@ namespace TorXakisDotNetAdapter.Tests
         }
 
         /// <summary>
-        /// Test for the <see cref="TestModel.ParseActions"/> method.
+        /// Test for the <see cref="TorXakisModel.ParseActions"/> method.
         /// </summary>
         [TestMethod]
         public void ParseActions()
         {
             // Find all model files.
             DirectoryInfo directory = new DirectoryInfo(Path.Combine(@"..\..\..\", "TorXakisDotNetAdapter.Models", "Models"));
-            TestModelCollection collection = new TestModelCollection(directory);
+            TorXakisModelCollection collection = new TorXakisModelCollection(directory);
             Console.WriteLine(collection);
 
             // Parse actions from models.
