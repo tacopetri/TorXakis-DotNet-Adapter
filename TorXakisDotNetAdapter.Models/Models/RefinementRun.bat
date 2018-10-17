@@ -3,9 +3,9 @@ torxakis Refinement.txs
 # Enter these commands into the console:
 
 # stepper Model
-# step 55
+# step N
 # quit
 
 # tester Model System
-# test 55
+# test N
 # quit
