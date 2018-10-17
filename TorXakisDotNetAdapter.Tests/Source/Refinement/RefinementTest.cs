@@ -135,7 +135,7 @@ namespace TorXakisDotNetAdapter.Tests
                 ),
             };
 
-            TransitionSystem system = new TransitionSystem(nameof(NewItem), states, states.First(x => x.Name == "Wait"), transitions);
+            TransitionSystem system = new TransitionSystem(states, states.First(x => x.Name == "Wait"), transitions);
 
             // Have the properties been initialized correctly?
             CollectionAssert.AreEqual(states.ToList(), system.States.ToList());
@@ -189,7 +189,7 @@ namespace TorXakisDotNetAdapter.Tests
                 ),
             };
 
-            TransitionSystem system = new TransitionSystem(nameof(ItemEventArgsNew), states, states.First(x => x.Name == "Wait"), transitions);
+            TransitionSystem system = new TransitionSystem(states, states.First(x => x.Name == "Wait"), transitions);
 
             // Have the properties been initialized correctly?
             CollectionAssert.AreEqual(states.ToList(), system.States.ToList());
@@ -316,7 +316,7 @@ namespace TorXakisDotNetAdapter.Tests
                 };
                 Console.WriteLine("Using model input: " + modelInput);
                 HashSet<Tuple<TransitionSystem, ReactiveTransition>> reactives = framework.PossibleReactiveTransitions(modelInput);
-                Console.WriteLine("Possible reactives transitions: " + string.Join(", ", reactives.Select(x => x.Item1.Name + ": " + x.Item2).ToArray()));
+                Console.WriteLine("Possible reactives transitions: " + string.Join(", ", reactives.Select(x => x.Item1.ModelAction.Name + ": " + x.Item2).ToArray()));
                 Assert.AreEqual(1, reactives.Count);
 
                 framework.HandleModelInput(modelInput);
@@ -340,7 +340,7 @@ namespace TorXakisDotNetAdapter.Tests
                 };
                 Console.WriteLine("Using system event: " + systemEvent);
                 HashSet<Tuple<TransitionSystem, ReactiveTransition>> reactives = framework.PossibleReactiveTransitions(systemEvent);
-                Console.WriteLine("Possible reactives transitions: " + string.Join(", ", reactives.Select(x => x.Item1.Name + ": " + x.Item2).ToArray()));
+                Console.WriteLine("Possible reactives transitions: " + string.Join(", ", reactives.Select(x => x.Item1.ModelAction.Name + ": " + x.Item2).ToArray()));
                 Assert.AreEqual(1, reactives.Count);
 
                 framework.HandleSystemEvent(systemEvent);

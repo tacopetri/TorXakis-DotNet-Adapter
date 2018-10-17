@@ -18,7 +18,7 @@ namespace TorXakisDotNetAdapter.Refinement
         #region Variables & Properties
 
         /// <summary>
-        /// The <see cref="System.Type"/> of the associated <see cref="IAction"/> action.
+        /// The <see cref="Type"/> of the associated <see cref="IAction"/> action.
         /// </summary>
         public Type Action { get; private set; }
 

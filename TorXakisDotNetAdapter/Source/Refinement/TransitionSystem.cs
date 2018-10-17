@@ -19,9 +19,9 @@ namespace TorXakisDotNetAdapter.Refinement
         #region Variables & Properties
 
         /// <summary>
-        /// The user-friendly name.
+        /// The <see cref="Type"/> of the <see cref="Refinement.ModelAction"/> that is being refined via this system.
         /// </summary>
-        public string Name { get; private set; }
+        public Type ModelAction { get; private set; }
 
         /// <summary>
         /// The collection of contained <see cref="State"/> states.
@@ -54,17 +54,18 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public TransitionSystem(string name, HashSet<State> states, State initialState, HashSet<Transition> transitions)
+        public TransitionSystem(HashSet<State> states, State initialState, HashSet<Transition> transitions)
         {
             // Sanity checks.
-            if (string.IsNullOrEmpty(name)) throw new ArgumentException(nameof(name) + ": " + name);
             if (states == null) throw new ArgumentNullException(nameof(states));
             if (initialState == null) throw new ArgumentNullException(nameof(initialState));
             if (!states.Contains(initialState)) throw new ArgumentException(nameof(initialState) + ": " + initialState);
             if (transitions == null) throw new ArgumentNullException(nameof(transitions));
             if (transitions.Any(x => !states.Contains(x.From) || !states.Contains(x.To))) throw new ArgumentException(nameof(transitions) + ": " + transitions);
 
-            Name = name;
+            List<Type> modelActions = transitions.Where(x => typeof(ModelAction).IsAssignableFrom(x.Action)).Select(x => x.Action).ToList();
+            if (modelActions.Count != 1) throw new ArgumentException("Invalid number of model actions: " + modelActions.Count);
+            ModelAction = modelActions[0];
             States = states;
             InitialState = initialState;
             CurrentState = initialState;
@@ -74,7 +75,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
-            return Name + " (" + GetType().Name + ")"
+            return ModelAction.Name + " (" + GetType().Name + ")"
                 + "\n\t" + nameof(States) + ": " + string.Join(", ", States.Select(x => x.ToString()).ToArray())
                 + "\n\t" + nameof(InitialState) + ": " + InitialState
                 + "\n\t" + nameof(CurrentState) + ": " + CurrentState

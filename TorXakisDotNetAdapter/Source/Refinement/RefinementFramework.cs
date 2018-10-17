@@ -80,7 +80,7 @@ namespace TorXakisDotNetAdapter.Refinement
         {
             return GetType().Name
                 + "\n" + nameof(Connector) + ": " + Connector
-                + "\n" + nameof(Systems) + " (" + Systems.Count + "): " + string.Join(", ", Systems.Select(x => x.Name).ToArray())
+                + "\n" + nameof(Systems) + " (" + Systems.Count + "): " + string.Join(", ", Systems.Select(x => x.ModelAction.Name).ToArray())
                 + "\n" + nameof(CurrentSystem) + ": " + CurrentSystem
                 + "\n" + nameof(ModelInputs) + " (" + ModelInputs.Count + "): " + string.Join(", ", ModelInputs.Select(x => x.Name).ToArray())
                 + "\n" + nameof(ModelOutputs) + " (" + ModelOutputs.Count + "): " + string.Join(", ", ModelOutputs.Select(x => x.Name).ToArray())
@@ -211,9 +211,9 @@ namespace TorXakisDotNetAdapter.Refinement
                 HashSet<Tuple<TransitionSystem, ProactiveTransition>> proactives = PossibleProactiveTransitions();
                 if (proactives.Count > 0)
                 {
-                    Log.Debug(this, "Possible proactive transitions: " + string.Join(", ", proactives.Select(x => x.Item1.Name + ": " + x.Item2).ToArray()));
+                    Log.Debug(this, "Possible proactive transitions: " + string.Join(", ", proactives.Select(x => x.Item1.ModelAction.Name + ": " + x.Item2).ToArray()));
                     Tuple<TransitionSystem, ProactiveTransition> selected = proactives.Random();
-                    Log.Debug(this, "Selected proactive transition: " + selected.Item1.Name + ": " + selected.Item2);
+                    Log.Debug(this, "Selected proactive transition: " + selected.Item1.ModelAction.Name + ": " + selected.Item2);
                     IAction generated = ExecuteProactiveTransition(selected);
 
                     if (generated is ModelAction modelOutput)
@@ -235,9 +235,9 @@ namespace TorXakisDotNetAdapter.Refinement
                     HashSet<Tuple<TransitionSystem, ReactiveTransition>> reactives = PossibleReactiveTransitions(systemEvent);
                     if (reactives.Count > 0)
                     {
-                        Log.Debug(this, "Possible reactive transitions: " + string.Join(", ", reactives.Select(x => x.Item1.Name + ": " + x.Item2).ToArray()));
+                        Log.Debug(this, "Possible reactive transitions: " + string.Join(", ", reactives.Select(x => x.Item1.ModelAction.Name + ": " + x.Item2).ToArray()));
                         Tuple<TransitionSystem, ReactiveTransition> selected = reactives.Random();
-                        Log.Debug(this, "Selected reactive transition: " + selected.Item1.Name + ": " + selected.Item2);
+                        Log.Debug(this, "Selected reactive transition: " + selected.Item1.ModelAction.Name + ": " + selected.Item2);
                         ExecuteReactiveTransition(systemEvent, selected);
 
                         transitioned = true;
@@ -260,9 +260,9 @@ namespace TorXakisDotNetAdapter.Refinement
                     HashSet<Tuple<TransitionSystem, ReactiveTransition>> reactives = PossibleReactiveTransitions(modelInput);
                     if (reactives.Count > 0)
                     {
-                        Log.Debug(this, "Possible reactive transitions: " + string.Join(", ", reactives.Select(x => x.Item1.Name + ": " + x.Item2).ToArray()));
+                        Log.Debug(this, "Possible reactive transitions: " + string.Join(", ", reactives.Select(x => x.Item1.ModelAction.Name + ": " + x.Item2).ToArray()));
                         Tuple<TransitionSystem, ReactiveTransition> selected = reactives.Random();
-                        Log.Debug(this, "Selected reactive transition: " + selected.Item1.Name + ": " + selected.Item2);
+                        Log.Debug(this, "Selected reactive transition: " + selected.Item1.ModelAction.Name + ": " + selected.Item2);
                         ExecuteReactiveTransition(modelInput, selected);
 
                         transitioned = true;
