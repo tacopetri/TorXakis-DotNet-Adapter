@@ -38,11 +38,11 @@ namespace TorXakisDotNetAdapter.Tests
                 "DeleteBegin"
             ),
             new Tuple<ModelAction, string>(
-                new NewItem() { newItemId = 1 },
+                new NewItem() { Id = 1 },
                 "NewItem(1)"
             ),
             new Tuple<ModelAction, string>(
-                new ConnectItem() { connectItemId1 = 1, connectItemId2 = 2 },
+                new ConnectItem() { Id1 = 1, Id2 = 2 },
                 "ConnectItem(1,2)"
             ),
         };

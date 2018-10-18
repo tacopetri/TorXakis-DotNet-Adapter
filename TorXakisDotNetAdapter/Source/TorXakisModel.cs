@@ -25,7 +25,7 @@ namespace TorXakisDotNetAdapter
         public static readonly Dictionary<string, string> TypeMapping = new Dictionary<string, string>()
         {
             { "Bool", "bool" },
-            { "Int", "long" },
+            { "Int", "int" },
             { "String", "string" },
         };
 

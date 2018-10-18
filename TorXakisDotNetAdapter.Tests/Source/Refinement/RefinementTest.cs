@@ -100,11 +100,11 @@ namespace TorXakisDotNetAdapter.Tests
                     states.First(x => x.Name == "Act"),
                     (action) =>
                     {
-                        return 1 <= action.newItemId && action.newItemId <= guids.Length;
+                        return 1 <= action.Id && action.Id <= guids.Length;
                     },
                     (action, variables) =>
                     {
-                        int id = action.newItemId;
+                        int id = action.Id;
                         variables.SetValue(nameof(id), id);
                     }
                 ),
@@ -175,7 +175,7 @@ namespace TorXakisDotNetAdapter.Tests
                         int id = variables.GetValue<int>(nameof(id));
                         return new NewItem()
                         {
-                            newItemId = id,
+                            Id = id,
                         };
                     },
                     (action, variables) =>
@@ -208,7 +208,7 @@ namespace TorXakisDotNetAdapter.Tests
             // Determine possible reactive transitions.
             NewItem modelInput = new NewItem()
             {
-                newItemId = 1,
+                Id = 1,
             };
             Console.WriteLine("Using model input: " + modelInput);
             HashSet<ReactiveTransition> reactives = system.PossibleReactiveTransitions(modelInput);
@@ -278,7 +278,7 @@ namespace TorXakisDotNetAdapter.Tests
             IAction generatedAction = system.ExecuteProactiveTransition(proactives.First());
             Console.WriteLine("Generated action: " + generatedAction);
             Assert.AreEqual(typeof(NewItem), generatedAction.GetType());
-            Assert.AreEqual(1, (generatedAction as NewItem).newItemId);
+            Assert.AreEqual(1, (generatedAction as NewItem).Id);
             Console.WriteLine(system);
             Assert.AreEqual(system.States.ElementAt(0), system.CurrentState);
         }
@@ -308,7 +308,7 @@ namespace TorXakisDotNetAdapter.Tests
             {
                 NewItem modelInput = new NewItem()
                 {
-                    newItemId = 1,
+                    Id = 1,
                 };
                 Console.WriteLine("Using model input: " + modelInput);
                 HashSet<Tuple<TransitionSystem, ReactiveTransition>> reactives = framework.PossibleReactiveTransitions(modelInput);
