@@ -11,14 +11,14 @@ namespace TorXakisDotNetAdapter.Models
 	public sealed class CreateItemBegin : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int createItemBeginId { get; set; }
+        public long Id { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
 	public sealed class CreateItemEnd : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int createItemEndId { get; set; }
+        public long Id { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
@@ -45,78 +45,78 @@ namespace TorXakisDotNetAdapter.Models
 	public sealed class NewItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int newItemId { get; set; }
+        public long Id { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
 	public sealed class HideItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int hideItemId { get; set; }
+        public long Id { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
 	public sealed class DisableItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int disableItemId { get; set; }
+        public long Id { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
 	public sealed class LockItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int lockItemId { get; set; }
+        public long Id { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
 	public sealed class ModelSwitchItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int modelSwitchItemId { get; set; }
+        public long Id { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
 	public sealed class AssembledItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int assembledItemId { get; set; }
+        public long Id { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
 	public sealed class ConnectItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int connectItemId1 { get; set; }
+        public long Id1 { get; set; }
         /// <summary>Generated from TorXakis model.</summary>
-        public int connectItemId2 { get; set; }
+        public long Id2 { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
 	public sealed class ConnectedItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int connectedItemId1 { get; set; }
+        public long Id1 { get; set; }
         /// <summary>Generated from TorXakis model.</summary>
-        public int connectedItemId2 { get; set; }
+        public long Id2 { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
 	public sealed class CreatePathFromNodes : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int createPathFromNodesId1 { get; set; }
+        public long Id1 { get; set; }
         /// <summary>Generated from TorXakis model.</summary>
-        public int createPathFromNodesId2 { get; set; }
+        public long Id2 { get; set; }
         /// <summary>Generated from TorXakis model.</summary>
-        public int createPathFromNodesId3 { get; set; }
+        public long Id3 { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>
 	public sealed class DeleteItem : ModelAction
 	{
         /// <summary>Generated from TorXakis model.</summary>
-        public int deleteItemId { get; set; }
+        public long Id { get; set; }
 	}
 
     /// <summary>Generated from TorXakis model.</summary>

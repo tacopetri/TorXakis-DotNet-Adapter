@@ -20,13 +20,13 @@ namespace TorXakisDotNetAdapter
         public const string FileExtension = ".txs";
 
         /// <summary>
-        /// The mapping between TorXakis type names, and .NET types.
+        /// The mapping between TorXakis type names, and .NET type names.
         /// </summary>
-        public static readonly Dictionary<string, Type> TypeMapping = new Dictionary<string, Type>()
+        public static readonly Dictionary<string, string> TypeMapping = new Dictionary<string, string>()
         {
-            { "Bool", typeof(bool) },
-            { "Int", typeof(int) },
-            { "String", typeof(string) },
+            { "Bool", "bool" },
+            { "Int", "long" },
+            { "String", "string" },
         };
 
         /// <summary>

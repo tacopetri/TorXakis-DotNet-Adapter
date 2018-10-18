@@ -28,16 +28,30 @@ namespace TorXakisDotNetAdapter.Models
     // Generate classes for all action types.
     foreach (KeyValuePair<string, Dictionary<string, string>> kvp1 in actions)
     {
+        string className = kvp1.Key;
 #>
     /// <summary>Generated from TorXakis model.</summary>
-	public sealed class <#=            kvp1.Key #> : ModelAction
+	public sealed class <#= className #> : ModelAction
 	{
 <#
         foreach (KeyValuePair<string, string> kvp2 in kvp1.Value)
         {
+            // TorXakis requires fields starting with a lower case character.
+            // The .NET convention however, is camel case for properties.
+            char[] propertyNameChars= kvp2.Key.ToArray();
+            propertyNameChars[0] = Char.ToUpper(propertyNameChars[0]);
+            string propertyName = new string(propertyNameChars);
+
+            // In addition, TorXakis requires UNIQUE field names across ALL types.
+            // This leads to very long names that we would like to avoid.
+            if (propertyName.StartsWith(className))
+                propertyName = propertyName.Substring(className.Length);
+
+            // Convert TorXakis data type to .NET type.
+            string propertyType = TorXakisModel.TypeMapping[kvp2.Value];
 #>
         /// <summary>Generated from TorXakis model.</summary>
-        public <#=                kvp2.Value.ToLower() #> <#=                kvp2.Key #> { get; set; }
+        public <#= propertyType #> <#= propertyName #> { get; set; }
 <#
         }
 #>
