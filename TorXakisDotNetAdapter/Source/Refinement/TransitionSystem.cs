@@ -64,7 +64,7 @@ namespace TorXakisDotNetAdapter.Refinement
             if (transitions.Any(x => !states.Contains(x.From) || !states.Contains(x.To))) throw new ArgumentException(nameof(transitions) + ": " + transitions);
 
             List<Type> modelActions = transitions.Where(x => typeof(ModelAction).IsAssignableFrom(x.Action)).Select(x => x.Action).ToList();
-            if (modelActions.Count != 1) throw new ArgumentException("Invalid number of model actions: " + modelActions.Count);
+            if (modelActions.Count != 1) Log.Warn(this, "Invalid number of model actions: " + modelActions.Count);
             ModelAction = modelActions[0];
             States = states;
             InitialState = initialState;
