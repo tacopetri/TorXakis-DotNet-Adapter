@@ -30,7 +30,7 @@ namespace TorXakisDotNetAdapter.Models
     {
         string className = kvp1.Key;
 #>
-    /// <summary>Generated from TorXakis model.</summary>
+    /// <summary>TorXakis: <#= kvp1.Key #></summary>
 	public sealed class <#= className #> : ModelAction
 	{
 <#
@@ -50,7 +50,7 @@ namespace TorXakisDotNetAdapter.Models
             // Convert TorXakis data type to .NET type.
             string propertyType = TorXakisModel.TypeMapping[kvp2.Value];
 #>
-        /// <summary>Generated from TorXakis model.</summary>
+        /// <summary>TorXakis: <#= kvp2.Key #></summary>
         public <#= propertyType #> <#= propertyName #> { get; set; }
 <#
         }
