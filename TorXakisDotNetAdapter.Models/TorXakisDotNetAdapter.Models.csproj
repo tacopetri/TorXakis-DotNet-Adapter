@@ -73,9 +73,17 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis\"
+    <PostBuildEvent>if NOT %25ComputerName%25 == TACO GOTO end
+
+for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis\"
 
 del /q "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\AutoTest\MBT\TorXakis\Models\*"
-xcopy "$(ProjectDir)\Models" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\AutoTest\MBT\TorXakis\Models" /Y /I /E</PostBuildEvent>
+xcopy "$(ProjectDir)\Models" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\AutoTest\MBT\TorXakis\Models" /Y /I /E
+
+:end</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>
