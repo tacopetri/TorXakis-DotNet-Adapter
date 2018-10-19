@@ -58,10 +58,6 @@
     <Compile Include="Source\Logging\LogLevel.cs" />
     <Compile Include="Source\Logging\LogMessage.cs" />
     <Compile Include="Source\Refinement\ModelAction.cs" />
-    <Compile Include="Source\Legacy\Mapping\SymbolicState.cs" />
-    <Compile Include="Source\Legacy\Mapping\SymbolicTransition.cs" />
-    <Compile Include="Source\Legacy\Mapping\SymbolicTransitionSystem.cs" />
-    <Compile Include="Source\Legacy\Mapping\SymbolicVariable.cs" />
     <Compile Include="Source\Refinement\ProactiveTransition.cs" />
     <Compile Include="Source\Refinement\ProactiveTransitionT.cs" />
     <Compile Include="Source\Refinement\ReactiveTransitionT.cs" />
