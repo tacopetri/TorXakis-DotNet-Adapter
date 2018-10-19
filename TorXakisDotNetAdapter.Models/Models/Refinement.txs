@@ -1,6 +1,6 @@
 {-
 TorXakis :: Model-Based Testing
-Test model for the reference test case - original version
+Test model for the reference test case - updated for action refinement
 -}
 
 -- Internal message types:
