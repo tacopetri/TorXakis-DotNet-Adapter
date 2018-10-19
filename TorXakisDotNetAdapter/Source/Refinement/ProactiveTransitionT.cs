@@ -43,7 +43,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="Transition.CheckGuard"/></summary>
         public override bool CheckGuard(IAction action)
         {
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("Operation not defined for transition type: " + Type);
         }
 
         /// <summary><see cref="Transition.PerformGenerate"/></summary>

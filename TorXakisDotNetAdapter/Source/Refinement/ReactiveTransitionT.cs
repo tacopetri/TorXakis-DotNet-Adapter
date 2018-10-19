@@ -49,7 +49,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary><see cref="Transition.PerformGenerate"/></summary>
         public override IAction PerformGenerate(VariableCollection variables)
         {
-            throw new InvalidOperationException();
+            throw new InvalidOperationException("Operation not defined for transition type: " + Type);
         }
 
         /// <summary><see cref="Transition.PerformUpdate"/></summary>
