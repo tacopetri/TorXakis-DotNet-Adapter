@@ -101,7 +101,7 @@ namespace TorXakisDotNetAdapter.Refinement
                 // Transition must have the exact type of the given action.
                 if (transition.Action != action.GetType()) continue;
                 // Transition guard function must evaluate to true.
-                if (!transition.CheckGuard(action)) continue;
+                if (!transition.ReactiveGuard(Variables, action)) continue;
 
                 // All checks passed!
                 result.Add(transition);
@@ -120,6 +120,8 @@ namespace TorXakisDotNetAdapter.Refinement
             {
                 // Transition must come from the current state.
                 if (transition.From != CurrentState) continue;
+                // Transition guard function must evaluate to true.
+                if (!transition.ProactiveGuard(Variables)) continue;
 
                 // All checks passed!
                 result.Add(transition);
@@ -138,7 +140,7 @@ namespace TorXakisDotNetAdapter.Refinement
 
             // Execute the update function.
             Log.Debug(this, "Calling update function: " + transition);
-            transition.PerformUpdate(action, Variables);
+            transition.UpdateVariables(Variables, action);
             // Transition to the new state.
             Log.Debug(this, "Transitioning to new state: " + transition.To);
             CurrentState = transition.To;
@@ -156,10 +158,10 @@ namespace TorXakisDotNetAdapter.Refinement
 
             // Generate the action.
             Log.Debug(this, "Calling generate function: " + transition);
-            IAction action = transition.PerformGenerate(Variables);
+            IAction action = transition.GenerateAction(Variables);
             // Execute the update function.
             Log.Debug(this, "Calling update function: " + transition);
-            transition.PerformUpdate(action, Variables);
+            transition.UpdateVariables(Variables, action);
             // Transition to the new state.
             Log.Debug(this, "Transitioning to new state: " + transition.To);
             CurrentState = transition.To;

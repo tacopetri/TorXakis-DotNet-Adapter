@@ -18,11 +18,11 @@ namespace TorXakisDotNetAdapter.Refinement
         #endregion
         #region Variables & Properties
 
-        /// <summary><see cref="Transition.CheckGuard"/></summary>
-        public Func<T, bool> Guard { get; private set; }
+        /// <summary><see cref="Transition.ReactiveGuard"/></summary>
+        public Func<VariableCollection, T, bool> Guard { get; private set; }
 
-        /// <summary><see cref="Transition.PerformUpdate"/></summary>
-        public Action<T, VariableCollection> Update { get; private set; }
+        /// <summary><see cref="Transition.UpdateVariables"/></summary>
+        public Action<VariableCollection, T> Update { get; private set; }
 
         #endregion
         #region Create & Destroy
@@ -30,7 +30,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// <summary>
         /// Constructor, with parameters.
         /// </summary>
-        public ReactiveTransition(State from, State to, Func<T, bool> guard, Action<T, VariableCollection> update)
+        public ReactiveTransition(State from, State to, Func<VariableCollection, T, bool> guard, Action<VariableCollection, T> update)
             : base(from, to)
         {
             Guard = guard ?? throw new ArgumentNullException(nameof(guard));
@@ -40,22 +40,28 @@ namespace TorXakisDotNetAdapter.Refinement
         #endregion
         #region Functionality
 
-        /// <summary><see cref="Transition.CheckGuard"/></summary>
-        public override bool CheckGuard(IAction action)
-        {
-            return Guard.Invoke((T)action);
-        }
-
-        /// <summary><see cref="Transition.PerformGenerate"/></summary>
-        public override IAction PerformGenerate(VariableCollection variables)
+        /// <summary><see cref="Transition.ProactiveGuard"/></summary>
+        public override bool ProactiveGuard(VariableCollection variables)
         {
             throw new InvalidOperationException("Operation not defined for transition type: " + Type);
         }
 
-        /// <summary><see cref="Transition.PerformUpdate"/></summary>
-        public override void PerformUpdate(IAction action, VariableCollection variables)
+        /// <summary><see cref="Transition.ReactiveGuard"/></summary>
+        public override bool ReactiveGuard(VariableCollection variables, IAction action)
         {
-            Update.Invoke((T)action, variables);
+            return Guard.Invoke(variables, (T)action);
+        }
+
+        /// <summary><see cref="Transition.GenerateAction"/></summary>
+        public override IAction GenerateAction(VariableCollection variables)
+        {
+            throw new InvalidOperationException("Operation not defined for transition type: " + Type);
+        }
+
+        /// <summary><see cref="Transition.UpdateVariables"/></summary>
+        public override void UpdateVariables(VariableCollection variables, IAction action)
+        {
+            Update.Invoke(variables, (T)action);
         }
 
         #endregion

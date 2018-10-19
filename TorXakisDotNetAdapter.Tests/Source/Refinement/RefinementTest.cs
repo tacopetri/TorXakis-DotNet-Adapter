@@ -38,14 +38,6 @@ namespace TorXakisDotNetAdapter.Tests
         /// The model.
         /// </summary>
         public string Model { get; set; }
-        /// <summary>
-        /// The model version.
-        /// </summary>
-        public int ModelVersion { get; set; }
-        /// <summary>
-        /// The parent item.
-        /// </summary>
-        public object Parent { get; set; }
 
         /// <summary>
         /// Constructor, with parameters.
@@ -82,8 +74,6 @@ namespace TorXakisDotNetAdapter.Tests
         private static readonly float[][] rotations = new float[][] { new float[4] { 1, 0, 0, 1 }, new float[4] { 0, 1, 0, 1 } };
         private static readonly string[] modelGroups = new string[] { "group_12", "default" };
         private static readonly string[] models = new string[] { "asset_human_nld_ic1_fire_bevelvoerder_12", "asset_object_int_fire_watergun" };
-        private static readonly int[] modelVersions = new int[] { 24, 18 };
-        private static readonly object[] parents = new object[] { null, null };
 
         private TransitionSystem CreateTransitionSystem1()
         {
@@ -98,11 +88,11 @@ namespace TorXakisDotNetAdapter.Tests
                 new ReactiveTransition<NewItem>(
                     states.First(x => x.Name == "Wait"),
                     states.First(x => x.Name == "Act"),
-                    (action) =>
+                    (variables, action) =>
                     {
                         return 1 <= action.Id && action.Id <= guids.Length;
                     },
-                    (action, variables) =>
+                    (variables, action) =>
                     {
                         int id = action.Id;
                         variables.SetValue(nameof(id), id);
@@ -111,6 +101,10 @@ namespace TorXakisDotNetAdapter.Tests
                 new ProactiveTransition<ItemEventArgsNew>(
                     states.First(x => x.Name == "Act"),
                     states.First(x => x.Name == "Wait"),
+                    (variables) =>
+                    {
+                        return true;
+                    },
                     (variables) =>
                     {
                         int id = variables.GetValue<int>(nameof(id));
@@ -122,11 +116,9 @@ namespace TorXakisDotNetAdapter.Tests
                             Rotation = rotations[id - 1],
                             ModelGroup = modelGroups[id - 1],
                             Model = models[id - 1],
-                            ModelVersion = modelVersions[id - 1],
-                            Parent = parents[id - 1],
                         };
                     },
-                    (action, variables) =>
+                    (variables, action) =>
                     {
                         variables.ClearValue("id");
                     }
@@ -157,11 +149,11 @@ namespace TorXakisDotNetAdapter.Tests
                 new ReactiveTransition<ItemEventArgsNew>(
                     states.First(x => x.Name == "Wait"),
                     states.First(x => x.Name == "Act"),
-                    (action) =>
+                    (variables, action) =>
                     {
                         return guids.ToList().IndexOf(action.GUID) != -1;
                     },
-                    (action, variables) =>
+                    (variables, action) =>
                     {
                         int id = guids.ToList().IndexOf(action.GUID) + 1;
                         variables.SetValue(nameof(id), id);
@@ -172,13 +164,17 @@ namespace TorXakisDotNetAdapter.Tests
                     states.First(x => x.Name == "Wait"),
                     (variables) =>
                     {
+                        return true;
+                    },
+                    (variables) =>
+                    {
                         int id = variables.GetValue<int>(nameof(id));
                         return new NewItem()
                         {
                             Id = id,
                         };
                     },
-                    (action, variables) =>
+                    (variables, action) =>
                     {
                         variables.ClearValue("id");
                     }
@@ -254,8 +250,6 @@ namespace TorXakisDotNetAdapter.Tests
                 Rotation = rotations[0],
                 ModelGroup = modelGroups[0],
                 Model = models[0],
-                ModelVersion = modelVersions[0],
-                Parent = parents[0],
             };
             Console.WriteLine("Using system event: " + systemEvent);
             HashSet<ReactiveTransition> reactives = system.PossibleReactiveTransitions(systemEvent);
@@ -331,8 +325,6 @@ namespace TorXakisDotNetAdapter.Tests
                     Rotation = rotations[0],
                     ModelGroup = modelGroups[0],
                     Model = models[0],
-                    ModelVersion = modelVersions[0],
-                    Parent = parents[0],
                 };
                 Console.WriteLine("Using system event: " + systemEvent);
                 HashSet<Tuple<TransitionSystem, ReactiveTransition>> reactives = framework.PossibleReactiveTransitions(systemEvent);
