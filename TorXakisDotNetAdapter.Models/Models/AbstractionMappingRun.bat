@@ -1,4 +1,4 @@
-torxakis Refinement.txs
+torxakis AbstractionMapping.txs
 
 # Enter these commands into the console:
 

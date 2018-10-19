@@ -65,8 +65,8 @@
   <ItemGroup>
     <None Include="Models\Reference.txs" />
     <None Include="Models\ReferenceRun.bat" />
-    <None Include="Models\Refinement.txs" />
-    <None Include="Models\RefinementRun.bat" />
+    <None Include="Models\AbstractionMapping.txs" />
+    <None Include="Models\AbstractionMappingRun.bat" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -75,6 +75,7 @@
   <PropertyGroup>
     <PostBuildEvent>for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis\"
 
+del /q "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\AutoTest\MBT\TorXakis\Models\*"
 xcopy "$(ProjectDir)\Models" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\AutoTest\MBT\TorXakis\Models" /Y /I /E</PostBuildEvent>
   </PropertyGroup>
 </Project>
