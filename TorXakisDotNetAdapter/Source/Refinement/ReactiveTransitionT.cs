@@ -40,16 +40,16 @@ namespace TorXakisDotNetAdapter.Refinement
         #endregion
         #region Functionality
 
-        /// <summary><see cref="Transition.ProactiveGuard"/></summary>
-        public override bool ProactiveGuard(VariableCollection variables)
-        {
-            throw new InvalidOperationException("Operation not defined for transition type: " + Type);
-        }
-
         /// <summary><see cref="Transition.ReactiveGuard"/></summary>
         public override bool ReactiveGuard(VariableCollection variables, IAction action)
         {
             return Guard.Invoke(variables, (T)action);
+        }
+
+        /// <summary><see cref="Transition.ProactiveGuard"/></summary>
+        public override bool ProactiveGuard(VariableCollection variables)
+        {
+            throw new InvalidOperationException("Operation not defined for transition type: " + Type);
         }
 
         /// <summary><see cref="Transition.GenerateAction"/></summary>

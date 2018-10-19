@@ -63,16 +63,16 @@ namespace TorXakisDotNetAdapter.Refinement
         #region Functionality
 
         /// <summary>
-        /// The guard constraint: is this transition valid given the variables?
-        /// <para>Only valid for <see cref="TransitionType.Proactive"/> transitions!</para>
-        /// </summary>
-        public abstract bool ProactiveGuard(VariableCollection variables);
-
-        /// <summary>
         /// The guard constraint: is this transition valid given the variables and action?
         /// <para>Only valid for <see cref="TransitionType.Reactive"/> transitions!</para>
         /// </summary>
         public abstract bool ReactiveGuard(VariableCollection variables, IAction action);
+
+        /// <summary>
+        /// The guard constraint: is this transition valid given the variables?
+        /// <para>Only valid for <see cref="TransitionType.Proactive"/> transitions!</para>
+        /// </summary>
+        public abstract bool ProactiveGuard(VariableCollection variables);
 
         /// <summary>
         /// The generate function: given the variables, which action should be performed?
