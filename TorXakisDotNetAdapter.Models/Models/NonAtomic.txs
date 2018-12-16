@@ -77,6 +77,7 @@ PROCDEF Main [Sync :: Internal; Input, Output :: External] () ::=
   EXIT
  )
  >>>
+ {-
  Input ? connect1 :: External [[ IF isConnectItem(connect1)
                                  THEN (connectItemId1(connect1) == 1)
                                  /\ (connectItemId2(connect1) == 2)
@@ -95,6 +96,7 @@ PROCDEF Main [Sync :: Internal; Input, Output :: External] () ::=
  >->
  Output ! ConnectedItem(2, 3)
  >->
+ -}
  Sync ? begind :: Internal [[ isDeleteBegin(begind) ]]
  >->
  Sync ? endd :: Internal [[ isDeleteEnd(endd) ]]
@@ -173,6 +175,7 @@ ENDDEF
 PROCDEF Delete [Sync :: Internal; Input, Output :: External] () ::=
  Sync ? begin :: Internal [[ isDeleteBegin(begin) ]]
  >->
+ {-
  (
    Input ? delete3 :: External [[ IF isDeleteItem(delete3)
                                   THEN deleteItemId(delete3) == 3
@@ -192,6 +195,7 @@ PROCDEF Delete [Sync :: Internal; Input, Output :: External] () ::=
  >>>
  Input ? deletep :: External [[ isDeletePath(deletep) ]]
  >->
+ -}
  Input ? delete2 :: External [[ IF isDeleteItem(delete2)
                                 THEN deleteItemId(delete2) == 2
                                 ELSE False FI ]]
