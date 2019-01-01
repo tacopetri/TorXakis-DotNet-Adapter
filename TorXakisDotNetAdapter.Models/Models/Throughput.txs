@@ -50,6 +50,57 @@ PROCDEF Main [Sync :: Internal; Input, Output :: External] () ::=
  >->
  Output ! AssembledItem(2)
  >->
+ {-
+ Input ? new3 :: External [[ IF isNewItem(new3)
+                             THEN newItemId(new3) == 3
+                             ELSE False FI ]]
+ >->
+ Output ! AssembledItem(3)
+ >->
+ Input ? new4 :: External [[ IF isNewItem(new4)
+                             THEN newItemId(new4) == 4
+                             ELSE False FI ]]
+ >->
+ Output ! AssembledItem(4)
+ >->
+ Input ? new5 :: External [[ IF isNewItem(new5)
+                             THEN newItemId(new5) == 5
+                             ELSE False FI ]]
+ >->
+ Output ! AssembledItem(5)
+ >->
+ Input ? new6 :: External [[ IF isNewItem(new6)
+                             THEN newItemId(new6) == 6
+                             ELSE False FI ]]
+ >->
+ Output ! AssembledItem(6)
+ >->
+ Input ? new7 :: External [[ IF isNewItem(new7)
+                             THEN newItemId(new7) == 7
+                             ELSE False FI ]]
+ >->
+ Output ! AssembledItem(7)
+ >->
+ Input ? new8 :: External [[ IF isNewItem(new8)
+                             THEN newItemId(new8) == 8
+                             ELSE False FI ]]
+ >->
+ Output ! AssembledItem(8)
+ >->
+ Input ? new9 :: External [[ IF isNewItem(new9)
+                             THEN newItemId(new9) == 9
+                             ELSE False FI ]]
+ >->
+ Output ! AssembledItem(9)
+ >->
+ Input ? new10 :: External [[ IF isNewItem(new10)
+                             THEN newItemId(new10) == 10
+                             ELSE False FI ]]
+ >->
+ Output ! AssembledItem(10)
+ >->
+ -}
+ 
  
  Sync ? begin1 :: Internal [[ IF isMoveItemBegin(begin1)
                               THEN moveItemBeginId(begin1) == 1
@@ -59,6 +110,40 @@ PROCDEF Main [Sync :: Internal; Input, Output :: External] () ::=
                               THEN moveItemBeginId(begin2) == 2
                               ELSE False FI ]]
  >->
+ {-
+ Sync ? begin3 :: Internal [[ IF isMoveItemBegin(begin3)
+                              THEN moveItemBeginId(begin3) == 3
+                              ELSE False FI ]]
+ >->
+ Sync ? begin4 :: Internal [[ IF isMoveItemBegin(begin4)
+                              THEN moveItemBeginId(begin4) == 4
+                              ELSE False FI ]]
+ >->
+ Sync ? begin5 :: Internal [[ IF isMoveItemBegin(begin5)
+                              THEN moveItemBeginId(begin5) == 5
+                              ELSE False FI ]]
+ >->
+ Sync ? begin6 :: Internal [[ IF isMoveItemBegin(begin6)
+                              THEN moveItemBeginId(begin6) == 6
+                              ELSE False FI ]]
+ >->
+ Sync ? begin7 :: Internal [[ IF isMoveItemBegin(begin7)
+                              THEN moveItemBeginId(begin7) == 7
+                              ELSE False FI ]]
+ >->
+ Sync ? begin8 :: Internal [[ IF isMoveItemBegin(begin8)
+                              THEN moveItemBeginId(begin8) == 8
+                              ELSE False FI ]]
+ >->
+ Sync ? begin9 :: Internal [[ IF isMoveItemBegin(begin9)
+                              THEN moveItemBeginId(begin9) == 9
+                              ELSE False FI ]]
+ >->
+ Sync ? begin10 :: Internal [[ IF isMoveItemBegin(begin10)
+                              THEN moveItemBeginId(begin10) == 10
+                              ELSE False FI ]]
+ >->
+ -}
  
  (
   Sync ? end :: Internal [[ IF isMoveItemEnd(end)
@@ -75,6 +160,72 @@ PROCDEF Main [Sync :: Internal; Input, Output :: External] () ::=
   >->
   EXIT
  )
+ {-
+ |||
+ (
+  Sync ? end :: Internal [[ IF isMoveItemEnd(end)
+                            THEN moveItemEndId(end) == 3
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ |||
+ (
+  Sync ? end :: Internal [[ IF isMoveItemEnd(end)
+                            THEN moveItemEndId(end) == 4
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ |||
+ (
+  Sync ? end :: Internal [[ IF isMoveItemEnd(end)
+                            THEN moveItemEndId(end) == 5
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ |||
+ (
+  Sync ? end :: Internal [[ IF isMoveItemEnd(end)
+                            THEN moveItemEndId(end) == 6
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ |||
+ (
+  Sync ? end :: Internal [[ IF isMoveItemEnd(end)
+                            THEN moveItemEndId(end) == 7
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ |||
+ (
+  Sync ? end :: Internal [[ IF isMoveItemEnd(end)
+                            THEN moveItemEndId(end) == 8
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ |||
+ (
+  Sync ? end :: Internal [[ IF isMoveItemEnd(end)
+                            THEN moveItemEndId(end) == 9
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ |||
+ (
+  Sync ? end :: Internal [[ IF isMoveItemEnd(end)
+                            THEN moveItemEndId(end) == 10
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ -}
  >>>
   
  Input ? delete1 :: External [[ IF isDeleteItem(delete1)
@@ -85,6 +236,40 @@ PROCDEF Main [Sync :: Internal; Input, Output :: External] () ::=
                                 THEN deleteItemId(delete2) == 2
                                 ELSE False FI ]]
  >->
+ {-
+ Input ? delete3 :: External [[ IF isDeleteItem(delete3)
+                                THEN deleteItemId(delete3) == 3
+                                ELSE False FI ]]
+ >->
+ Input ? delete4 :: External [[ IF isDeleteItem(delete4)
+                                THEN deleteItemId(delete4) == 4
+                                ELSE False FI ]]
+ >->
+ Input ? delete5 :: External [[ IF isDeleteItem(delete5)
+                                THEN deleteItemId(delete5) == 5
+                                ELSE False FI ]]
+ >->
+ Input ? delete6 :: External [[ IF isDeleteItem(delete6)
+                                THEN deleteItemId(delete6) == 6
+                                ELSE False FI ]]
+ >->
+ Input ? delete7 :: External [[ IF isDeleteItem(delete7)
+                                THEN deleteItemId(delete7) == 7
+                                ELSE False FI ]]
+ >->
+ Input ? delete8 :: External [[ IF isDeleteItem(delete8)
+                                THEN deleteItemId(delete8) == 8
+                                ELSE False FI ]]
+ >->
+ Input ? delete9 :: External [[ IF isDeleteItem(delete9)
+                                THEN deleteItemId(delete9) == 9
+                                ELSE False FI ]]
+ >->
+ Input ? delete10 :: External [[ IF isDeleteItem(delete10)
+                                THEN deleteItemId(delete10) == 10
+                                ELSE False FI ]]
+ >->
+ -}
  Main [Sync, Input, Output] ()
 ENDDEF
 
@@ -117,8 +302,18 @@ MODELDEF Model ::=
    Main [Sync1, Input, Output] ()
    |[Sync1]|
    (
-    MoveItem [Sync1, Input, Output] (1) |||
-    MoveItem [Sync1, Input, Output] (2)
+        MoveItem [Sync1, Input, Output] (1)
+    ||| MoveItem [Sync1, Input, Output] (2)
+    {-
+    ||| MoveItem [Sync1, Input, Output] (3)
+    ||| MoveItem [Sync1, Input, Output] (4)
+    ||| MoveItem [Sync1, Input, Output] (5)
+    ||| MoveItem [Sync1, Input, Output] (6)
+    ||| MoveItem [Sync1, Input, Output] (7)
+    ||| MoveItem [Sync1, Input, Output] (8)
+    ||| MoveItem [Sync1, Input, Output] (9)
+    ||| MoveItem [Sync1, Input, Output] (10)
+    -}
    )
 ENDDEF
 
