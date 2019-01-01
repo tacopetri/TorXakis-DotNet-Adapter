@@ -199,7 +199,7 @@ namespace TorXakisDotNetAdapter.Refinement
         /// Determines if the <see cref="CurrentSystem"/> can be advanced.
         /// Determines if one of the <see cref="Systems"/> can be started.
         /// </summary>
-        private void CheckSystems()
+        public void CheckSystems()
         {
             Log.Debug(this, nameof(CheckSystems) + " inputs: " + inputs.Count + " commands: " + events.Count + "\n" + this);
 
@@ -411,7 +411,9 @@ namespace TorXakisDotNetAdapter.Refinement
 
                 Log.Debug(this, nameof(HandleModelInput) + ": " + modelInput);
                 inputs.Enqueue(modelInput);
-                CheckSystems();
+
+                // This must now be called manually from the thread that should perform the operations.
+                //CheckSystems();
             }
         }
 
@@ -452,7 +454,9 @@ namespace TorXakisDotNetAdapter.Refinement
 
                 Log.Debug(this, nameof(HandleSystemEvent) + ": " + systemEvent);
                 events.Enqueue(systemEvent);
-                CheckSystems();
+
+                // This must now be called manually from the thread that should perform the operations.
+                //CheckSystems();
             }
         }
 
