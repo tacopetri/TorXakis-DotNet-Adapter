@@ -63,12 +63,16 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Models\NonAtomic.txs" />
+    <None Include="Models\NonAtomicRun.bat" />
     <None Include="Models\Reference.txs" />
     <None Include="Models\ReferenceRun.bat" />
     <None Include="Models\Mapping.txs" />
     <None Include="Models\MappingRun.bat" />
     <None Include="Models\Refinement.txs" />
     <None Include="Models\RefinementRun.bat" />
+    <None Include="Models\Throughput.txs" />
+    <None Include="Models\ThroughputRun.bat" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

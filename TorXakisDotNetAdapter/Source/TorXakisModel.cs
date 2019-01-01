@@ -134,7 +134,7 @@ namespace TorXakisDotNetAdapter
                 // Find all ACTION types.
                 foreach (string typeMatch in typedefText.Split(new char[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    string typeStripped = typeMatch.Replace("\n", "").Replace("\t", "").Replace(" ", "");
+                    string typeStripped = typeMatch.Replace("\r", "").Replace("\n", "").Replace("\t", "").Replace(" ", "");
 
                     // Parse NAME.
                     string[] typeParts = typeStripped.Split('{');
@@ -149,7 +149,7 @@ namespace TorXakisDotNetAdapter
                         {
                             string[] paramParts = paramMatch.Split(new char[] { ':' }, StringSplitOptions.RemoveEmptyEntries);
                             string[] paramNames = paramParts[0].Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                            string paramType = paramParts[1];
+                            string paramType = paramParts[1].TrimEnd('}');
                             foreach (string paramName in paramNames)
                             {
                                 actions[typeName].Add(paramName, paramType);

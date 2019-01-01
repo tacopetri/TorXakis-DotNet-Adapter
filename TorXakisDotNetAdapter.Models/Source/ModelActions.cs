@@ -124,4 +124,32 @@ namespace TorXakisDotNetAdapter.Models
 	{
 	}
 
+    /// <summary>TorXakis: MoveItemBegin</summary>
+	public sealed class MoveItemBegin : ModelAction
+	{
+        /// <summary>TorXakis: moveItemBeginId</summary>
+        public int Id { get; set; }
+	}
+
+    /// <summary>TorXakis: MoveItemEnd</summary>
+	public sealed class MoveItemEnd : ModelAction
+	{
+        /// <summary>TorXakis: moveItemEndId</summary>
+        public int Id { get; set; }
+	}
+
+    /// <summary>TorXakis: MovingItem</summary>
+	public sealed class MovingItem : ModelAction
+	{
+        /// <summary>TorXakis: movingItemId</summary>
+        public int Id { get; set; }
+	}
+
+    /// <summary>TorXakis: MovedItem</summary>
+	public sealed class MovedItem : ModelAction
+	{
+        /// <summary>TorXakis: movedItemId</summary>
+        public int Id { get; set; }
+	}
+
 }

@@ -81,7 +81,7 @@ namespace TorXakisDotNetAdapter
                         {
                             string oldList = string.Join(", ", existing.Select(x => x.Key + ": " + x.Value).ToArray());
                             string newList = string.Join(", ", kvp.Value.Select(x => x.Key + ": " + x.Value).ToArray());
-                            throw new Exception("Cannot change signature of model action: " + kvp.Key + "\n" + "Old: " + oldList + "\n" + "New: " + newList);
+                            throw new Exception("Cannot change signature of model action: " + kvp.Key + "\n" + "Old: " + oldList + "\n" + "New: " + newList + "\n" + "File: " + model.File.FullName);
                         }
                     }
                     else
