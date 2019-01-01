@@ -16,6 +16,7 @@ TYPEDEF  External ::=
    NewItem { newItemId :: Int }
  | AssembledItem { assembledItemId :: Int }
  
+ | MoveItem { moveItemId :: Int }
  | MovingItem { movingItemId :: Int }
  | MovedItem { movedItemId :: Int }
  
@@ -90,12 +91,15 @@ ENDDEF
 -- The message & event pattern for the item move sub-model.
 -- It loops so it may be traversed multiple times during a test run.
 STAUTDEF MoveItem [Sync :: Internal; Input, Output :: External] (id :: Int) ::=
- STATE idle, moving, moved
+ STATE idle, move, moving, moved
  VAR varid, varcount :: Int
  INIT idle { varid := id; varcount := 0 }
  TRANS idle -> Sync ? begin [[ IF isMoveItemBegin(begin)
                                THEN moveItemBeginId(begin) == varid
-                               ELSE False FI ]] {} -> moving
+                               ELSE False FI ]] {} -> move
+       move -> Input ? mv [[ IF isMoveItem(mv)
+                             THEN moveItemId(mv) == varid
+                             ELSE False FI ]] {} -> moving
        moving -> Output ! MovingItem(varid) { varcount := varcount + 1 } -> moving
        moving -> Output ! MovedItem(varid) [[ varcount > 5 ]] {} -> moved
        moved -> Sync ? end [[ IF isMoveItemEnd(end)

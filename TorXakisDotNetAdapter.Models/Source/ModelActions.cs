@@ -138,6 +138,13 @@ namespace TorXakisDotNetAdapter.Models
         public int Id { get; set; }
 	}
 
+    /// <summary>TorXakis: MoveItem</summary>
+	public sealed class MoveItem : ModelAction
+	{
+        /// <summary>TorXakis: moveItemId</summary>
+        public int Id { get; set; }
+	}
+
     /// <summary>TorXakis: MovingItem</summary>
 	public sealed class MovingItem : ModelAction
 	{
