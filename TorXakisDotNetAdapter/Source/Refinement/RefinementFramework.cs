@@ -245,7 +245,7 @@ namespace TorXakisDotNetAdapter.Refinement
                     else
                     {
                         // Since all system events are being looped through this, not being able to handle one is not an error per se. (TPE)
-                        if (true) Log.Error(this, "No reactive transition possible for system event: " + systemEvent);
+                        Log.Warn(this, "No reactive transition possible for system event: " + systemEvent);
                     }
                 }
             }
