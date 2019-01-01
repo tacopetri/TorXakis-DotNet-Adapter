@@ -1,0 +1,136 @@
+{-
+TorXakis :: Model-Based Testing
+Test model for the reference test case - updated for high message throughput
+-}
+
+-- Internal message types:
+-- used to synchronize between main model and sub-models.
+TYPEDEF  Internal ::=
+   MoveItemBegin { moveItemBeginId :: Int }
+ | MoveItemEnd { moveItemEndId :: Int }
+ENDDEF
+
+-- External message types:
+-- these are the messages that the SUT understands via its test adapter.
+TYPEDEF  External ::=
+   NewItem { newItemId :: Int }
+ | AssembledItem { assembledItemId :: Int }
+ 
+ | MovingItem { movingItemId :: Int }
+ | MovedItem { movedItemId :: Int }
+ 
+ | DeleteItem { deleteItemId :: Int }
+ ENDDEF
+
+-- There are only 2 SUT channels. All input messages are sent over the
+-- input channel, all output messages are sent over the output channel.
+-- For now, we don't restrict the input/output direction of the messages:
+-- both channels may send/receive ANY of the message types.
+-- There are special SYNC channels for sychronization between the processes:
+-- one for each level of nested sychronization.
+CHANDEF Channels ::=
+ Sync1 :: Internal;
+ Input :: External;
+ Output :: External
+ENDDEF
+
+-- The message & event pattern for the main model.
+-- It is recursive so it may be traversed multiple times during a test run.
+PROCDEF Main [Sync :: Internal; Input, Output :: External] () ::=
+ Input ? new1 :: External [[ IF isNewItem(new1)
+                             THEN newItemId(new1) == 1
+                             ELSE False FI ]]
+ >->
+ Output ! AssembledItem(1)
+ >->
+ Input ? new2 :: External [[ IF isNewItem(new2)
+                             THEN newItemId(new2) == 2
+                             ELSE False FI ]]
+ >->
+ Output ! AssembledItem(2)
+ >->
+ 
+ Sync ? begin1 :: Internal [[ IF isMoveItemBegin(begin1)
+                              THEN moveItemBeginId(begin1) == 1
+                              ELSE False FI ]]
+ >->
+ Sync ? begin2 :: Internal [[ IF isMoveItemBegin(begin2)
+                              THEN moveItemBeginId(begin2) == 2
+                              ELSE False FI ]]
+ >->
+ 
+ (
+  Sync ? end :: Internal [[ IF isMoveItemEnd(end)
+                            THEN moveItemEndId(end) == 1
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ |||
+ (
+  Sync ? end :: Internal [[ IF isMoveItemEnd(end)
+                            THEN moveItemEndId(end) == 2
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ >>>
+  
+ Input ? delete1 :: External [[ IF isDeleteItem(delete1)
+                                THEN deleteItemId(delete1) == 1
+                                ELSE False FI ]]
+ >->
+ Input ? delete2 :: External [[ IF isDeleteItem(delete2)
+                                THEN deleteItemId(delete2) == 2
+                                ELSE False FI ]]
+ >->
+ Main [Sync, Input, Output] ()
+ENDDEF
+
+-- The message & event pattern for the item move sub-model.
+-- It loops so it may be traversed multiple times during a test run.
+STAUTDEF MoveItem [Sync :: Internal; Input, Output :: External] (id :: Int) ::=
+ STATE idle, moving, moved
+ VAR varid, varcount :: Int
+ INIT idle { varid := id; varcount := 0 }
+ TRANS idle -> Sync ? begin [[ IF isMoveItemBegin(begin)
+                               THEN moveItemBeginId(begin) == varid
+                               ELSE False FI ]] {} -> moving
+       moving -> Output ! MovingItem(varid) { varcount := varcount + 1 } -> moving
+       moving -> Output ! MovedItem(varid) [[ varcount > 5 ]] {} -> moved
+       moved -> Sync ? end [[ IF isMoveItemEnd(end)
+                              THEN moveItemEndId(end) == varid
+                              ELSE False FI ]] {} -> idle
+ENDDEF
+
+-- The test model consists of the composition of parametrized processes,
+-- synchronized via communication over the internal SYNC channels.
+MODELDEF Model ::=
+ CHAN IN Sync1, Input
+ CHAN OUT Output
+
+ BEHAVIOUR
+   Main [Sync1, Input, Output] ()
+   |[Sync1]|
+   (
+    MoveItem [Sync1, Input, Output] (1) |||
+    MoveItem [Sync1, Input, Output] (2)
+   )
+ENDDEF
+
+-- We connect to the system via a single TCP socket: input+output combined.
+-- This preserves message order within the stream, as opposed to using
+-- multiple TCP sockets: one for each channel.
+-- We explicitly use a single INPUT and single OUTPUT channel to enforce
+-- message order, using abstract data types to distinguish message types.
+CNECTDEF System ::=
+ CLIENTSOCK
+  CHAN OUT Sync1 HOST "localhost" PORT 8001
+  ENCODE Sync1 ? s -> ! toString(s)
+  
+  CHAN OUT Input HOST "localhost" PORT 9001
+  ENCODE Input ? s -> ! toString(s)
+
+  CHAN IN Output HOST "localhost" PORT 9001
+  DECODE Output ! fromString(s) <- ? s
+ENDDEF
