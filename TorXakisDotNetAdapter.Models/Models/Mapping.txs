@@ -1,0 +1,250 @@
+{-
+TorXakis :: Model-Based Testing
+Test model for the reference test case - updated for abstraction mapping
+-}
+
+-- Internal message types:
+-- used to synchronize between main model and sub-models.
+TYPEDEF  Internal ::=
+   CreateItemBegin { createItemBeginId :: Int }
+ | CreateItemEnd { createItemEndId :: Int }
+ 
+ | CreatePathBegin
+ | CreatePathEnd
+ 
+ | DeleteBegin
+ | DeleteEnd
+ENDDEF
+
+-- External message types:
+-- these are the messages that the SUT understands via its test adapter.
+TYPEDEF  External ::=
+   NewItem { newItemId :: Int }
+ | HideItem { hideItemId :: Int }
+ | DisableItem { disableItemId :: Int }
+ | LockItem { lockItemId :: Int }
+ | ModelSwitchItem { modelSwitchItemId :: Int }
+ | AssembledItem { assembledItemId :: Int }
+ 
+ | ConnectItem { connectItemId1 :: Int; connectItemId2 :: Int }
+ | ConnectedItem { connectedItemId1 :: Int; connectedItemId2 :: Int }
+ 
+ | CreatePathFromNodes { createPathFromNodesId1 :: Int;
+                         createPathFromNodesId2 :: Int;
+                         createPathFromNodesId3 :: Int }
+ 
+ | DeleteItem { deleteItemId :: Int }
+ | DeletePath
+ENDDEF
+
+-- There are only 2 SUT channels. All input messages are sent over the
+-- input channel, all output messages are sent over the output channel.
+-- For now, we don't restrict the input/output direction of the messages:
+-- both channels may send/receive ANY of the message types.
+-- There are special SYNC channels for sychronization between the processes:
+-- one for each level of nested sychronization.
+CHANDEF Channels ::=
+ Sync1 :: Internal;
+ Sync2 :: Internal;
+ Input :: External;
+ Output :: External
+ENDDEF
+
+-- The message & event pattern for the main model.
+-- It is recursive so it may be traversed multiple times during a test run.
+PROCDEF Main [Sync :: Internal; Input, Output :: External] () ::=
+ (
+  Sync ? begin :: Internal [[ IF isCreateItemBegin(begin)
+                              THEN createItemBeginId(begin) == 1
+                              ELSE False FI ]]
+  >->
+  Sync ? end :: Internal [[ IF isCreateItemEnd(end)
+                            THEN createItemEndId(end) == 1
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ |||
+ (
+  Sync ? begin :: Internal [[ IF isCreateItemBegin(begin)
+                              THEN createItemBeginId(begin) == 2
+                              ELSE False FI ]]
+  >->
+  Sync ? end :: Internal [[ IF isCreateItemEnd(end)
+                            THEN createItemEndId(end) == 2
+                            ELSE False FI ]]
+  >->
+  EXIT
+ )
+ >>>
+ Input ? connect1 :: External [[ IF isConnectItem(connect1)
+                                 THEN (connectItemId1(connect1) == 1)
+                                 /\ (connectItemId2(connect1) == 2)
+                                 ELSE False FI ]]
+ >->
+ Output ! ConnectedItem(1, 2)
+ >->
+ Sync ? beginp :: Internal [[ isCreatePathBegin(beginp) ]]
+ >->
+ Sync ? endp :: Internal [[ isCreatePathEnd(endp) ]]
+ >->
+ Input ? connect2 :: External [[ IF isConnectItem(connect2)
+                                 THEN (connectItemId1(connect2) == 2)
+                                 /\ (connectItemId2(connect2) == 3)
+                                 ELSE False FI ]]
+ >->
+ Output ! ConnectedItem(2, 3)
+ >->
+ Sync ? begind :: Internal [[ isDeleteBegin(begind) ]]
+ >->
+ Sync ? endd :: Internal [[ isDeleteEnd(endd) ]]
+ >->
+ Main [Sync, Input, Output] ()
+ENDDEF
+
+-- The message & event pattern for the item creation sub-model.
+PROCDEF CreateItem [Sync :: Internal; Input, Output :: External] (id :: Int)
+ ::=
+ Sync ? begin :: Internal [[ IF isCreateItemBegin(begin)
+                             THEN createItemBeginId(begin) == id
+                             ELSE False FI ]]
+ >->
+ Input ? new :: External [[ IF isNewItem(new)
+                            THEN newItemId(new) == id
+                            ELSE False FI ]]
+ >->
+ Output ! HideItem(id)
+ >->
+ Output ! DisableItem(id)
+ >->
+ Output ! LockItem(id)
+ >->
+ Output ! ModelSwitchItem(id)
+ >->
+ Output ! AssembledItem(id)
+ >->
+ Sync ? end :: Internal [[ IF isCreateItemEnd(end)
+                           THEN createItemEndId(end) == id
+                           ELSE False FI ]]
+ >->
+ CreateItem [Sync, Input, Output] (id)
+ENDDEF
+
+-- The message & event pattern for the path creation sub-model.
+PROCDEF CreatePath [Sync1, Sync2 :: Internal; Input, Output :: External] () ::=
+ Sync1 ? begin :: Internal [[ isCreatePathBegin(begin) ]]
+ >->
+ Sync2 ? begin1 :: Internal [[ IF isCreateItemBegin(begin1)
+                               THEN createItemBeginId(begin1) == 3
+                               ELSE False FI ]]
+ >->
+ Sync2 ? end1 :: Internal [[ IF isCreateItemEnd(end1)
+                             THEN createItemEndId(end1) == 3
+                             ELSE False FI ]]
+ >->
+ Sync2 ? begin2 :: Internal [[ IF isCreateItemBegin(begin2)
+                               THEN createItemBeginId(begin2) == 4
+                               ELSE False FI ]]
+ >->
+ Sync2 ? end2 :: Internal [[ IF isCreateItemEnd(end2)
+                             THEN createItemEndId(end2) == 4
+                             ELSE False FI ]]
+ >->
+ Sync2 ? begin3 :: Internal [[ IF isCreateItemBegin(begin3)
+                               THEN createItemBeginId(begin3) == 5
+                               ELSE False FI ]]
+ >->
+ Sync2 ? end3 :: Internal [[ IF isCreateItemEnd(end3)
+                             THEN createItemEndId(end3) == 5
+                             ELSE False FI ]]
+ >->
+ Input ? nodes :: External [[ IF isCreatePathFromNodes(nodes)
+                              THEN (createPathFromNodesId1(nodes) == 3)
+                              /\ (createPathFromNodesId2(nodes) == 4)
+                              /\ (createPathFromNodesId3(nodes) == 5)
+                              ELSE False FI ]]
+ >->
+ Sync1 ? end :: Internal [[ isCreatePathEnd(end) ]]
+ >->
+ CreatePath [Sync1, Sync2, Input, Output] ()
+ENDDEF
+
+-- The message & event pattern for the deletion sub-model.
+PROCDEF Delete [Sync :: Internal; Input, Output :: External] () ::=
+ Sync ? begin :: Internal [[ isDeleteBegin(begin) ]]
+ >->
+ (
+   Input ? delete3 :: External [[ IF isDeleteItem(delete3)
+                                  THEN deleteItemId(delete3) == 3
+                                  ELSE False FI ]]
+                                  >-> EXIT
+   |||
+   Input ? delete4 :: External [[ IF isDeleteItem(delete4)
+                                  THEN deleteItemId(delete4) == 4
+                                  ELSE False FI ]]
+                                  >-> EXIT
+   |||
+   Input ? delete5 :: External [[ IF isDeleteItem(delete5)
+                                  THEN deleteItemId(delete5) == 5
+                                  ELSE False FI ]]
+                                  >-> EXIT
+ )
+ >>>
+ Input ? deletep :: External [[ isDeletePath(deletep) ]]
+ >->
+ Input ? delete2 :: External [[ IF isDeleteItem(delete2)
+                                THEN deleteItemId(delete2) == 2
+                                ELSE False FI ]]
+ >->
+ Input ? delete1 :: External [[ IF isDeleteItem(delete1)
+                                THEN deleteItemId(delete1) == 1
+                                ELSE False FI ]]
+ >->
+ Sync ? end :: Internal [[ isDeleteEnd(end) ]]
+ >->
+ Delete [Sync, Input, Output] ()
+ENDDEF
+
+-- The test model consists of the composition of parametrized processes,
+-- synchronized via communication over the internal SYNC channels.
+MODELDEF Model ::=
+ CHAN IN Sync1, Sync2, Input
+ CHAN OUT Output
+
+ BEHAVIOUR
+   Main [Sync1, Input, Output] ()
+   |[Sync1]|
+   (
+    CreateItem [Sync1, Input, Output] (1) |||
+    CreateItem [Sync1, Input, Output] (2) |||
+     (
+      CreatePath [Sync1, Sync2, Input, Output] ()
+      |[Sync2]|
+      ( CreateItem [Sync2, Input, Output] (3) |||
+        CreateItem [Sync2, Input, Output] (4) |||
+        CreateItem [Sync2, Input, Output] (5) )
+     )
+     |||
+     Delete [Sync1, Input, Output] ()
+    )
+ENDDEF
+
+-- We connect to the system via a single TCP socket: input+output combined.
+-- This preserves message order within the stream, as opposed to using
+-- multiple TCP sockets: one for each channel.
+-- We explicitly use a single INPUT and single OUTPUT channel to enforce
+-- message order, using abstract data types to distinguish message types.
+CNECTDEF System ::=
+ CLIENTSOCK
+  CHAN OUT Sync1 HOST "localhost" PORT 8001
+  ENCODE Sync1 ? s -> ! toString(s)
+  
+  CHAN OUT Sync2 HOST "localhost" PORT 8002
+  ENCODE Sync2 ? s -> ! toString(s)
+ 
+  CHAN OUT Input HOST "localhost" PORT 9001
+  ENCODE Input ? s -> ! toString(s)
+
+  CHAN IN Output HOST "localhost" PORT 9001
+  DECODE Output ! fromString(s) <- ? s
+ENDDEF

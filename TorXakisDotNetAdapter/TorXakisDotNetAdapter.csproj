@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{8A724948-57C2-4888-AEE5-657A264AAD35}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>TorXakisDotNetAdapter</RootNamespace>
+    <AssemblyName>TorXakisDotNetAdapter</AssemblyName>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Debug\TorXakisDotNetAdapter.xml</DocumentationFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\TorXakisDotNetAdapter.xml</DocumentationFile>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.Solver.Foundation, Version=3.0.2.10889, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Solver.Foundation.3.1.0\lib\Microsoft.Solver.Foundation.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Source\ActionType.cs" />
+    <Compile Include="Source\Legacy\Constraint\SymbolicState.cs" />
+    <Compile Include="Source\Legacy\Constraint\SymbolicTransition.cs" />
+    <Compile Include="Source\Legacy\Constraint\SymbolicTransitionSystem.cs" />
+    <Compile Include="Source\ExtensionMethods.cs" />
+    <Compile Include="Source\Refinement\IAction.cs" />
+    <Compile Include="Source\Refinement\ISystemAction.cs" />
+    <Compile Include="Source\Logging\Log.cs" />
+    <Compile Include="Source\Logging\LogLevel.cs" />
+    <Compile Include="Source\Logging\LogMessage.cs" />
+    <Compile Include="Source\Refinement\ModelAction.cs" />
+    <Compile Include="Source\Refinement\ProactiveTransition.cs" />
+    <Compile Include="Source\Refinement\ProactiveTransitionT.cs" />
+    <Compile Include="Source\Refinement\ReactiveTransitionT.cs" />
+    <Compile Include="Source\Refinement\RefinementFramework.cs" />
+    <Compile Include="Source\Refinement\ReactiveTransition.cs" />
+    <Compile Include="Source\Refinement\State.cs" />
+    <Compile Include="Source\Refinement\TransitionSystem.cs" />
+    <Compile Include="Source\Refinement\Transition.cs" />
+    <Compile Include="Source\Refinement\TransitionType.cs" />
+    <Compile Include="Source\Refinement\VariableCollection.cs" />
+    <Compile Include="Source\TorXakisAction.cs" />
+    <Compile Include="Source\TorXakisConnector.cs" />
+    <Compile Include="Source\TorXakisConnection.cs" />
+    <Compile Include="Source\TorXakisModel.cs" />
+    <Compile Include="Source\TorXakisModelCollection.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>
+    </PreBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>
+    </PostBuildEvent>
+  </PropertyGroup>
+</Project>
