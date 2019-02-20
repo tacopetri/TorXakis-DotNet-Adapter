@@ -4,4 +4,4 @@ See also: https://github.com/TorXakis/TorXakis
 
 ~~~~ v0.1 ~~~~
 
-Version associated with publicated MSc Thesis.
+Version associated with MSc thesis.
