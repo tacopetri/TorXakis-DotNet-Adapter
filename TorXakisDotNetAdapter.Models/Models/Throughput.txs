@@ -1,6 +1,6 @@
 {-
 TorXakis :: Model-Based Testing
-Test model for the reference test case - updated for high message throughput
+Test model for the reference test case - updated for high message/sec throughput
 -}
 
 -- Internal message types:
