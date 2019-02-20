@@ -284,16 +284,10 @@ namespace TorXakisDotNetAdapter.Refinement
                 }
                 CheckSystems();
             }
-            // If no transition was taken, but there are still inputs or events queued: this indicates a deadlock!
+            // If no transition was taken (due to ignored input or event), we still need to check the next input or event.
             else if (inputs.Count > 0 || events.Count > 0)
             {
-                // Since all system events are being looped through this, not being able to handle one is not an error per se. (TPE)
-                if (true)
-                {
-                    string error = "No valid transitions! Deadlock!";
-                    Log.Error(this, error);
-                    throw new Exception(error);
-                }
+                CheckSystems();
             }
         }
 
