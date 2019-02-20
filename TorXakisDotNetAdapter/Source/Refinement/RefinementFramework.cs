@@ -13,7 +13,10 @@ namespace TorXakisDotNetAdapter.Refinement
     {
         #region Definitions
 
-        // TODO: Implement!
+        /// <summary>
+        /// Force atomic refinements? This means that no other refinement may start when another one is still in progress.
+        /// </summary>
+        public static readonly bool AtomicRefinement = true;
 
         #endregion
         #region Variables & Properties
@@ -304,7 +307,7 @@ namespace TorXakisDotNetAdapter.Refinement
             HashSet<Tuple<TransitionSystem, ReactiveTransition>> result = new HashSet<Tuple<TransitionSystem, ReactiveTransition>>();
 
             // If current system is set, only query that.
-            if (CurrentSystem != null)
+            if (AtomicRefinement && CurrentSystem != null)
             {
                 foreach (ReactiveTransition transition in CurrentSystem.PossibleReactiveTransitions(action))
                     result.Add(new Tuple<TransitionSystem, ReactiveTransition>(CurrentSystem, transition));
@@ -330,7 +333,7 @@ namespace TorXakisDotNetAdapter.Refinement
             HashSet<Tuple<TransitionSystem, ProactiveTransition>> result = new HashSet<Tuple<TransitionSystem, ProactiveTransition>>();
 
             // If current system is set, only query that.
-            if (CurrentSystem != null)
+            if (AtomicRefinement && CurrentSystem != null)
             {
                 foreach (ProactiveTransition transition in CurrentSystem.PossibleProactiveTransitions())
                     result.Add(new Tuple<TransitionSystem, ProactiveTransition>(CurrentSystem, transition));

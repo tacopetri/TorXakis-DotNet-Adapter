@@ -11,11 +11,6 @@ namespace TorXakisDotNetAdapter.Legacy.Constraint
     /// </summary>
     public sealed class SymbolicState
     {
-        #region Definitions
-
-        // TODO: Implement!
-
-        #endregion
         #region Variables & Properties
 
         /// <summary>
@@ -37,16 +32,14 @@ namespace TorXakisDotNetAdapter.Legacy.Constraint
             Name = name;
         }
 
+        #endregion
+        #region Functionality
+
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             return "State (" + Name + ")";
         }
-
-        #endregion
-        #region Functionality
-
-        // TODO: Implement!
 
         #endregion
     }

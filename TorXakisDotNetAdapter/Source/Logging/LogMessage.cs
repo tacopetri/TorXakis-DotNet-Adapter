@@ -10,11 +10,6 @@ namespace TorXakisDotNetAdapter.Logging
     /// </summary>
     public sealed class LogMessage
     {
-        #region Definitions
-
-        // TODO: Implement!
-
-        #endregion
         #region Variables & Properties
 
         /// <summary>
@@ -56,6 +51,9 @@ namespace TorXakisDotNetAdapter.Logging
             Message = message;
             Exception = exception;
         }
+
+        #endregion
+        #region Functionality
 
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()

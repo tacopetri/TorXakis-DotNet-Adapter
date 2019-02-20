@@ -18,11 +18,6 @@ namespace TorXakisDotNetAdapter.Refinement
         public override TransitionType Type { get { return TransitionType.Proactive; } }
 
         #endregion
-        #region Variables & Properties
-
-        // TODO: Implement!
-
-        #endregion
         #region Create & Destroy
 
         /// <summary>
@@ -33,11 +28,6 @@ namespace TorXakisDotNetAdapter.Refinement
         {
 
         }
-
-        #endregion
-        #region Functionality
-
-        // TODO: Implement!
 
         #endregion
     }

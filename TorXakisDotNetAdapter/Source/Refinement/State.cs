@@ -10,11 +10,6 @@ namespace TorXakisDotNetAdapter.Refinement
     /// </summary>
     public sealed class State
     {
-        #region Definitions
-
-        // TODO: Implement!
-
-        #endregion
         #region Variables & Properties
 
         /// <summary>
@@ -37,16 +32,14 @@ namespace TorXakisDotNetAdapter.Refinement
             Name = name;
         }
 
+        #endregion
+        #region Functionality
+
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
             return Name;
         }
-
-        #endregion
-        #region Functionality
-
-        // TODO: Implement!
 
         #endregion
     }

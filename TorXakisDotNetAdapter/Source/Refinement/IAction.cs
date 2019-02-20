@@ -12,20 +12,6 @@ namespace TorXakisDotNetAdapter.Refinement
     /// </summary>
     public interface IAction
     {
-        #region Definitions
 
-        // TODO: Implement!
-
-        #endregion
-        #region Variables & Properties
-
-        // TODO: Implement!
-
-        #endregion
-        #region Functionality
-
-        // TODO: Implement!
-
-        #endregion
     }
 }

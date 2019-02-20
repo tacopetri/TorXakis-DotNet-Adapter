@@ -13,11 +13,6 @@ namespace TorXakisDotNetAdapter.Legacy.Constraint
     /// </summary>
     public sealed class SymbolicTransitionSystem
     {
-        #region Definitions
-
-        // TODO: Implement!
-
-        #endregion
         #region Variables & Properties
 
         /// <summary>
@@ -94,6 +89,9 @@ namespace TorXakisDotNetAdapter.Legacy.Constraint
         #endregion
         #region Functionality
 
+        /// <summary>
+        /// Cached models for the different transition systems.
+        /// </summary>
         private readonly Dictionary<SymbolicTransition, Model> modelCache = new Dictionary<SymbolicTransition, Model>();
 
         /// <summary>

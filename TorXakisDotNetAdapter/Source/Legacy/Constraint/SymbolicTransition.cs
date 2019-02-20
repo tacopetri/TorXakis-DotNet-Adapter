@@ -11,11 +11,6 @@ namespace TorXakisDotNetAdapter.Legacy.Constraint
     /// </summary>
     public sealed class SymbolicTransition
     {
-        #region Definitions
-
-        // TODO: Implement!
-
-        #endregion
         #region Variables & Properties
 
         /// <summary>
@@ -92,6 +87,9 @@ namespace TorXakisDotNetAdapter.Legacy.Constraint
             Update = update ?? throw new ArgumentNullException(nameof(update));
         }
 
+        #endregion
+        #region Functionality
+
         /// <summary><see cref="object.ToString"/></summary>
         public override string ToString()
         {
@@ -106,11 +104,6 @@ namespace TorXakisDotNetAdapter.Legacy.Constraint
 
             return result;
         }
-
-        #endregion
-        #region Functionality
-
-        // TODO: Implement!
 
         #endregion
     }

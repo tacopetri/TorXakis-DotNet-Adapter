@@ -12,11 +12,6 @@ namespace TorXakisDotNetAdapter
     /// </summary>
     public sealed class TorXakisModelCollection
     {
-        #region Definitions
-
-        // TODO: Implement!
-
-        #endregion
         #region Variables & Properties
 
         /// <summary>

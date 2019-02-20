@@ -11,11 +11,6 @@ namespace TorXakisDotNetAdapter.Refinement
     /// </summary>
     public sealed class TransitionSystem
     {
-        #region Definitions
-
-        // TODO: Implement!
-
-        #endregion
         #region Variables & Properties
 
         /// <summary>
@@ -168,11 +163,6 @@ namespace TorXakisDotNetAdapter.Refinement
 
             return action;
         }
-
-        #endregion
-        #region Functionality
-
-        // TODO: Implement!
 
         #endregion
     }

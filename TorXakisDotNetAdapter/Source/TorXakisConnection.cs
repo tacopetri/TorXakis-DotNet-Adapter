@@ -19,11 +19,6 @@ namespace TorXakisDotNetAdapter
     /// </summary>
     internal sealed class TorXakisConnection : IDisposable
     {
-        #region Definitions
-
-        // TODO: Implement!
-
-        #endregion
         #region Variables & Properties
 
         /// <summary>

@@ -10,11 +10,6 @@ namespace TorXakisDotNetAdapter
     /// </summary>
     public sealed class TorXakisAction
     {
-        #region Definitions
-
-        // TODO: Implement!
-
-        #endregion
         #region Variables & Properties
 
         /// <summary>

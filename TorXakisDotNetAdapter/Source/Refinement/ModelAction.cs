@@ -20,11 +20,6 @@ namespace TorXakisDotNetAdapter.Refinement
         public const string ModelsAssemblyName = "TorXakisDotNetAdapter.Models";
 
         #endregion
-        #region Variables & Properties
-
-        // TODO: Implement!
-
-        #endregion
         #region Create & Destroy
 
         /// <summary>
@@ -33,12 +28,6 @@ namespace TorXakisDotNetAdapter.Refinement
         public ModelAction()
         {
 
-        }
-
-        /// <summary><see cref="object.ToString"/></summary>
-        public override string ToString()
-        {
-            return Serialize();
         }
 
         #endregion
@@ -88,6 +77,12 @@ namespace TorXakisDotNetAdapter.Refinement
 
         #endregion
         #region Functionality
+
+        /// <summary><see cref="object.ToString"/></summary>
+        public override string ToString()
+        {
+            return Serialize();
+        }
 
         /// <summary>
         /// The cached <see cref="Serialize"/> value.
