@@ -41,9 +41,6 @@
     <DocumentationFile>bin\Release\TorXakisDotNetAdapter.Tests.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Solver.Foundation, Version=3.0.2.10889, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\packages\Microsoft.Solver.Foundation.3.1.0\lib\Microsoft.Solver.Foundation.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.VisualStudio.TestPlatform.TestFramework, Version=14.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\MSTest.TestFramework.1.4.0\lib\net45\Microsoft.VisualStudio.TestPlatform.TestFramework.dll</HintPath>
     </Reference>
@@ -55,11 +52,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Source\Refinement\ModelActionTest.cs" />
-    <Compile Include="Source\Legacy\ConstraintTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Source\TorXakisModelTest.cs" />
     <Compile Include="Source\Refinement\RefinementTest.cs" />
-    <Compile Include="Source\Legacy\SolverTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
