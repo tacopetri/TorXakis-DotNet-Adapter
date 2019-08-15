@@ -273,6 +273,9 @@ namespace TorXakisDotNetAdapter.Refinement
                     else
                     {
                         Log.Error(this, "No reactive transition possible for model input: " + modelInput);
+                        // Notify TorXakis immediately that a refinement error occurred: don't wait until quiescence is observed.
+                        // This prevents more TorXakis inputs coming before an output is finally expected (which never comes).
+                        SendModelOutput(new ErrorAction());
                     }
                 }
             }
