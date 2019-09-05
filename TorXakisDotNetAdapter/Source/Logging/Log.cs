@@ -17,12 +17,20 @@ namespace TorXakisDotNetAdapter.Logging
         public static event Action<LogMessage> Message;
 
         /// <summary>
+        /// The lowest <see cref="LogLevel"/> to pass along.
+        /// </summary>
+        public static LogLevel Level { get; set; } = LogLevel.Info;
+
+        /// <summary>
         /// Invokes the <see cref="Message"/> event.
         /// </summary>
         private static void OnMessage(object sender, LogLevel level, string message, Exception exception)
         {
+            // Ignore messages with a lower level than the current level.
+            if (level < Level) return;
+
             LogMessage log = new LogMessage(sender, level, message, exception);
-            Message?.GetInvocationList()?.FirstOrDefault()?.DynamicInvoke(log);
+            Message?.Invoke(log);
         }
 
         /// <summary>
