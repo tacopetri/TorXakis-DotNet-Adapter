@@ -31,6 +31,7 @@ namespace TorXakisDotNetAdapter.Tests
         // Define action types with 0, 1 and 2 properties.
         private readonly List<Tuple<ModelAction, string>> actions = new List<Tuple<ModelAction, string>>()
         {
+            /*
             new Tuple<ModelAction, string>(
                 new DeleteBegin(),
                 "DeleteBegin"
@@ -43,6 +44,7 @@ namespace TorXakisDotNetAdapter.Tests
                 new ConnectItem() { Id1 = 1, Id2 = 2 },
                 "ConnectItem(1,2)"
             ),
+            */
         };
 
         /// <summary>

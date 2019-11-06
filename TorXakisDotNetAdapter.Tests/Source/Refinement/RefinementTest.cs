@@ -85,6 +85,7 @@ namespace TorXakisDotNetAdapter.Tests
 
             HashSet<Transition> transitions = new HashSet<Transition>()
             {
+                /*
                 new ReactiveTransition<NewItem>(
                     states.First(x => x.Name == "Wait"),
                     states.First(x => x.Name == "Act"),
@@ -98,6 +99,7 @@ namespace TorXakisDotNetAdapter.Tests
                         variables.SetValue(nameof(id), id);
                     }
                 ),
+                */
                 new ProactiveTransition<ItemEventArgsNew>(
                     states.First(x => x.Name == "Act"),
                     states.First(x => x.Name == "Wait"),
@@ -159,6 +161,7 @@ namespace TorXakisDotNetAdapter.Tests
                         variables.SetValue(nameof(id), id);
                     }
                 ),
+                /*
                 new ProactiveTransition<NewItem>(
                     states.First(x => x.Name == "Act"),
                     states.First(x => x.Name == "Wait"),
@@ -179,6 +182,7 @@ namespace TorXakisDotNetAdapter.Tests
                         variables.ClearValue("id");
                     }
                 ),
+                */
             };
 
             TransitionSystem system = new TransitionSystem(states, states.First(x => x.Name == "Wait"), transitions);
@@ -201,6 +205,7 @@ namespace TorXakisDotNetAdapter.Tests
             TransitionSystem system = CreateTransitionSystem1();
             Console.WriteLine(system);
 
+            /*
             // Determine possible reactive transitions.
             NewItem modelInput = new NewItem()
             {
@@ -216,6 +221,7 @@ namespace TorXakisDotNetAdapter.Tests
             system.ExecuteReactiveTransition(modelInput, reactives.First());
             Console.WriteLine(system);
             Assert.AreEqual(system.States.ElementAt(1), system.CurrentState);
+            */
 
             // Determine possible proactive transitions.
             HashSet<ProactiveTransition> proactives = system.PossibleProactiveTransitions();
@@ -268,6 +274,7 @@ namespace TorXakisDotNetAdapter.Tests
             Assert.AreEqual(1, proactives.Count);
             Assert.AreEqual(system.Transitions.ElementAt(1), proactives.First());
 
+            /*
             // Execute and check proactive transition.
             IAction generatedAction = system.ExecuteProactiveTransition(proactives.First());
             Console.WriteLine("Generated action: " + generatedAction);
@@ -275,6 +282,7 @@ namespace TorXakisDotNetAdapter.Tests
             Assert.AreEqual(1, (generatedAction as NewItem).Id);
             Console.WriteLine(system);
             Assert.AreEqual(system.States.ElementAt(0), system.CurrentState);
+            */
         }
 
         /// <summary>
@@ -300,6 +308,7 @@ namespace TorXakisDotNetAdapter.Tests
             // Trigger a reactive transition, which should activate a proactive one next.
             if (true)
             {
+                /*
                 NewItem modelInput = new NewItem()
                 {
                     Id = 1,
@@ -312,6 +321,7 @@ namespace TorXakisDotNetAdapter.Tests
                 framework.HandleModelInput(modelInput);
                 Console.WriteLine(framework);
                 Assert.AreEqual(system1.States.ElementAt(0), system1.CurrentState);
+                */
             }
 
             // Trigger a reactive transition, which should activate a proactive one next.

@@ -63,28 +63,21 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Models\NonAtomic.txs" />
-    <None Include="Models\NonAtomicRun.bat" />
-    <None Include="Models\Reference.txs" />
-    <None Include="Models\ReferenceRun.bat" />
-    <None Include="Models\Mapping.txs" />
-    <None Include="Models\MappingRun.bat" />
-    <None Include="Models\Refinement.txs" />
-    <None Include="Models\RefinementRun.bat" />
-    <None Include="Models\Throughput.txs" />
-    <None Include="Models\ThroughputRun.bat" />
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <None Include="Models\Movement.txs" />
+    <None Include="Models\MovementRun.bat" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>if NOT %25ComputerName%25 == TACO GOTO end
+    <PostBuildEvent>if NOT %25ComputerName%25 == AETHER GOTO end
 
-for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis\"
+for %25%25f in (*.dll *.pdb *.xml) do xcopy /F /Y /C "$(TargetDir)%25%25f" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\branches\feature-movement-refactor\XVR.one\XVR.mors\Assets\platform_unity_code_base\TorXakis\"
 
-del /q "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\AutoTest\MBT\TorXakis\Models\*"
-xcopy "$(ProjectDir)\Models" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\trunk\XVR.one\AutoTest\MBT\TorXakis\Models" /Y /I /E
+del /q "$(TargetDir)..\..\..\..\..\SVN\XVR.one\branches\feature-movement-refactor\XVR.one\AutoTest\MBT\TorXakis\Models\*"
+xcopy "$(ProjectDir)\Models" "$(TargetDir)..\..\..\..\..\SVN\XVR.one\branches\feature-movement-refactor\XVR.one\AutoTest\MBT\TorXakis\Models" /Y /I /E
 
 :end</PostBuildEvent>
   </PropertyGroup>

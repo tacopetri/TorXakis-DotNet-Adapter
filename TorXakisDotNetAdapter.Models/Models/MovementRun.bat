@@ -1,4 +1,4 @@
-torxakis Reference.txs
+torxakis Movement.txs
 
 # Enter these commands into the console:
 
@@ -9,3 +9,5 @@ torxakis Reference.txs
 # tester Model System
 # test N
 # quit
+
+pause
