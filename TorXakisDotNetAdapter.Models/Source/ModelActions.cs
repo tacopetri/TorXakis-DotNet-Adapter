@@ -14,13 +14,6 @@ namespace TorXakisDotNetAdapter.Models
         public int Id { get; set; }
 	}
 
-    /// <summary>TorXakis: MoveFail</summary>
-	public sealed class MoveFail : ModelAction
-	{
-        /// <summary>TorXakis: moveFailId</summary>
-        public int Id { get; set; }
-	}
-
     /// <summary>TorXakis: MoveStart</summary>
 	public sealed class MoveStart : ModelAction
 	{
