@@ -14,7 +14,6 @@ END2DEF
 -- these are the messages that the SUT understands via its test adapter.
 TYPEDEF  External ::=
  MoveCreate { moveCreateId :: Int }
- | MoveFail { moveFailId :: Int }
  | MoveStart { moveStartId :: Int }
  | MovePause { movePauseId :: Int }
  | MoveResume { moveResumeId :: Int }
@@ -43,7 +42,6 @@ STAUTDEF Move [Input, Output :: External] (i :: Int)
   
   TRANS
     None -> Input ? create [[ IF isMoveCreate(create) THEN moveCreateId(create) == id ELSE False FI ]] -> Created
-    Created -> Output ? fail [[ IF isMoveFail(fail) THEN moveFailId(fail) == id ELSE False FI ]] -> Stopped
     Created -> Output ? start [[ IF isMoveStart(start) THEN moveStartId(start) == id ELSE False FI ]] -> Started
     Started -> Input ? pause [[ IF isMovePause(pause) THEN movePauseId(pause) == id ELSE False FI ]] -> Paused
     Paused -> Input ? resume [[ IF isMoveResume(resume) THEN moveResumeId(resume) == id ELSE False FI ]] -> Started
