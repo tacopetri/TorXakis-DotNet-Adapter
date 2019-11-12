@@ -81,6 +81,26 @@ MODELDEF Model ::=
    queue [ Enqueue, Input, Dequeue ] ()
 ENDDEF
 
+-- We connect to the system via a single TCP socket: input+output combined.
+-- This preserves message order within the stream, as opposed to using
+-- multiple TCP sockets: one for each channel.
+-- We explicitly use a single INPUT and single OUTPUT channel to enforce
+-- message order, using abstract data types to distinguish message types.
+CNECTDEF System ::=
+ CLIENTSOCK
+  CHAN OUT Enqueue HOST "localhost" PORT 8001
+  ENCODE Enqueue ? s -> ! toString(s)
+  
+  CHAN OUT Dequeue HOST "localhost" PORT 8002
+  ENCODE Dequeue -> ! "Dequeue"
+ 
+  CHAN OUT Input HOST "localhost" PORT 9001
+  ENCODE Input ? s -> ! toString(s)
+
+  CHAN IN Output HOST "localhost" PORT 9001
+  DECODE Output ! fromString(s) <- ? s
+ENDDEF
+
 {-
 
 STAUTDEF Move [Input :: Inputs; Output :: Outputs]
