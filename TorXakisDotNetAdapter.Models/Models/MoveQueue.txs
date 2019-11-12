@@ -15,16 +15,23 @@ TYPEDEF  Inputs ::=
  | MoveComplete { moveCompleteId :: Int }
 ENDDEF
 
--- ----------------------------------------------------------------------------------------- --
--- Models of Queues of Integers, with input "In x", and "Out y".
+-- Output message types:
+TYPEDEF  Outputs ::=
+ MoveCreated { moveCreatedId :: Int }
+ | MoveStarted { moveStartedId :: Int }
+ | MovePaused { movePausedId :: Int }
+ | MoveResumed { moveResumedId :: Int }
+ | MoveAborted { moveAbortedId :: Int }
+ | MoveCompleted { moveCompletedId :: Int }
+ENDDEF
 
-
+-- Type for queue of inputs
 TYPEDEF Queue ::=
  Null
  | New { head :: Inputs; tail :: Queue }
 ENDDEF
 
-
+-- Adding an input to a queue of inputs
 FUNCDEF add ( input :: Inputs; queue :: Queue ) :: Queue
  ::=
   IF isNull(queue)
@@ -32,12 +39,8 @@ FUNCDEF add ( input :: Inputs; queue :: Queue ) :: Queue
   ELSE New(head(queue),add(input,tail(queue)))
   FI
 ENDDEF
-
  
--- ----------------------------------------------------------------------------------------- --
--- simple queue
-
-
+-- Model for queue of inputs
 STAUTDEF  queue  [ Enqueue, Value :: Inputs;  Dequeue ]  ( )
  ::=
   STATE s0, s1
@@ -51,7 +54,7 @@ STAUTDEF  queue  [ Enqueue, Value :: Inputs;  Dequeue ]  ( )
                                  IF isMoveResume(input) THEN ((moveResumeId(input) >= 0) /\ (moveResumeId(input) <= maxId)) ELSE
                                  IF isMoveAbort(input) THEN ((moveAbortId(input) >= 0) /\ (moveAbortId(input) <= maxId)) ELSE
                                  IF isMoveComplete(input) THEN ((moveCompleteId(input) >= 0) /\ (moveCompleteId(input) <= maxId)) ELSE
-                                  False FI FI FI FI FI ]]
+                                 False FI FI FI FI FI ]]
                               { queue := add(input,queue) } -> s0
         s0 -> Dequeue [[ isNull(queue) ]] -> s0
         s0 -> Dequeue [[ not(isNull(queue)) ]] -> s1
