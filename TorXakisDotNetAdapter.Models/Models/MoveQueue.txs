@@ -83,45 +83,6 @@ ENDDEF
 
 {-
 
--- Sync message types:
-TYPEDEF  Syncs ::=
- MoveCreate
- | MovePause
- | MoveResume
- | MoveAbort
- | MoveComplete
-ENDDEF
-
--- Input message types:
-TYPEDEF  Inputs ::=
- MoveCreate
- | MovePause
- | MoveResume
- | MoveAbort
- | MoveComplete
-ENDDEF
-
--- Output message types:
-TYPEDEF  Outputs ::=
- MoveCreated
- | MoveStarted
- | MovePaused
- | MoveResumed
- | MoveAborted
- | MoveCompleted
-ENDDEF
-
--- There are only 2 SUT channels. All input messages are sent over the
--- input channel, all output messages are sent over the output channel.
--- For now, we don't restrict the input/output direction of the messages:
--- both channels may send/receive ANY of the message types.
--- There are special SYNC channels for sychronization between the processes:
--- one for each level of nested sychronization.
-CHANDEF Channels ::=
- Input :: Inputs;
- Output :: Outputs
-ENDDEF
-
 STAUTDEF Move [Input :: Inputs; Output :: Outputs]
  ::=
   STATE None, Created, Started, Paused, Stopped

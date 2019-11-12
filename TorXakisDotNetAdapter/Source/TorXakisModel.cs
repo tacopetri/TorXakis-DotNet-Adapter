@@ -139,6 +139,8 @@ namespace TorXakisDotNetAdapter
                     // Parse NAME.
                     string[] typeParts = typeStripped.Split('{');
                     string typeName = typeParts[0];
+                    if (actions.ContainsKey(typeName)) throw new Exception("Duplicate type name: " + typeName + " Raw: " + typeStripped);
+                    if (!typeName.StartsWith("Move")) continue;
                     actions.Add(typeName, new Dictionary<string, string>());
 
                     // Parse PARAMETER NAMES, and their TYPES.

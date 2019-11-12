@@ -49,4 +49,46 @@ namespace TorXakisDotNetAdapter.Models
         public int Id { get; set; }
 	}
 
+    /// <summary>TorXakis: MoveCreated</summary>
+	public sealed class MoveCreated : ModelAction
+	{
+        /// <summary>TorXakis: moveCreatedId</summary>
+        public int Id { get; set; }
+	}
+
+    /// <summary>TorXakis: MoveStarted</summary>
+	public sealed class MoveStarted : ModelAction
+	{
+        /// <summary>TorXakis: moveStartedId</summary>
+        public int Id { get; set; }
+	}
+
+    /// <summary>TorXakis: MovePaused</summary>
+	public sealed class MovePaused : ModelAction
+	{
+        /// <summary>TorXakis: movePausedId</summary>
+        public int Id { get; set; }
+	}
+
+    /// <summary>TorXakis: MoveResumed</summary>
+	public sealed class MoveResumed : ModelAction
+	{
+        /// <summary>TorXakis: moveResumedId</summary>
+        public int Id { get; set; }
+	}
+
+    /// <summary>TorXakis: MoveAborted</summary>
+	public sealed class MoveAborted : ModelAction
+	{
+        /// <summary>TorXakis: moveAbortedId</summary>
+        public int Id { get; set; }
+	}
+
+    /// <summary>TorXakis: MoveCompleted</summary>
+	public sealed class MoveCompleted : ModelAction
+	{
+        /// <summary>TorXakis: moveCompletedId</summary>
+        public int Id { get; set; }
+	}
+
 }
