@@ -1,0 +1,156 @@
+{-
+TorXakis :: Model-Based Testing
+Test model for the OS Movement Refactor (branches/feature-movement-refactor)
+-}
+
+-- Input message types:
+TYPEDEF  Inputs ::=
+ MoveCreate
+ | MovePause
+ | MoveResume
+ | MoveAbort
+ | MoveComplete
+ENDDEF
+
+-- ----------------------------------------------------------------------------------------- --
+-- Models of Queues of Integers, with input "In x", and "Out y".
+
+
+TYPEDEF Queue ::=
+ Null
+ | New { head :: Inputs; tail :: Queue }
+ENDDEF
+
+
+FUNCDEF add ( input :: Inputs; queue :: Queue ) :: Queue
+ ::=
+  IF isNull(queue)
+  THEN New(input,Null)
+  ELSE New(head(queue),add(input,tail(queue)))
+  FI
+ENDDEF
+
+ 
+-- ----------------------------------------------------------------------------------------- --
+-- simple queue
+
+
+STAUTDEF  queue  [ Enqueue, Value :: Inputs;  Dequeue ]  ( )
+ ::=
+  STATE s0, s1
+
+  VAR queue :: Queue
+
+  INIT s0 { queue := Null }
+
+  TRANS s0 -> Enqueue ? input { queue := add(input,queue) } -> s0
+        s0 -> Dequeue [[ isNull(queue) ]] -> s0
+        s0 -> Dequeue [[ not(isNull(queue)) ]] -> s1
+        s1 -> Value ! head(queue) [[ not(isNull(queue)) ]] { queue := tail(queue) } -> s0
+
+ENDDEF
+
+CHANDEF ChanDefs ::= Enqueue   ::  Inputs
+                   ; Dequeue
+                   ; Value :: Inputs
+ENDDEF
+
+-- The test model consists of the composition of parametrized processes,
+-- synchronized via communication over the internal SYNC channels.
+MODELDEF Model ::=
+ CHAN IN Enqueue, Dequeue
+ CHAN OUT Value
+
+ BEHAVIOUR
+   queue [ Enqueue, Value, Dequeue ] ()
+ENDDEF
+
+{-
+
+-- Sync message types:
+TYPEDEF  Syncs ::=
+ MoveCreate
+ | MovePause
+ | MoveResume
+ | MoveAbort
+ | MoveComplete
+ENDDEF
+
+-- Input message types:
+TYPEDEF  Inputs ::=
+ MoveCreate
+ | MovePause
+ | MoveResume
+ | MoveAbort
+ | MoveComplete
+ENDDEF
+
+-- Output message types:
+TYPEDEF  Outputs ::=
+ MoveCreated
+ | MoveStarted
+ | MovePaused
+ | MoveResumed
+ | MoveAborted
+ | MoveCompleted
+ENDDEF
+
+-- There are only 2 SUT channels. All input messages are sent over the
+-- input channel, all output messages are sent over the output channel.
+-- For now, we don't restrict the input/output direction of the messages:
+-- both channels may send/receive ANY of the message types.
+-- There are special SYNC channels for sychronization between the processes:
+-- one for each level of nested sychronization.
+CHANDEF Channels ::=
+ Input :: Inputs;
+ Output :: Outputs
+ENDDEF
+
+STAUTDEF Move [Input :: Inputs; Output :: Outputs]
+ ::=
+  STATE None, Created, Started, Paused, Stopped
+  
+  --VAR id :: Int
+  
+  INIT None --{ id := i }
+  
+  TRANS
+    None -> Input ? MoveCreate -> Created
+    Created -> Output ? MoveStarted -> Started
+    Started -> Input ? MovePause -> Paused
+    Paused -> Input ? MoveResume -> Started
+    Started -> Input ? MoveAbort -> Stopped
+    Paused -> Input ? MoveAbort -> Stopped
+    Started -> Output ? MoveCompleted -> Stopped
+    Paused -> Output ? MoveCompleted -> Stopped
+    
+ENDDEF
+
+-- The test model consists of the composition of parametrized processes,
+-- synchronized via communication over the internal SYNC channels.
+MODELDEF Model ::=
+ CHAN IN Input
+ CHAN OUT Output
+
+ BEHAVIOUR
+   Move [Input, Output] ()
+ENDDEF
+
+-- We connect to the system via a single TCP socket: input+output combined.
+-- This preserves message order within the stream, as opposed to using
+-- multiple TCP sockets: one for each channel.
+-- We explicitly use a single INPUT and single OUTPUT channel to enforce
+-- message order, using abstract data types to distinguish message types.
+CNECTDEF System ::=
+ CLIENTSOCK
+  --CHAN OUT Sync HOST "localhost" PORT 8001
+  --ENCODE Sync ? s -> 
+  
+  CHAN OUT Input HOST "localhost" PORT 9001
+  ENCODE Input ? s -> ! toString(s)
+
+  CHAN IN Output HOST "localhost" PORT 9001
+  DECODE Output ! fromString(s) <- ? s
+ENDDEF
+
+-}
