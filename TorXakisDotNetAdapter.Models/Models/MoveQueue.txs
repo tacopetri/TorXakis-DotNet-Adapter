@@ -25,6 +25,15 @@ TYPEDEF  Outputs ::=
  | MoveCompleted { moveCompletedId :: Int }
 ENDDEF
 
+-- All channel definitions:
+CHANDEF Channels ::=
+ Enqueue :: Inputs;
+ Dequeue;
+ 
+ Input :: Inputs;
+ Output :: Outputs;
+ENDDEF
+
 -- Type for queue of inputs
 TYPEDEF Queue ::=
  Null
@@ -41,7 +50,7 @@ FUNCDEF add ( input :: Inputs; queue :: Queue ) :: Queue
 ENDDEF
  
 -- Model for queue of inputs
-STAUTDEF  queue  [ Enqueue, Value :: Inputs;  Dequeue ]  ( )
+STAUTDEF  queue  [ Enqueue, Input :: Inputs; Dequeue ]  ( )
  ::=
   STATE s0, s1
 
@@ -58,23 +67,18 @@ STAUTDEF  queue  [ Enqueue, Value :: Inputs;  Dequeue ]  ( )
                               { queue := add(input,queue) } -> s0
         s0 -> Dequeue [[ isNull(queue) ]] -> s0
         s0 -> Dequeue [[ not(isNull(queue)) ]] -> s1
-        s1 -> Value ! head(queue) [[ not(isNull(queue)) ]] { queue := tail(queue) } -> s0
+        s1 -> Input ! head(queue) [[ not(isNull(queue)) ]] { queue := tail(queue) } -> s0
 
-ENDDEF
-
-CHANDEF ChanDefs ::= Enqueue   ::  Inputs
-                   ; Dequeue
-                   ; Value :: Inputs
 ENDDEF
 
 -- The test model consists of the composition of parametrized processes,
 -- synchronized via communication over the internal SYNC channels.
 MODELDEF Model ::=
- CHAN IN Enqueue, Dequeue
- CHAN OUT Value
+ CHAN IN Enqueue, Input, Dequeue
+ CHAN OUT Output
 
  BEHAVIOUR
-   queue [ Enqueue, Value, Dequeue ] ()
+   queue [ Enqueue, Input, Dequeue ] ()
 ENDDEF
 
 {-
