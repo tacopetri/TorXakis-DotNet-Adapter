@@ -6,18 +6,24 @@ Test model for the OS Movement Refactor (branches/feature-movement-refactor)
 -- The max ID, IE how many items are being moved at the same time
 CONSTDEF maxId :: Int ::= 0 ENDDEF
 
--- Input message types:
-TYPEDEF  Inputs ::=
- MoveCreate { moveCreateId :: Int }
+-- Internal message types:
+-- used to synchronize between main model and sub-models.
+TYPEDEF  Internal ::=
+   Blargh
+ENDDEF
+
+-- External message types:
+-- these are the messages that the SUT understands via its test adapter.
+TYPEDEF  External ::=
+ Dequeue
+
+ | MoveCreate { moveCreateId :: Int }
  | MovePause { movePauseId :: Int }
  | MoveResume { moveResumeId :: Int }
  | MoveAbort { moveAbortId :: Int }
  | MoveComplete { moveCompleteId :: Int }
-ENDDEF
 
--- Output message types:
-TYPEDEF  Outputs ::=
- MoveCreated { moveCreatedId :: Int }
+ | MoveCreated { moveCreatedId :: Int }
  | MoveStarted { moveStartedId :: Int }
  | MovePaused { movePausedId :: Int }
  | MoveResumed { moveResumedId :: Int }
@@ -27,30 +33,27 @@ ENDDEF
 
 -- All channel definitions:
 CHANDEF Channels ::=
- Enqueue :: Inputs;
- Dequeue;
- 
- Input :: Inputs;
- Output :: Outputs;
+ Input, Output :: External;
+ Sync1 :: Internal;
 ENDDEF
 
--- Type for queue of inputs
+-- Type for queue of commands
 TYPEDEF Queue ::=
  Null
- | New { head :: Inputs; tail :: Queue }
+ | New { head :: External; tail :: Queue }
 ENDDEF
 
--- Adding an input to a queue of inputs
-FUNCDEF add ( input :: Inputs; queue :: Queue ) :: Queue
+-- Adding an input to a queue of commands
+FUNCDEF add ( input :: External; queue :: Queue ) :: Queue
  ::=
   IF isNull(queue)
   THEN New(input,Null)
   ELSE New(head(queue),add(input,tail(queue)))
   FI
 ENDDEF
- 
+
 -- Model for queue of inputs
-STAUTDEF  queue  [ Enqueue, Input :: Inputs; Dequeue ]  ( )
+STAUTDEF queue [Input :: External; Output :: External] ()
  ::=
   STATE s0, s1
 
@@ -58,27 +61,49 @@ STAUTDEF  queue  [ Enqueue, Input :: Inputs; Dequeue ]  ( )
 
   INIT s0 { queue := Null }
 
-  TRANS s0 -> Enqueue ? input [[ IF isMoveCreate(input) THEN ((moveCreateId(input) >= 0) /\ (moveCreateId(input) <= maxId)) ELSE
+  TRANS s0 -> Input ? input [[ IF isMoveCreate(input) THEN ((moveCreateId(input) >= 0) /\ (moveCreateId(input) <= maxId)) ELSE
                                  IF isMovePause(input) THEN ((movePauseId(input) >= 0) /\ (movePauseId(input) <= maxId)) ELSE
                                  IF isMoveResume(input) THEN ((moveResumeId(input) >= 0) /\ (moveResumeId(input) <= maxId)) ELSE
                                  IF isMoveAbort(input) THEN ((moveAbortId(input) >= 0) /\ (moveAbortId(input) <= maxId)) ELSE
                                  IF isMoveComplete(input) THEN ((moveCompleteId(input) >= 0) /\ (moveCompleteId(input) <= maxId)) ELSE
                                  False FI FI FI FI FI ]]
                               { queue := add(input,queue) } -> s0
-        s0 -> Dequeue [[ isNull(queue) ]] -> s0
-        s0 -> Dequeue [[ not(isNull(queue)) ]] -> s1
-        s1 -> Input ! head(queue) [[ not(isNull(queue)) ]] { queue := tail(queue) } -> s0
+        s0 -> Output ! Dequeue [[ isNull(queue) ]] -> s0
+        s0 -> Output ! Dequeue [[ not(isNull(queue)) ]] -> s1
+        s1 -> Output ! head(queue) [[ isNew(queue) ]] { queue := tail(queue) } -> s0
 
 ENDDEF
+
+{-
+STAUTDEF Move [Input :: Inputs; Output :: Outputs] (i :: Int)
+ ::=
+  STATE Idle, Created, Started, Paused, Stopped
+  
+  VAR id :: Int
+  
+  INIT Idle { id := i }
+  
+  TRANS
+    Idle -> Input ? create [[ IF isMoveCreate(create) THEN moveCreateId(create) == id ELSE False FI ]] -> Created
+    --Created -> Output ? start [[ IF isMoveStart(start) THEN moveStartId(start) == id ELSE False FI ]] -> Started
+    --Started -> Input ? pause [[ IF isMovePause(pause) THEN movePauseId(pause) == id ELSE False FI ]] -> Paused
+    --Paused -> Input ? resume [[ IF isMoveResume(resume) THEN moveResumeId(resume) == id ELSE False FI ]] -> Started
+    --Started -> Input ? abort [[ IF isMoveAbort(abort) THEN moveAbortId(abort) == id ELSE False FI ]] -> Stopped
+    --Paused -> Input ? abort [[ IF isMoveAbort(abort) THEN moveAbortId(abort) == id ELSE False FI ]] -> Stopped
+    --Started -> Output ? complete [[ IF isMoveComplete(complete) THEN moveCompleteId(complete) == id ELSE False FI ]] -> Stopped
+    --Paused -> Output ? complete [[ IF isMoveComplete(complete) THEN moveCompleteId(complete) == id ELSE False FI ]] -> Stopped
+    
+ENDDEF
+-}
 
 -- The test model consists of the composition of parametrized processes,
 -- synchronized via communication over the internal SYNC channels.
 MODELDEF Model ::=
- CHAN IN Enqueue, Input, Dequeue
+ CHAN IN Input
  CHAN OUT Output
 
  BEHAVIOUR
-   queue [ Enqueue, Input, Dequeue ] ()
+   queue [Input, Output] ()
 ENDDEF
 
 -- We connect to the system via a single TCP socket: input+output combined.
@@ -88,11 +113,11 @@ ENDDEF
 -- message order, using abstract data types to distinguish message types.
 CNECTDEF System ::=
  CLIENTSOCK
-  CHAN OUT Enqueue HOST "localhost" PORT 8001
-  ENCODE Enqueue ? s -> ! toString(s)
+  --CHAN OUT Sync1 HOST "localhost" PORT 8001
+  --ENCODE Sync1 ? s -> ! toString(s)
   
-  CHAN OUT Dequeue HOST "localhost" PORT 8002
-  ENCODE Dequeue -> ! "Dequeue"
+  --CHAN IN Dequeue HOST "localhost" PORT 8002
+  --DECODE Dequeue ! fromString(s) <- ? s
  
   CHAN OUT Input HOST "localhost" PORT 9001
   ENCODE Input ? s -> ! toString(s)
@@ -102,26 +127,6 @@ CNECTDEF System ::=
 ENDDEF
 
 {-
-
-STAUTDEF Move [Input :: Inputs; Output :: Outputs]
- ::=
-  STATE None, Created, Started, Paused, Stopped
-  
-  --VAR id :: Int
-  
-  INIT None --{ id := i }
-  
-  TRANS
-    None -> Input ? MoveCreate -> Created
-    Created -> Output ? MoveStarted -> Started
-    Started -> Input ? MovePause -> Paused
-    Paused -> Input ? MoveResume -> Started
-    Started -> Input ? MoveAbort -> Stopped
-    Paused -> Input ? MoveAbort -> Stopped
-    Started -> Output ? MoveCompleted -> Stopped
-    Paused -> Output ? MoveCompleted -> Stopped
-    
-ENDDEF
 
 -- The test model consists of the composition of parametrized processes,
 -- synchronized via communication over the internal SYNC channels.
