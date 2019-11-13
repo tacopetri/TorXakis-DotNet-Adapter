@@ -26,7 +26,7 @@ namespace TorXakisDotNetAdapter.Models
     Dictionary<string, Dictionary<string, string>> actions = modelCollection.ParseActions();
 
     // Generate classes for all action types.
-    foreach (KeyValuePair<string, Dictionary<string, string>> kvp1 in actions)
+    foreach (KeyValuePair<string, Dictionary<string, string>> kvp1 in actions.OrderBy(x => x.Key))
     {
         string className = kvp1.Key;
 #>
