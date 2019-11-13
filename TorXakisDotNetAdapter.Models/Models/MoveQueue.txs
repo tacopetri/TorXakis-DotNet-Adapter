@@ -15,7 +15,7 @@ ENDDEF
 -- External message types:
 -- these are the messages that the SUT understands via its test adapter.
 TYPEDEF  External ::=
- Dequeue
+ MoveDequeue
 
  | MoveCreate { moveCreateId :: Int }
  | MovePause { movePauseId :: Int }
@@ -68,8 +68,8 @@ STAUTDEF queue [Input :: External; Output :: External] ()
                                  IF isMoveComplete(input) THEN ((moveCompleteId(input) >= 0) /\ (moveCompleteId(input) <= maxId)) ELSE
                                  False FI FI FI FI FI ]]
                               { queue := add(input,queue) } -> s0
-        s0 -> Output ! Dequeue [[ isNull(queue) ]] -> s0
-        s0 -> Output ! Dequeue [[ not(isNull(queue)) ]] -> s1
+        --s0 -> Output ! MoveDequeue [[ isNull(queue) ]] -> s0
+        s0 -> Output ! MoveDequeue [[ not(isNull(queue)) ]] -> s1
         s1 -> Output ! head(queue) [[ isNew(queue) ]] { queue := tail(queue) } -> s0
 
 ENDDEF
