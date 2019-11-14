@@ -6,9 +6,9 @@ Test model for the OS Movement Refactor (branches/feature-movement-refactor)
 -- The max ID, IE how many items are being moved at the same time
 CONSTDEF maxId :: Int ::= 0 ENDDEF
 
--- Internal message types:
+-- External message types:
 -- these are the messages that the SUT understands via its test adapter.
-TYPEDEF  Internal ::=
+TYPEDEF  External ::=
    MoveDequeue
 
  | MoveCreate { moveCreateId :: Int }
@@ -16,12 +16,8 @@ TYPEDEF  Internal ::=
  | MoveResume { moveResumeId :: Int }
  | MoveAbort { moveAbortId :: Int }
  | MoveComplete { moveCompleteId :: Int }
-ENDDEF
 
--- External message types:
--- these are the messages that the SUT understands via its test adapter.
-TYPEDEF  External ::=
-   MoveCreated { moveCreatedId :: Int }
+ | MoveCreated { moveCreatedId :: Int }
  | MoveStarted { moveStartedId :: Int }
  | MovePaused { movePausedId :: Int }
  | MoveResumed { moveResumedId :: Int }
@@ -31,19 +27,18 @@ ENDDEF
 
 -- All channel definitions:
 CHANDEF Channels ::=
- Input :: Internal;
+ Input :: External;
  Output :: External;
- Sync :: Internal;
 ENDDEF
 
 -- Type for queue of commands
 TYPEDEF Queue ::=
  Null
- | New { head :: Internal; tail :: Queue }
+ | New { head :: External; tail :: Queue }
 ENDDEF
 
 -- Add method for queue of commands
-FUNCDEF add ( input :: Internal; queue :: Queue ) :: Queue
+FUNCDEF add ( input :: External; queue :: Queue ) :: Queue
  ::=
   IF isNull(queue)
   THEN New(input,Null)
@@ -52,7 +47,7 @@ FUNCDEF add ( input :: Internal; queue :: Queue ) :: Queue
 ENDDEF
 
 -- Model for queue of commands
-STAUTDEF CommandQueue [Input :: Internal; Sync :: Internal] ()
+STAUTDEF CommandQueue [Input :: External; Output :: External] ()
  ::=
   STATE s0, s1
 
@@ -67,12 +62,19 @@ STAUTDEF CommandQueue [Input :: Internal; Sync :: Internal] ()
                                  IF isMoveComplete(input) THEN ((moveCompleteId(input) >= 0) /\ (moveCompleteId(input) <= maxId)) ELSE
                                  False FI FI FI FI FI ]]
                               { queue := add(input,queue) } -> s0
-        s0 -> Sync ! MoveDequeue [[ isNew(queue) ]] -> s1
-        s1 -> Sync ! head(queue) [[ isNew(queue) ]] { queue := tail(queue) } -> s0
+        s0 -> Output ! MoveDequeue [[ isNew(queue) ]] -> s1
+        s1 -> Output ! head(queue) [[ isNew(queue) ]] { queue := tail(queue) } -> s0
+        
+        s0 -> Output ! MoveCreated(0) -> s0
+        s0 -> Output ! MoveStarted(0) -> s0
+        s0 -> Output ! MovePaused(0) -> s0
+        s0 -> Output ! MoveResumed(0) -> s0
+        s0 -> Output ! MoveAborted(0) -> s0
+        s0 -> Output ! MoveCompleted(0) -> s0
 
 ENDDEF
 
-STAUTDEF Move [Sync :: Internal; Output :: External] (i :: Int)
+STAUTDEF Move [Output :: External] (i :: Int)
  ::=
   STATE Idle, Created, Started, Paused, Create, Pause, Resume, Abort, Complete
   
@@ -81,30 +83,29 @@ STAUTDEF Move [Sync :: Internal; Output :: External] (i :: Int)
   INIT Idle { id := i }
   
   TRANS
-    Idle -> Sync ! MoveDequeue -> Idle
-    --Created -> Sync ! MoveDequeue -> Created
-    Started -> Sync ! MoveDequeue -> Started
-    Paused -> Sync ! MoveDequeue -> Paused
+    Idle -> Output ! MoveDequeue -> Idle
+    Started -> Output ! MoveDequeue -> Started
+    Paused -> Output ! MoveDequeue -> Paused
   
-    Idle -> Sync ! MoveCreate(id) -> Create
-    Idle -> Sync ! MovePause(id) -> Idle
-    Idle -> Sync ! MoveResume(id) -> Idle
-    Idle -> Sync ! MoveAbort(id) -> Idle
-    Idle -> Sync ! MoveComplete(id) -> Idle
+    Idle -> Output ! MoveCreate(id) -> Create
+    Idle -> Output ! MovePause(id) -> Idle
+    Idle -> Output ! MoveResume(id) -> Idle
+    Idle -> Output ! MoveAbort(id) -> Idle
+    Idle -> Output ! MoveComplete(id) -> Idle
 
     Created -> Output ! MoveStarted(id) -> Started
 
-    Started -> Sync ! MoveCreate(id) -> Started
-    Started -> Sync ! MovePause(id) -> Pause
-    Started -> Sync ! MoveResume(id) -> Started
-    Started -> Sync ! MoveAbort(id) -> Abort
-    Started -> Sync ! MoveComplete(id) -> Complete
+    Started -> Output ! MoveCreate(id) -> Started
+    Started -> Output ! MovePause(id) -> Pause
+    Started -> Output ! MoveResume(id) -> Started
+    Started -> Output ! MoveAbort(id) -> Abort
+    Started -> Output ! MoveComplete(id) -> Complete
 
-    Paused -> Sync ! MoveCreate(id) -> Paused
-    Paused -> Sync ! MovePause(id) -> Paused
-    Paused -> Sync ! MoveResume(id) -> Resume
-    Paused -> Sync ! MoveAbort(id) -> Abort
-    Paused -> Sync ! MoveComplete(id) -> Complete
+    Paused -> Output ! MoveCreate(id) -> Paused
+    Paused -> Output ! MovePause(id) -> Paused
+    Paused -> Output ! MoveResume(id) -> Resume
+    Paused -> Output ! MoveAbort(id) -> Abort
+    Paused -> Output ! MoveComplete(id) -> Complete
     
     -- COMMANDS
     Create -> Output ! MoveCreated(id) -> Created
@@ -122,15 +123,15 @@ ENDDEF
 -- synchronized via communication over the internal SYNC channels.
 MODELDEF Model ::=
  CHAN IN Input
- CHAN OUT Sync, Output
+ CHAN OUT Output
 
  BEHAVIOUR
-   CommandQueue [Input, Sync] ()
-   |[Sync]|
+   CommandQueue [Input, Output] ()
+   |[Output]|
    (
-    Move [Sync, Output] (0) --|||
-    --Move [Sync, Output] (1) |||
-    --Move [Sync, Output] (2)
+    Move [Output] (0) --|||
+    --Move [Output] (1) |||
+    --Move [Output] (2)
    )
 ENDDEF
 
@@ -144,9 +145,6 @@ CNECTDEF System ::=
   CHAN OUT Input HOST "localhost" PORT 9001
   ENCODE Input ? s -> ! toString(s)
 
-  CHAN IN Sync HOST "localhost" PORT 9002
-  DECODE Sync ! fromString(s) <- ? s
-
-  CHAN IN Output HOST "localhost" PORT 9003
+  CHAN IN Output HOST "localhost" PORT 9001
   DECODE Output ! fromString(s) <- ? s
 ENDDEF
