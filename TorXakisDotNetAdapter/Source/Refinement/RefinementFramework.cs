@@ -430,35 +430,7 @@ namespace TorXakisDotNetAdapter.Refinement
 
                 Log.Debug(this, nameof(SendModelOutput) + ": " + modelOutput);
                 string serialized = modelOutput.Serialize();
-
-                // HACK: Split message types into distinct SYNC and OUTPUT channels. (TPE)
-                string outputChannel;
-                switch (modelOutput.GetType().Name)
-                {
-                    case "MoveDequeue":
-
-                    case "MoveCreate":
-                    case "MovePause":
-                    case "MoveResume":
-                    case "MoveAbort":
-                    case "MoveComplete":
-                        outputChannel = "Sync";
-                        break;
-
-                    case "MoveCreated":
-                    case "MoveStarted":
-                    case "MovePaused":
-                    case "MoveResumed":
-                    case "MoveAborted":
-                    case "MoveCompleted":
-                        outputChannel = "Output";
-                        break;
-
-                    default:
-                        throw new Exception("Unhandled case: " + modelOutput.GetType().Name);
-                }
-
-                TorXakisAction output = TorXakisAction.FromOutput(outputChannel, serialized);
+                TorXakisAction output = TorXakisAction.FromOutput(TorXakisModel.OutputChannel, serialized);
                 Connector.SendOutput(output);
             }
         }
