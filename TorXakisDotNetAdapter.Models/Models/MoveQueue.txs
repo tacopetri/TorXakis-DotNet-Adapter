@@ -61,21 +61,28 @@ STAUTDEF queue [Input :: External; Output :: External] ()
 
   INIT s0 { queue := Null }
 
-  TRANS s0 -> Input ? input [[ IF isMoveCreate(input) THEN ((moveCreateId(input) >= 0) /\ (moveCreateId(input) <= maxId)) ELSE
-                                 IF isMovePause(input) THEN ((movePauseId(input) >= 0) /\ (movePauseId(input) <= maxId)) ELSE
-                                 IF isMoveResume(input) THEN ((moveResumeId(input) >= 0) /\ (moveResumeId(input) <= maxId)) ELSE
-                                 IF isMoveAbort(input) THEN ((moveAbortId(input) >= 0) /\ (moveAbortId(input) <= maxId)) ELSE
-                                 IF isMoveComplete(input) THEN ((moveCompleteId(input) >= 0) /\ (moveCompleteId(input) <= maxId)) ELSE
-                                 False FI FI FI FI FI ]]
-                              { queue := add(input,queue) } -> s0
-        --s0 -> Output ! MoveDequeue [[ isNull(queue) ]] -> s0
-        s0 -> Output ! MoveDequeue [[ not(isNull(queue)) ]] -> s1
-        s1 -> Output ! head(queue) [[ isNew(queue) ]] { queue := tail(queue) } -> s0
+  TRANS
+   s0 -> Input ? input { queue := add(input,queue) } -> s0
+   s0 -> Output ! MoveDequeue [[ not(isNull(queue)) ]] -> s1
+   s1 -> Output ! head(queue) [[ isNew(queue) ]] { queue := tail(queue) } -> s0
 
 ENDDEF
 
-{-
-STAUTDEF Move [Input :: Inputs; Output :: Outputs] (i :: Int)
+-- Is the ID of the given input equal to the given ID?
+FUNCDEF correctId ( input :: External; id :: Int ) :: Bool
+ ::=
+ IF isMoveCreate(input) THEN moveCreateId(input) == id ELSE False FI
+ {-
+  IF isMoveCreate(input) THEN moveCreateId(input) == id ELSE
+  IF isMovePause(input) THEN movePauseId(input) == id ELSE
+  IF isMoveResume(input) THEN moveResumeId(input) == id ELSE
+  IF isMoveAbort(input) THEN moveAbortId(input) == id ELSE
+  IF isMoveComplete(input) THEN moveCompleteId(input) == id ELSE
+  False FI FI FI FI FI
+ -}
+ENDDEF
+
+STAUTDEF Move [Input :: External; Output :: External] (i :: Int)
  ::=
   STATE Idle, Created, Started, Paused, Stopped
   
@@ -84,17 +91,70 @@ STAUTDEF Move [Input :: Inputs; Output :: Outputs] (i :: Int)
   INIT Idle { id := i }
   
   TRANS
-    Idle -> Input ? create [[ IF isMoveCreate(create) THEN moveCreateId(create) == id ELSE False FI ]] -> Created
-    --Created -> Output ? start [[ IF isMoveStart(start) THEN moveStartId(start) == id ELSE False FI ]] -> Started
-    --Started -> Input ? pause [[ IF isMovePause(pause) THEN movePauseId(pause) == id ELSE False FI ]] -> Paused
-    --Paused -> Input ? resume [[ IF isMoveResume(resume) THEN moveResumeId(resume) == id ELSE False FI ]] -> Started
-    --Started -> Input ? abort [[ IF isMoveAbort(abort) THEN moveAbortId(abort) == id ELSE False FI ]] -> Stopped
-    --Paused -> Input ? abort [[ IF isMoveAbort(abort) THEN moveAbortId(abort) == id ELSE False FI ]] -> Stopped
-    --Started -> Output ? complete [[ IF isMoveComplete(complete) THEN moveCompleteId(complete) == id ELSE False FI ]] -> Stopped
-    --Paused -> Output ? complete [[ IF isMoveComplete(complete) THEN moveCompleteId(complete) == id ELSE False FI ]] -> Stopped
+  
+   -- Move is input enabled: all inputs are allowed in all states!
+   Idle -> Input ? input [[ correctId(input,id) ]] -> Idle
+   Created -> Input ? input [[ correctId(input,id) ]] -> Created
+   Started -> Input ? input [[ correctId(input,id) ]] -> Started
+   Paused -> Input ? input [[ correctId(input,id) ]] -> Paused
+   Stopped -> Input ? input [[ correctId(input,id) ]] -> Stopped
+   
+   --Idle -> Output ! MoveDequeue -> Idle
+   {-
+   Create -> Input ? input [[ correctId(input,id) ]] -> Create
+   Created -> Input ? input [[ correctId(input,id) ]] -> Created
+   Started -> Input ? input [[ correctId(input,id) ]] -> Started
+   Pause -> Input ? input [[ correctId(input,id) ]] -> Pause
+   Paused -> Input ? input [[ correctId(input,id) ]] -> Paused
+   Resume -> Input ? input [[ correctId(input,id) ]] -> Resume
+   StartedAbort -> Input ? input [[ correctId(input,id) ]] -> StartedAbort
+   PausedAbort -> Input ? input [[ correctId(input,id) ]] -> PausedAbort
+   StartedComplete -> Input ? input [[ correctId(input,id) ]] -> StartedComplete
+   PausedComplete -> Input ? input [[ correctId(input,id) ]] -> PausedComplete
+   Stopped -> Input ? input [[ correctId(input,id) ]] -> Stopped
+   -}
+   
+   Idle -> Output ! MoveCreated(id) -> Created
+   Created -> Output ! MoveStarted(id) -> Started
+   Started -> Output ! MovePaused(id) -> Paused
+   Paused -> Output ! MoveResumed(id) -> Started
+   
+   Started -> Output ! MoveAborted(id) -> Stopped
+   Paused -> Output ! MoveAborted(id) -> Stopped
+   
+   Started -> Output ! MoveCompleted(id) -> Stopped
+   Paused -> Output ! MoveCompleted(id) -> Stopped
+
+    -- Create flow: command followed by perform!
+    --Idle -> Output ! MoveCreate(id) -> Create
+    --Create -> Output ! MoveCreated(id) -> Created
+    
+    -- Start flow: command followed by perform!
+    --Created -> Output ! MoveStarted(id) -> Started
+    
+    -- Pause flow: command followed by perform!
+    --Started -> Output ! MovePause(id) -> Pause
+    --Pause -> Output ! MovePaused(id) -> Paused
+    
+    -- Resume flow: command followed by perform!
+    --Paused -> Output ! MoveResume(id) -> Resume
+    --Resume -> Output ! MoveResumed(id) -> Started
+    
+    -- Abort flow: command followed by perform!
+    --Started -> Output ! MoveAbort(id) -> StartedAbort
+    --StartedAbort -> Output ! MoveAborted(id) -> Stopped
+    
+    --Paused -> Output ! MoveAbort(id) -> PausedAbort
+    --PausedAbort -> Output ! MoveAborted(id) -> Stopped
+    
+    -- Complete flow: command followed by perform!
+    --Started -> Output ! MoveComplete(id) -> StartedComplete
+    --StartedComplete -> Output ! MoveCompleted(id) -> Stopped
+    
+    --Paused -> Output ! MoveCompleted(id) -> PausedComplete
+    --PausedComplete -> Output ! MoveCompleted(id) -> Stopped
     
 ENDDEF
--}
 
 -- The test model consists of the composition of parametrized processes,
 -- synchronized via communication over the internal SYNC channels.
@@ -104,6 +164,12 @@ MODELDEF Model ::=
 
  BEHAVIOUR
    queue [Input, Output] ()
+   |[Input]|
+   (
+    Move [Input, Output] (0) --|||
+    --Move [Input, Output] (1) |||
+    --Move [Input, Output] (2)
+   )
 ENDDEF
 
 -- We connect to the system via a single TCP socket: input+output combined.
