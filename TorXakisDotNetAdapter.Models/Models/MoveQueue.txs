@@ -43,7 +43,7 @@ TYPEDEF Queue ::=
  | New { head :: External; tail :: Queue }
 ENDDEF
 
--- Adding an input to a queue of commands
+-- Add method for queue of commands
 FUNCDEF add ( input :: External; queue :: Queue ) :: Queue
  ::=
   IF isNull(queue)
@@ -52,8 +52,8 @@ FUNCDEF add ( input :: External; queue :: Queue ) :: Queue
   FI
 ENDDEF
 
--- Model for queue of inputs
-STAUTDEF queue [Input :: External; Output :: External] ()
+-- Model for queue of commands
+STAUTDEF CommandQueue [Input :: External; Output :: External] ()
  ::=
   STATE s0, s1
 
@@ -163,7 +163,7 @@ MODELDEF Model ::=
  CHAN OUT Output
 
  BEHAVIOUR
-   queue [Input, Output] ()
+   CommandQueue [Input, Output] ()
    |[Input]|
    (
     Move [Input, Output] (0) --|||
