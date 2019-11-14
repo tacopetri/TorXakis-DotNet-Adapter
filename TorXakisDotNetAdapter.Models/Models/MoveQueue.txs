@@ -8,7 +8,7 @@ CONSTDEF maxId :: Int ::= 0 ENDDEF
 
 -- External message types:
 -- these are the messages that the SUT understands via its test adapter.
-TYPEDEF  External ::=
+TYPEDEF External ::=
    None
 
  | MoveCreate { moveCreateId :: Int }
@@ -38,7 +38,7 @@ TYPEDEF Queue ::=
 ENDDEF
 
 -- Add method for queue of commands
-FUNCDEF add ( input :: External; queue :: Queue ) :: Queue
+FUNCDEF add (input :: External; queue :: Queue) :: Queue
  ::=
   IF isNull(queue)
   THEN New(input,Null)
@@ -46,7 +46,7 @@ FUNCDEF add ( input :: External; queue :: Queue ) :: Queue
   FI
 ENDDEF
 
-FUNCDEF next ( queue :: Queue ) :: External
+FUNCDEF next (queue :: Queue) :: External
  ::=
   IF isNew(queue) THEN head(queue) ELSE None FI
 ENDDEF
@@ -103,10 +103,6 @@ STAUTDEF Move [Output :: External] (i :: Int)
   INIT Idle { id := i }
   
   TRANS
-    --Idle -> Output ! MoveDequeue(id) -> Idle
-    --Started -> Output ! MoveDequeue(id) -> Started
-    --Paused -> Output ! MoveDequeue(id) -> Paused
-  
     Idle -> Output ! MoveCreate(id) -> Create
     Idle -> Output ! MovePause(id) -> Idle
     Idle -> Output ! MoveResume(id) -> Idle
