@@ -78,7 +78,7 @@ STAUTDEF Move [Sync :: External; Output :: External] (i :: Int)
   
   TRANS
     Idle -> Sync ! MoveDequeue -> Idle
-    Created -> Sync ! MoveDequeue -> Created
+    --Created -> Sync ! MoveDequeue -> Created
     Started -> Sync ! MoveDequeue -> Started
     Paused -> Sync ! MoveDequeue -> Paused
   
@@ -90,23 +90,27 @@ STAUTDEF Move [Sync :: External; Output :: External] (i :: Int)
 
     Created -> Output ! MoveStarted(id) -> Started
 
-    Started -> Output ! MoveCreate(id) -> Started
-    Started -> Output ! MovePause(id) -> Pause
-    Started -> Output ! MoveResume(id) -> Started
-    Started -> Output ! MoveAbort(id) -> Abort
-    Started -> Output ! MoveComplete(id) -> Complete
+    Started -> Sync ! MoveCreate(id) -> Started
+    Started -> Sync ! MovePause(id) -> Pause
+    Started -> Sync ! MoveResume(id) -> Started
+    Started -> Sync ! MoveAbort(id) -> Abort
+    Started -> Sync ! MoveComplete(id) -> Complete
 
-    Paused -> Output ! MoveCreate(id) -> Paused
-    Paused -> Output ! MovePause(id) -> Paused
-    Paused -> Output ! MoveResume(id) -> Resume
-    Paused -> Output ! MoveAbort(id) -> Abort
-    Paused -> Output ! MoveComplete(id) -> Complete
+    Paused -> Sync ! MoveCreate(id) -> Paused
+    Paused -> Sync ! MovePause(id) -> Paused
+    Paused -> Sync ! MoveResume(id) -> Resume
+    Paused -> Sync ! MoveAbort(id) -> Abort
+    Paused -> Sync ! MoveComplete(id) -> Complete
     
+    -- COMMANDS
     Create -> Output ! MoveCreated(id) -> Created
     Pause -> Output ! MovePaused(id) -> Paused
     Resume -> Output ! MoveResumed(id) -> Started
     Abort -> Output ! MoveAborted(id) -> Idle
     Complete -> Output ! MoveCompleted(id) -> Idle
+    
+    -- END
+    Started -> Output ! MoveCompleted(id) -> Idle
 
 ENDDEF
 
