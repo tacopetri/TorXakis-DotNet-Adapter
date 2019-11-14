@@ -9,7 +9,7 @@ CONSTDEF maxId :: Int ::= 0 ENDDEF
 -- External message types:
 -- these are the messages that the SUT understands via its test adapter.
 TYPEDEF  External ::=
-   MoveDequeue
+   None
 
  | MoveCreate { moveCreateId :: Int }
  | MovePause { movePauseId :: Int }
@@ -46,6 +46,11 @@ FUNCDEF add ( input :: External; queue :: Queue ) :: Queue
   FI
 ENDDEF
 
+FUNCDEF next ( queue :: Queue ) :: External
+ ::=
+  IF isNew(queue) THEN head(queue) ELSE None FI
+ENDDEF
+
 -- Model for queue of commands
 STAUTDEF CommandQueue [Input :: External; Output :: External] ()
  ::=
@@ -62,8 +67,7 @@ STAUTDEF CommandQueue [Input :: External; Output :: External] ()
                                  IF isMoveComplete(input) THEN ((moveCompleteId(input) >= 0) /\ (moveCompleteId(input) <= maxId)) ELSE
                                  False FI FI FI FI FI ]]
                               { queue := add(input,queue) } -> s0
-        s0 -> Output ! MoveDequeue [[ isNew(queue) ]] -> s1
-        s1 -> Output ! head(queue) [[ isNew(queue) ]] { queue := tail(queue) } -> s0
+        s0 -> Output ! next(queue) [[ isNew(queue) ]] { queue := tail(queue) } -> s0
         
         s0 -> Output ! MoveCreated(0) -> s0
         s0 -> Output ! MoveStarted(0) -> s0
@@ -99,9 +103,9 @@ STAUTDEF Move [Output :: External] (i :: Int)
   INIT Idle { id := i }
   
   TRANS
-    Idle -> Output ! MoveDequeue -> Idle
-    Started -> Output ! MoveDequeue -> Started
-    Paused -> Output ! MoveDequeue -> Paused
+    --Idle -> Output ! MoveDequeue(id) -> Idle
+    --Started -> Output ! MoveDequeue(id) -> Started
+    --Paused -> Output ! MoveDequeue(id) -> Paused
   
     Idle -> Output ! MoveCreate(id) -> Create
     Idle -> Output ! MovePause(id) -> Idle

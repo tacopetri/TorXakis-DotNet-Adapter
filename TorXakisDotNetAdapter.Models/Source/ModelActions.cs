@@ -49,11 +49,6 @@ namespace TorXakisDotNetAdapter.Models
         public int Id { get; set; }
 	}
 
-    /// <summary>TorXakis: MoveDequeue</summary>
-	public sealed class MoveDequeue : ModelAction
-	{
-	}
-
     /// <summary>TorXakis: MovePause</summary>
 	public sealed class MovePause : ModelAction
 	{
