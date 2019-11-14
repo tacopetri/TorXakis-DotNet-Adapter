@@ -71,6 +71,22 @@ STAUTDEF CommandQueue [Input :: External; Output :: External] ()
         s0 -> Output ! MoveResumed(0) -> s0
         s0 -> Output ! MoveAborted(0) -> s0
         s0 -> Output ! MoveCompleted(0) -> s0
+        
+        {-
+        s0 -> Output ! MoveCreated(1) -> s0
+        s0 -> Output ! MoveStarted(1) -> s0
+        s0 -> Output ! MovePaused(1) -> s0
+        s0 -> Output ! MoveResumed(1) -> s0
+        s0 -> Output ! MoveAborted(1) -> s0
+        s0 -> Output ! MoveCompleted(1) -> s0
+        
+        s0 -> Output ! MoveCreated(2) -> s0
+        s0 -> Output ! MoveStarted(2) -> s0
+        s0 -> Output ! MovePaused(2) -> s0
+        s0 -> Output ! MoveResumed(2) -> s0
+        s0 -> Output ! MoveAborted(2) -> s0
+        s0 -> Output ! MoveCompleted(2) -> s0
+        -}
 
 ENDDEF
 
@@ -129,9 +145,9 @@ MODELDEF Model ::=
    CommandQueue [Input, Output] ()
    |[Output]|
    (
-    Move [Output] (0) --|||
-    --Move [Output] (1) |||
-    --Move [Output] (2)
+    Move [Output] (0)
+    --||| Move [Output] (1)
+    --||| Move [Output] (2)
    )
 ENDDEF
 
