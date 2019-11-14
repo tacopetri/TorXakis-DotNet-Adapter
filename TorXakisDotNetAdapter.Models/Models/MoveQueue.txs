@@ -6,12 +6,6 @@ Test model for the OS Movement Refactor (branches/feature-movement-refactor)
 -- The max ID, IE how many items are being moved at the same time
 CONSTDEF maxId :: Int ::= 0 ENDDEF
 
--- Internal message types:
--- used to synchronize between main model and sub-models.
-TYPEDEF  Internal ::=
-   Blargh
-ENDDEF
-
 -- External message types:
 -- these are the messages that the SUT understands via its test adapter.
 TYPEDEF  External ::=
@@ -33,8 +27,9 @@ ENDDEF
 
 -- All channel definitions:
 CHANDEF Channels ::=
- Input, Output :: External;
- Sync1 :: Internal;
+ Input :: External;
+ Output :: External;
+ Sync :: External;
 ENDDEF
 
 -- Type for queue of commands
@@ -53,7 +48,7 @@ FUNCDEF add ( input :: External; queue :: Queue ) :: Queue
 ENDDEF
 
 -- Model for queue of commands
-STAUTDEF CommandQueue [Input :: External; Output :: External] ()
+STAUTDEF CommandQueue [Input :: External; Sync :: External] ()
  ::=
   STATE s0, s1
 
@@ -61,114 +56,73 @@ STAUTDEF CommandQueue [Input :: External; Output :: External] ()
 
   INIT s0 { queue := Null }
 
-  TRANS
-   s0 -> Input ? input { queue := add(input,queue) } -> s0
-   s0 -> Output ! MoveDequeue [[ not(isNull(queue)) ]] -> s1
-   s1 -> Output ! head(queue) [[ isNew(queue) ]] { queue := tail(queue) } -> s0
+  TRANS s0 -> Input ? input [[ IF isMoveCreate(input) THEN ((moveCreateId(input) >= 0) /\ (moveCreateId(input) <= maxId)) ELSE
+                                 IF isMovePause(input) THEN ((movePauseId(input) >= 0) /\ (movePauseId(input) <= maxId)) ELSE
+                                 IF isMoveResume(input) THEN ((moveResumeId(input) >= 0) /\ (moveResumeId(input) <= maxId)) ELSE
+                                 IF isMoveAbort(input) THEN ((moveAbortId(input) >= 0) /\ (moveAbortId(input) <= maxId)) ELSE
+                                 IF isMoveComplete(input) THEN ((moveCompleteId(input) >= 0) /\ (moveCompleteId(input) <= maxId)) ELSE
+                                 False FI FI FI FI FI ]]
+                              { queue := add(input,queue) } -> s0
+        s0 -> Sync ! MoveDequeue [[ isNew(queue) ]] -> s1
+        s1 -> Sync ! head(queue) [[ isNew(queue) ]] { queue := tail(queue) } -> s0
 
 ENDDEF
 
--- Is the ID of the given input equal to the given ID?
-FUNCDEF correctId ( input :: External; id :: Int ) :: Bool
+STAUTDEF Move [Sync :: External; Output :: External] (i :: Int)
  ::=
- IF isMoveCreate(input) THEN moveCreateId(input) == id ELSE False FI
- {-
-  IF isMoveCreate(input) THEN moveCreateId(input) == id ELSE
-  IF isMovePause(input) THEN movePauseId(input) == id ELSE
-  IF isMoveResume(input) THEN moveResumeId(input) == id ELSE
-  IF isMoveAbort(input) THEN moveAbortId(input) == id ELSE
-  IF isMoveComplete(input) THEN moveCompleteId(input) == id ELSE
-  False FI FI FI FI FI
- -}
-ENDDEF
-
-STAUTDEF Move [Input :: External; Output :: External] (i :: Int)
- ::=
-  STATE Idle, Created, Started, Paused, Stopped
+  STATE Idle, Created, Started, Paused, Create, Pause, Resume, Abort, Complete
   
   VAR id :: Int
   
   INIT Idle { id := i }
   
   TRANS
+    Idle -> Sync ! MoveDequeue -> Idle
+    Created -> Sync ! MoveDequeue -> Created
+    Started -> Sync ! MoveDequeue -> Started
+    Paused -> Sync ! MoveDequeue -> Paused
   
-   -- Move is input enabled: all inputs are allowed in all states!
-   Idle -> Input ? input [[ correctId(input,id) ]] -> Idle
-   Created -> Input ? input [[ correctId(input,id) ]] -> Created
-   Started -> Input ? input [[ correctId(input,id) ]] -> Started
-   Paused -> Input ? input [[ correctId(input,id) ]] -> Paused
-   Stopped -> Input ? input [[ correctId(input,id) ]] -> Stopped
-   
-   --Idle -> Output ! MoveDequeue -> Idle
-   {-
-   Create -> Input ? input [[ correctId(input,id) ]] -> Create
-   Created -> Input ? input [[ correctId(input,id) ]] -> Created
-   Started -> Input ? input [[ correctId(input,id) ]] -> Started
-   Pause -> Input ? input [[ correctId(input,id) ]] -> Pause
-   Paused -> Input ? input [[ correctId(input,id) ]] -> Paused
-   Resume -> Input ? input [[ correctId(input,id) ]] -> Resume
-   StartedAbort -> Input ? input [[ correctId(input,id) ]] -> StartedAbort
-   PausedAbort -> Input ? input [[ correctId(input,id) ]] -> PausedAbort
-   StartedComplete -> Input ? input [[ correctId(input,id) ]] -> StartedComplete
-   PausedComplete -> Input ? input [[ correctId(input,id) ]] -> PausedComplete
-   Stopped -> Input ? input [[ correctId(input,id) ]] -> Stopped
-   -}
-   
-   Idle -> Output ! MoveCreated(id) -> Created
-   Created -> Output ! MoveStarted(id) -> Started
-   Started -> Output ! MovePaused(id) -> Paused
-   Paused -> Output ! MoveResumed(id) -> Started
-   
-   Started -> Output ! MoveAborted(id) -> Stopped
-   Paused -> Output ! MoveAborted(id) -> Stopped
-   
-   Started -> Output ! MoveCompleted(id) -> Stopped
-   Paused -> Output ! MoveCompleted(id) -> Stopped
+    Idle -> Sync ! MoveCreate(id) -> Create
+    Idle -> Sync ! MovePause(id) -> Idle
+    Idle -> Sync ! MoveResume(id) -> Idle
+    Idle -> Sync ! MoveAbort(id) -> Idle
+    Idle -> Sync ! MoveComplete(id) -> Idle
 
-    -- Create flow: command followed by perform!
-    --Idle -> Output ! MoveCreate(id) -> Create
-    --Create -> Output ! MoveCreated(id) -> Created
+    Created -> Output ! MoveStarted(id) -> Started
+
+    Started -> Output ! MoveCreate(id) -> Started
+    Started -> Output ! MovePause(id) -> Pause
+    Started -> Output ! MoveResume(id) -> Started
+    Started -> Output ! MoveAbort(id) -> Abort
+    Started -> Output ! MoveComplete(id) -> Complete
+
+    Paused -> Output ! MoveCreate(id) -> Paused
+    Paused -> Output ! MovePause(id) -> Paused
+    Paused -> Output ! MoveResume(id) -> Resume
+    Paused -> Output ! MoveAbort(id) -> Abort
+    Paused -> Output ! MoveComplete(id) -> Complete
     
-    -- Start flow: command followed by perform!
-    --Created -> Output ! MoveStarted(id) -> Started
-    
-    -- Pause flow: command followed by perform!
-    --Started -> Output ! MovePause(id) -> Pause
-    --Pause -> Output ! MovePaused(id) -> Paused
-    
-    -- Resume flow: command followed by perform!
-    --Paused -> Output ! MoveResume(id) -> Resume
-    --Resume -> Output ! MoveResumed(id) -> Started
-    
-    -- Abort flow: command followed by perform!
-    --Started -> Output ! MoveAbort(id) -> StartedAbort
-    --StartedAbort -> Output ! MoveAborted(id) -> Stopped
-    
-    --Paused -> Output ! MoveAbort(id) -> PausedAbort
-    --PausedAbort -> Output ! MoveAborted(id) -> Stopped
-    
-    -- Complete flow: command followed by perform!
-    --Started -> Output ! MoveComplete(id) -> StartedComplete
-    --StartedComplete -> Output ! MoveCompleted(id) -> Stopped
-    
-    --Paused -> Output ! MoveCompleted(id) -> PausedComplete
-    --PausedComplete -> Output ! MoveCompleted(id) -> Stopped
-    
+    Create -> Output ! MoveCreated(id) -> Created
+    Pause -> Output ! MovePaused(id) -> Paused
+    Resume -> Output ! MoveResumed(id) -> Started
+    Abort -> Output ! MoveAborted(id) -> Idle
+    Complete -> Output ! MoveCompleted(id) -> Idle
+
 ENDDEF
 
 -- The test model consists of the composition of parametrized processes,
 -- synchronized via communication over the internal SYNC channels.
 MODELDEF Model ::=
  CHAN IN Input
- CHAN OUT Output
+ CHAN OUT Sync, Output
 
  BEHAVIOUR
-   CommandQueue [Input, Output] ()
-   |[Input]|
+   CommandQueue [Input, Sync] ()
+   |[Sync]|
    (
-    Move [Input, Output] (0) --|||
-    --Move [Input, Output] (1) |||
-    --Move [Input, Output] (2)
+    Move [Sync, Output] (0) --|||
+    --Move [Sync, Output] (1) |||
+    --Move [Sync, Output] (2)
    )
 ENDDEF
 
@@ -179,46 +133,12 @@ ENDDEF
 -- message order, using abstract data types to distinguish message types.
 CNECTDEF System ::=
  CLIENTSOCK
-  --CHAN OUT Sync1 HOST "localhost" PORT 8001
-  --ENCODE Sync1 ? s -> ! toString(s)
-  
-  --CHAN IN Dequeue HOST "localhost" PORT 8002
-  --DECODE Dequeue ! fromString(s) <- ? s
- 
+  CHAN OUT Sync HOST "localhost" PORT 8001
+  ENCODE Sync ? s -> ! toString(s)
+
   CHAN OUT Input HOST "localhost" PORT 9001
   ENCODE Input ? s -> ! toString(s)
 
   CHAN IN Output HOST "localhost" PORT 9001
   DECODE Output ! fromString(s) <- ? s
 ENDDEF
-
-{-
-
--- The test model consists of the composition of parametrized processes,
--- synchronized via communication over the internal SYNC channels.
-MODELDEF Model ::=
- CHAN IN Input
- CHAN OUT Output
-
- BEHAVIOUR
-   Move [Input, Output] ()
-ENDDEF
-
--- We connect to the system via a single TCP socket: input+output combined.
--- This preserves message order within the stream, as opposed to using
--- multiple TCP sockets: one for each channel.
--- We explicitly use a single INPUT and single OUTPUT channel to enforce
--- message order, using abstract data types to distinguish message types.
-CNECTDEF System ::=
- CLIENTSOCK
-  --CHAN OUT Sync HOST "localhost" PORT 8001
-  --ENCODE Sync ? s -> 
-  
-  CHAN OUT Input HOST "localhost" PORT 9001
-  ENCODE Input ? s -> ! toString(s)
-
-  CHAN IN Output HOST "localhost" PORT 9001
-  DECODE Output ! fromString(s) <- ? s
-ENDDEF
-
--}
