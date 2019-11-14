@@ -6,18 +6,22 @@ Test model for the OS Movement Refactor (branches/feature-movement-refactor)
 -- The max ID, IE how many items are being moved at the same time
 CONSTDEF maxId :: Int ::= 0 ENDDEF
 
--- External message types:
+-- Internal message types:
 -- these are the messages that the SUT understands via its test adapter.
-TYPEDEF  External ::=
- MoveDequeue
+TYPEDEF  Internal ::=
+   MoveDequeue
 
  | MoveCreate { moveCreateId :: Int }
  | MovePause { movePauseId :: Int }
  | MoveResume { moveResumeId :: Int }
  | MoveAbort { moveAbortId :: Int }
  | MoveComplete { moveCompleteId :: Int }
+ENDDEF
 
- | MoveCreated { moveCreatedId :: Int }
+-- External message types:
+-- these are the messages that the SUT understands via its test adapter.
+TYPEDEF  External ::=
+   MoveCreated { moveCreatedId :: Int }
  | MoveStarted { moveStartedId :: Int }
  | MovePaused { movePausedId :: Int }
  | MoveResumed { moveResumedId :: Int }
@@ -27,19 +31,19 @@ ENDDEF
 
 -- All channel definitions:
 CHANDEF Channels ::=
- Input :: External;
+ Input :: Internal;
  Output :: External;
- Sync :: External;
+ Sync :: Internal;
 ENDDEF
 
 -- Type for queue of commands
 TYPEDEF Queue ::=
  Null
- | New { head :: External; tail :: Queue }
+ | New { head :: Internal; tail :: Queue }
 ENDDEF
 
 -- Add method for queue of commands
-FUNCDEF add ( input :: External; queue :: Queue ) :: Queue
+FUNCDEF add ( input :: Internal; queue :: Queue ) :: Queue
  ::=
   IF isNull(queue)
   THEN New(input,Null)
@@ -48,7 +52,7 @@ FUNCDEF add ( input :: External; queue :: Queue ) :: Queue
 ENDDEF
 
 -- Model for queue of commands
-STAUTDEF CommandQueue [Input :: External; Sync :: External] ()
+STAUTDEF CommandQueue [Input :: Internal; Sync :: Internal] ()
  ::=
   STATE s0, s1
 
@@ -68,7 +72,7 @@ STAUTDEF CommandQueue [Input :: External; Sync :: External] ()
 
 ENDDEF
 
-STAUTDEF Move [Sync :: External; Output :: External] (i :: Int)
+STAUTDEF Move [Sync :: Internal; Output :: External] (i :: Int)
  ::=
   STATE Idle, Created, Started, Paused, Create, Pause, Resume, Abort, Complete
   
@@ -137,12 +141,12 @@ ENDDEF
 -- message order, using abstract data types to distinguish message types.
 CNECTDEF System ::=
  CLIENTSOCK
-  CHAN OUT Sync HOST "localhost" PORT 8001
-  ENCODE Sync ? s -> ! toString(s)
-
   CHAN OUT Input HOST "localhost" PORT 9001
   ENCODE Input ? s -> ! toString(s)
 
-  CHAN IN Output HOST "localhost" PORT 9001
+  CHAN IN Sync HOST "localhost" PORT 9002
+  DECODE Sync ! fromString(s) <- ? s
+
+  CHAN IN Output HOST "localhost" PORT 9003
   DECODE Output ! fromString(s) <- ? s
 ENDDEF
