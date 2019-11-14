@@ -4,7 +4,7 @@ Test model for the OS Movement Refactor (branches/feature-movement-refactor)
 -}
 
 -- The max ID, IE how many items are being moved at the same time
-CONSTDEF maxId :: Int ::= 0 ENDDEF
+CONSTDEF maxId :: Int ::= 2 ENDDEF
 
 -- External message types:
 -- these are the messages that the SUT understands via its test adapter.
@@ -76,7 +76,6 @@ STAUTDEF CommandQueue [Input :: External; Output :: External] ()
         s0 -> Output ! MoveAborted(0) -> s0
         s0 -> Output ! MoveCompleted(0) -> s0
         
-        {-
         s0 -> Output ! MoveCreated(1) -> s0
         s0 -> Output ! MoveStarted(1) -> s0
         s0 -> Output ! MovePaused(1) -> s0
@@ -90,7 +89,6 @@ STAUTDEF CommandQueue [Input :: External; Output :: External] ()
         s0 -> Output ! MoveResumed(2) -> s0
         s0 -> Output ! MoveAborted(2) -> s0
         s0 -> Output ! MoveCompleted(2) -> s0
-        -}
 
 ENDDEF
 
@@ -146,8 +144,8 @@ MODELDEF Model ::=
    |[Output]|
    (
     Move [Output] (0)
-    --||| Move [Output] (1)
-    --||| Move [Output] (2)
+    ||| Move [Output] (1)
+    ||| Move [Output] (2)
    )
 ENDDEF
 
